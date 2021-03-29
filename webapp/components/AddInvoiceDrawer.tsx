@@ -1,0 +1,139 @@
+import {
+    Drawer,
+    Divider,
+    Box,
+    DrawerBody,
+    DrawerFooter,
+    DrawerHeader,
+    DrawerOverlay,
+    DrawerContent,
+    DrawerCloseButton,
+    Stack, Button, useDisclosure, Input,
+    useToast
+  } from "@chakra-ui/react"
+import React, { useEffect, useState,  } from "react";
+import {fetcher, axiosInstance} from "./Main"
+
+const dummyOrder = {
+    orderRef: "",
+    value: 0,
+    status: "",
+    shippingStatus: "",
+    invoiceId: ""
+}
+
+interface Props {
+  handleSubmit: any
+}
+
+function AddInvoiceDrawer() {
+  const { isOpen, onOpen, onClose } = useDisclosure()
+  const btnRef = React.useRef()
+  const [orderId, setOrderId] = useState("")
+  const [order, setOrder] = useState(dummyOrder)
+//   const [result, setResult] = useState("")
+//   const [error, setError] = useState("")
+  const toast = useToast()
+
+  const getOrder = async (orderRef) => {
+    console.log('try fund: ', orderRef)
+    await axiosInstance.get("/v1/order/" + orderRef)
+      .then((result)=>{
+        console.log('got', result)
+        setOrder({
+            orderRef: result.data.orderId,
+            value: result.data.value,
+            invoiceId: result.data.invoiceId,
+            status: result.data.status,
+            shippingStatus: result.data.shipping_status
+        })
+        // alert("Tusker has been notified.")
+      })
+      .catch((err) => {
+        console.log('err', err)
+        setOrder(dummyOrder)
+      })
+}
+
+  const handleFinance = async () => {
+    console.log('try fund: ', order.invoiceId)
+    axiosInstance.post("/v1/invoice/" +  order.orderRef)
+      .then((result)=>{
+        console.log('got', result)
+        // setResult("success")
+        // alert("Tusker has been notified.")
+        toast({
+            title: "Success!",
+            description: "Your request is being processed",
+            status: "success",
+            duration: 2000,
+            isClosable: true,
+          })
+          onClose()
+
+      })
+      .catch((err) => {
+        console.log('err', err)
+        // setError("error")
+        toast({
+            title: "Error!",
+            // TODO display different things by error status
+            description: "Invoice already selected",
+            status: "error",
+            duration: 2000,
+            isClosable: true,
+          })
+      })
+}
+
+
+
+
+  return (
+    <>
+      <Button ref={btnRef} colorScheme="teal" onClick={onOpen}>
+        Add New Invoice
+      </Button>
+      <Drawer
+        isOpen={isOpen}
+        placement="right"
+        onClose={() => {setOrder(dummyOrder); onClose}}
+        finalFocusRef={btnRef}
+      >
+        <DrawerOverlay>
+          <DrawerContent>
+            <DrawerCloseButton />
+            <DrawerHeader>Finance new invoice</DrawerHeader>
+
+            <DrawerBody>
+              {/* <Input placeholder="Enter order reference number" onChange={(e) => setOrderId(e.target.value)}/> */}
+              <Input placeholder="Enter order reference number" onChange={(e) => getOrder(e.target.value)}/>
+              <Box>
+                  {order.invoiceId && <div>
+                      Order found!
+                        <p>Value: {order.value}</p>
+                        <p>reference number:  {order.orderRef}</p>
+                        <p> please upload the invoice with the number: </p>
+                        <h4> {order.invoiceId} </h4>
+                        <Input placeholder="please upload your invoice here" />
+                        <Divider />
+                        <p>some text explaining how this would affect credit...what to expect and whatnot</p>
+
+                      </div>}
+              </Box>
+            </DrawerBody>
+
+            <DrawerFooter>
+              <Button variant="outline" mr={3} onClick={onClose}>
+                Cancel
+              </Button>
+              <Button colorScheme="blue" onClick={handleFinance}>Finance</Button>
+            </DrawerFooter>
+          </DrawerContent>
+        </DrawerOverlay>
+      </Drawer>
+    </>
+  )
+}
+
+export default AddInvoiceDrawer
