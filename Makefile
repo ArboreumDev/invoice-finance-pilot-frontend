@@ -1,2 +1,2 @@
 dev-webapp:
-	cd webapp; yarn dev
+	yarn dev
