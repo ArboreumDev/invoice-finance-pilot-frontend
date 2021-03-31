@@ -115,7 +115,7 @@ function AddInvoiceDrawer() {
                         <p>reference number:  {order.orderRef}</p>
                         <p> please upload the invoice with the number: </p>
                         <h4> {order.invoiceId} </h4>
-                        <Input placeholder="please upload your invoice here" />
+                        <Input placeholder="please upload your invoice here (TODO)" />
                         <Divider />
                         <p>some text explaining how this would affect credit...what to expect and whatnot</p>
 
