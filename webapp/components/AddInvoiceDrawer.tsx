@@ -13,7 +13,6 @@ import {
     VStack
   } from "@chakra-ui/react"
 import React, { useEffect, useState,  } from "react";
-import {fetcher} from "./Main"
 import axiosInstance from "../utils/fetcher"
 
 const dummyOrder = {

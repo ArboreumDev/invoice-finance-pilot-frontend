@@ -1,4 +1,4 @@
-import {Box, Button, Center, Divider, Grid, Heading, HStack, Text} from "@chakra-ui/react"
+import {Spacer, Flex, Box, Button, Center, Divider, Grid, Heading, HStack, Text, VStack} from "@chakra-ui/react"
 import {Line} from 'react-chartjs-2';
 import useSWR from 'swr'
 import AmountInput from "./AmountInput"
@@ -38,13 +38,17 @@ const LenderDashboard = ({invoices, isLoading, isError}: Props) => {
   const chart_options = {
     maintainAspectRatio: false
   }
-
   return (
     <>
+    <VStack>
+      <HStack>
+        <AddInvoiceDrawer />
+      </HStack>
+      <Divider />
       <HStack>
       <Center>
         <Box w="">
-          <Grid templateColumns={"repeat(" + 6 + ", 1fr)"} gap={3}>
+          <Grid templateColumns={"repeat(" + 5 + ", 1fr)"} gap={3}>
             <Box width="100%" textAlign="center" bg="gray.100">
               Order ID
             </Box>
@@ -60,9 +64,6 @@ const LenderDashboard = ({invoices, isLoading, isError}: Props) => {
             <Box width="100%" textAlign="center" bg="gray.100">
               Action
             </Box>
-            <Box width="100%" textAlign="center" bg="gray.100">
-              <AddInvoiceDrawer />
-            </Box>
           </Grid>
 
           {invoices.sort((a,b) => {return parseInt(b.orderId) - parseInt(a.orderId);})
@@ -72,7 +73,7 @@ const LenderDashboard = ({invoices, isLoading, isError}: Props) => {
                 <Grid
                   p="10px"
                   h="90px"
-                  templateColumns={"repeat(" + 6 + ", 1fr)"}
+                  templateColumns={"repeat(" + 5 + ", 1fr)"}
                   gap={3}
                   key={"loan_" + idx}
                 >
@@ -97,6 +98,7 @@ const LenderDashboard = ({invoices, isLoading, isError}: Props) => {
         </Box>
       </Center>
       </HStack>
+    </VStack>
     </>
   )
 }
