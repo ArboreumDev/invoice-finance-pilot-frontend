@@ -21,15 +21,14 @@ const AccountInfo = ({invoices, isLoading, isError}: Props) => {
         There was an error
       </Heading>
   }
-  const totalFunded = invoices.filter(i => i.status == "FINANCED").map(i => i.value).reduce((a, b) => a + b, 0)
+  const totalFunded = invoices.filter(i => ["DISBURSAL_REQUESTED", "FINANCED"].includes(i.status)).map(i => i.value).reduce((a, b) => a + b, 0)
   return (
       <>
         <Box p={3} w="md" h="400px" >
         <div>
-          <p> total funded: { totalFunded}
-          </p>
-          <p> total debt: (TODO) {totalFunded * 1.2}
-          </p>
+          <p> total funded: { totalFunded} </p>
+          <p> total debt: {totalFunded * 1.2} </p>
+          <p>TODO breakdown of free credit by customer</p>
         </div>
       </Box>
             </>
