@@ -10,7 +10,8 @@ import {
 import Router from "next/dist/next-server/lib/router/router";
 import React, { useState } from "react";
 import { useRouter } from "next/router";
-import {fetcher, axiosInstance} from "../components/Main"
+import {fetcher } from "../components/Main"
+import axiosInstance from "../utils/fetcher"
 
 export default function Login() {
   const router = useRouter();
