@@ -9,7 +9,8 @@ import {
     DrawerContent,
     DrawerCloseButton,
     Stack, Button, useDisclosure, Input,
-    useToast
+    useToast,
+    VStack
   } from "@chakra-ui/react"
 import React, { useEffect, useState,  } from "react";
 import {fetcher, axiosInstance} from "./Main"
@@ -52,6 +53,15 @@ function AddInvoiceDrawer() {
       .catch((err) => {
         console.log('err', err)
         setOrder(dummyOrder)
+        toast({
+            title: "Error!",
+            // TODO display different things by error status
+            description: "Invoice not found",
+            status: "error",
+            duration: 2000,
+            isClosable: true,
+          })
+
       })
 }
 
@@ -70,6 +80,7 @@ function AddInvoiceDrawer() {
             isClosable: true,
           })
           onClose()
+          setOrder(dummyOrder)
 
       })
       .catch((err) => {
@@ -97,8 +108,12 @@ function AddInvoiceDrawer() {
       <Drawer
         isOpen={isOpen}
         placement="right"
+        lockFocusAcrossFrames={true}
         onClose={() => {setOrder(dummyOrder); onClose}}
         finalFocusRef={btnRef}
+        isCentered={true}
+        size="sm"
+        onEsc={onClose}
       >
         <DrawerOverlay>
           <DrawerContent>
@@ -110,15 +125,18 @@ function AddInvoiceDrawer() {
               <Input placeholder="Enter order reference number" onChange={(e) => getOrder(e.target.value)}/>
               <Box>
                   {order.invoiceId && <div>
+                    <VStack>
+
                       Order found!
                         <p>Value: {order.value}</p>
                         <p>reference number:  {order.orderRef}</p>
                         <p> please upload the invoice with the number: </p>
                         <h4> {order.invoiceId} </h4>
-                        <Input placeholder="please upload your invoice here (TODO)" />
+                        <Input placeholder="upload invoice here (TODO)" />
                         <Divider />
                         <p>some text explaining how this would affect credit...what to expect and whatnot</p>
 
+                    </VStack>
                       </div>}
               </Box>
             </DrawerBody>
