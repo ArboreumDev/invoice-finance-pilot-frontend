@@ -51,12 +51,16 @@ function AddInvoiceDrawer() {
         // alert("Tusker has been notified.")
       })
       .catch((err) => {
-        console.log('err', err)
+        let msg = "unknown error"
+        if (err.message.includes("404")) {msg = "invoice not found"}
+        if (err.message.includes("400")) {msg = "receveiver not whitelisted"}
+        console.log('err', err.message)
+        console.log('err', err.status)
         setOrder(dummyOrder)
         toast({
             title: "Error!",
             // TODO display different things by error status
-            description: "Invoice not found",
+            description: msg,
             status: "error",
             duration: 2000,
             isClosable: true,

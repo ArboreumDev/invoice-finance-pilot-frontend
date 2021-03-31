@@ -74,7 +74,6 @@ const getInvoices = () => {
 
 const Main = () => {
   const { invoices, isLoading, isError } = getInvoices();
-  console.log('error', isError, isLoading)
   return (
     <VStack align="left" textAlign="left" p="20px">
 
