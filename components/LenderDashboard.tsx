@@ -10,14 +10,16 @@ import axiosInstance, {fetcher} from "../utils/fetcher"
 import { useForm } from "react-hook-form"
 import {FinanceStatus} from "./Main"
 import {CreditLineInfo} from "./AccountInfo"
+import { Currency } from "./common/Currency";
 interface Props {
   invoices: Invoice[],
   isLoading: boolean,
   isError: Object
-  creditors: Object
+  creditInfo: any
+
 }
 
-const LenderDashboard = ({invoices, isLoading, isError}: Props) => {
+const LenderDashboard = ({invoices, isLoading, isError, creditInfo}: Props) => {
   if (isLoading) {
     return <Heading as="h2" size="lg" fontWeight="400" color="gray.500">
         Loading
@@ -54,39 +56,40 @@ const LenderDashboard = ({invoices, isLoading, isError}: Props) => {
   const chart_options = {
     maintainAspectRatio: false
   }
-  const creditorInfo = {
-  "216c6829-6439-4fcb-b7dc-d35d337e9315": {
-    name: "gurugrupa test receiver 1",
-    available: 40000,
-    used: 0,
-    total: 50000,
-    requested: 10000
-  },
-  "1aee8ce8-9c4c-4b7c-a790-6d8b4684e287": {
-    name: "gurugrupa test receiver 2",
-    available: 50000,
-    used: 0,
-    total: 50000,
-    requested: 0
-  }
-}
+//   const creditorInfo = {
+//   "216c6829-6439-4fcb-b7dc-d35d337e9315": {
+//     name: "gurugrupa test receiver 1",
+//     available: 40000,
+//     used: 0,
+//     total: 50000,
+//     requested: 10000
+//   },
+//   "1aee8ce8-9c4c-4b7c-a790-6d8b4684e287": {
+//     name: "gurugrupa test receiver 2",
+//     available: 50000,
+//     used: 0,
+//     total: 50000,
+//     requested: 0
+//   }
+// }
 
   return (
     <>
     <VStack>
     <HStack width="100%">
       <Text width="20%">Show Invoices:</Text>
-      {/* <Select onChange={(e)=> filterInvoices("", e.target.value)} placeholder="All Status"> */}
       <Select onChange={(e)=> setInvoiceStatus(e.target.value)} placeholder="All Status">
         <option value={FinanceStatus.INITIAL}>requested & awaiting delivery (INITIAL)</option>
         <option value={FinanceStatus.DISBURSAL_REQUESTED}>delivered & awaiting disbursal (DISBURSAL_REQUESTED)</option>
         <option value={FinanceStatus.FINANCED}>disbursed & to be paid back (FINANCED)</option>
       </Select>
-      <Select onChange={(e)=> setReceiver(e.target.value)} placeholder="All Receivers">
-        {Object.keys(creditorInfo).map((c) => (
-          <option value={c}> {creditorInfo[c].name} </option>
-        ))}
-      </Select>
+      {creditInfo && (
+        <Select onChange={(e)=> setReceiver(e.target.value)} placeholder="All Receivers">
+          {Object.keys(creditInfo).map((c) => (
+            <option value={c}> {creditInfo[c].name} </option>
+          ))}
+        </Select>
+        )}
       </HStack>
         <AddInvoiceDrawer />
       <Divider />
@@ -126,7 +129,7 @@ const LenderDashboard = ({invoices, isLoading, isError}: Props) => {
                     {l.orderId}
                   </Box>
                   <Box width="100%" textAlign="center">
-                    {l.value}
+                    <Currency amount={l.value}/>
                   </Box>
                   <Box width="100%" textAlign="center">
                     {l.shippingStatus}

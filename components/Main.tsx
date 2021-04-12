@@ -102,7 +102,7 @@ const Main = () => {
   <TabPanels >
     <TabPanel>
       <LenderDashboard
-        creditors={creditLineInfo}
+        creditInfo={creditLineInfo}
         invoices={invoices}
         isLoading={isLoading}
         isError={isError}
