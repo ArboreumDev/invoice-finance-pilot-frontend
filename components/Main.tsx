@@ -38,9 +38,17 @@ export enum ShipmentStatus {
 
 export enum FinanceStatus {
   NONE = "NONE",
+  INITIAL = "INITIAL",
   FINANCED = "FINANCED",
+  DISBURSED = "DISBURSED",
   REPAID = "REPAID",
   DEFAULTED = "DEFAULTED",
+  DISBURSAL_REQUESTED = "DISBURSAL_REQUESTED",
+  ERROR_SENDING_REQUEST = "ERROR_SENDING_REQUEST",
+}
+export interface ReceiverInfo {
+  receiverId: str
+  receiverName: str
 }
 
 export interface Invoice {
@@ -49,6 +57,7 @@ export interface Invoice {
   value: number;
   shippingStatus: ShipmentStatus;
   status: FinanceStatus;
+  receiverInfo: ReceiverInfo
   // endDate: Date
 }
 
@@ -65,15 +74,22 @@ const getInvoices = () => {
     const { data, error } = useSWR<Invoice[]>("/v1/invoice", fetcher, {
       refreshInterval: 10000,
     });
+    const creditInfo =  useSWR<Invoice[]>("/v1/credit", fetcher, {
+      refreshInterval: 10000,
+    });
+    // console.log('got creditinfo', Object.values(creditInfo.data))
   return {
     invoices: data,
-    isError: error,
-    isLoading: !error && !data
+    creditLineInfo: creditInfo.data,
+    isError: error || creditInfo.error,
+    isLoading: !error && !data && !creditInfo.error && !creditInfo.data
   }
 };
 
 const Main = () => {
-  const { invoices, isLoading, isError } = getInvoices();
+  const { invoices, creditLineInfo, isLoading, isError } = getInvoices();
+  // console.log(creditLineInfo)
+  console.log('and in here', Object.values(creditLineInfo))
   return (
     <VStack align="left" textAlign="left" p="20px">
 
@@ -93,7 +109,9 @@ const Main = () => {
     </TabPanel>
     <TabPanel>
       <AccountInfo 
+        // creditLines={[]}
         invoices={invoices}
+        creditLines={Object.values(creditLineInfo)}
         isLoading={isLoading}
         isError={isError}
       />

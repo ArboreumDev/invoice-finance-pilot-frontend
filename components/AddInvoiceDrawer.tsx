@@ -62,7 +62,7 @@ function AddInvoiceDrawer() {
             // TODO display different things by error status
             description: msg,
             status: "error",
-            duration: 2000,
+            duration: 6000,
             isClosable: true,
           })
 
