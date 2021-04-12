@@ -35,28 +35,21 @@ const LenderDashboard = ({invoices, isLoading, isError}: Props) => {
   // const [invoicesToShow, setInvoicesToShow] = useState(invoices)
 
   const filteredInvoices = () => {
-    // let invoices_to_show = invoices
-    // if (receiverId) {
-      // console.log('look for', receiverId)
-      // console.log(invoices.map(i => i.receiverInfo.receiverId))
-      // setInvoicesToShow( invoices.filter((inv) => inv.receiverInfo.receiverId === receiverId))
-      // setInvoicesToShow( invoices.filter((inv) => inv.receiverInfo.receiverId === receiverId))
-
       return invoices .filter( i => receiverId ? i.receiverInfo.receiverId === receiverId : true)
         .filter(i => invoiceStatus ? i.status === invoiceStatus : true)
 
     } 
-    // if (status){//} && !receiverId) {
-      // setInvoicesToShow( invoices.filter((inv) => inv.status === status))
-      // return
-    // } else {
-      // setInvoicesToShow(invoices)
-    // }
 
   const onInvest = () => {
     // invest in loan
     console.log("invested")
   }  
+
+  const showDetails = (invoiceId) => {
+    const inv = invoices.filter(i => i.invoiceId === invoiceId)
+    const msg = "TODO format this: " + JSON.stringify(inv)
+    alert(msg)
+  }
   
   const chart_options = {
     maintainAspectRatio: false
@@ -82,7 +75,7 @@ const LenderDashboard = ({invoices, isLoading, isError}: Props) => {
     <>
     <VStack>
     <HStack width="100%">
-      <Text>Show Invoices:</Text>
+      <Text width="20%">Show Invoices:</Text>
       {/* <Select onChange={(e)=> filterInvoices("", e.target.value)} placeholder="All Status"> */}
       <Select onChange={(e)=> setInvoiceStatus(e.target.value)} placeholder="All Status">
         <option value={FinanceStatus.INITIAL}>requested & awaiting delivery (INITIAL)</option>
@@ -93,13 +86,7 @@ const LenderDashboard = ({invoices, isLoading, isError}: Props) => {
         {Object.keys(creditorInfo).map((c) => (
           <option value={c}> {creditorInfo[c].name} </option>
         ))}
-
-
-        {/* <option value={FinanceStatus.INITIAL}>requested & awaiting delivery (INITIAL)</option>
-        <option value={FinanceStatus.DISBURSAL_REQUESTED}>delivered & awaiting disbursal (DISBURSAL_REQUESTED)</option>
-        <option value={FinanceStatus.FINANCED}>disbursed & to be paid back (FINANCED)</option> */}
       </Select>
-
       </HStack>
         <AddInvoiceDrawer />
       <Divider />
@@ -120,7 +107,7 @@ const LenderDashboard = ({invoices, isLoading, isError}: Props) => {
               Status
             </Box>
             <Box width="100%" textAlign="center" bg="gray.100">
-              Action
+              Details
             </Box>
           </Grid>
 
@@ -148,7 +135,8 @@ const LenderDashboard = ({invoices, isLoading, isError}: Props) => {
                     {l.status}
                   </Box>
                   <Box width="100%" textAlign="center">
-                    <Button size="sm" onClick={() => handleFinance(l.invoiceId)} disabled={l.status!=="NONE"}>Repayment Info</Button>
+                    {/* <Button size="sm" onClick={() => handleFinance(l.invoiceId)} disabled={l.status!=="NONE"}>Repayment Info</Button> */}
+                    <Button size="sm" onClick={() => showDetails(l.invoiceId)} >...</Button>
                   </Box>
                 </Grid>
               </>

@@ -218,7 +218,7 @@ const AccountInfo = ({invoices, isLoading, isError, creditLines}: VendorAccountI
               <Divider display={["none", "block"]} orientation="vertical" />
               <Center minW={320} maxW="sm">
                 <Stack w="100%" spacing={6}>
-                  {AllocatedAsset("Requested", percRequested, "gray.500")}
+                  {AllocatedAsset("Requested", percRequested, "teal.500")}
                   {AllocatedAsset("Used", percUsed, "teal.500")}
                   {AllocatedAsset("Available", percAvailable, "gray.500")}
                 </Stack>
