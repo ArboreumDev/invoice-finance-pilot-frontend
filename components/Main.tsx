@@ -89,7 +89,7 @@ const getInvoices = () => {
 const Main = () => {
   const { invoices, creditLineInfo, isLoading, isError } = getInvoices();
   // console.log(creditLineInfo)
-  console.log('and in here', Object.values(creditLineInfo))
+  console.log('and in here', creditLineInfo)
   return (
     <VStack align="left" textAlign="left" p="20px">
 
@@ -102,6 +102,7 @@ const Main = () => {
   <TabPanels >
     <TabPanel>
       <LenderDashboard
+        creditors={creditLineInfo}
         invoices={invoices}
         isLoading={isLoading}
         isError={isError}
@@ -109,9 +110,9 @@ const Main = () => {
     </TabPanel>
     <TabPanel>
       <AccountInfo 
-        // creditLines={[]}
         invoices={invoices}
-        creditLines={Object.values(creditLineInfo)}
+        // creditLines={[]}
+        creditLines={creditLineInfo ? Object.values(creditLineInfo): []}
         isLoading={isLoading}
         isError={isError}
       />
