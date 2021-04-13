@@ -14,7 +14,7 @@ import {
   Wrap,
 
 } from "@chakra-ui/react"
-import DynamicDoughnut from "./doughnut"
+import DynamicDoughnut, {color1, color2, color3} from "./doughnut"
 import { dec_to_perc } from "../lib/currency"
 import { Currency } from "../components/common/Currency"
 import {FinanceStatus} from "../components/Main"
@@ -28,6 +28,7 @@ interface CreditLineInfo {
   requested: number
   total: number
   available: number
+  invoices: number
 }
 
 const CreditLines = (props: { creditLines: CreditLineInfo[] }) => {
@@ -77,7 +78,7 @@ const CreditLines = (props: { creditLines: CreditLineInfo[] }) => {
             <Currency amount={creditLine.total} />
           </Box>
           <Box width="100%" textAlign="center">
-            {1}
+            {creditLine.invoices} 
           </Box>
         </Grid>
       ))}
@@ -146,7 +147,8 @@ const AccountInfo = ({invoices, isLoading, isError, creditLines}: VendorAccountI
   const invoicesPaidBack = invoices.filter(i => [FinanceStatus.REPAID].includes(i.status)) //.map(i => i.value).reduce((a, b) => a + b, 0)
   const invoicesRequested = invoices.filter(i => [FinanceStatus.DISBURSAL_REQUESTED, FinanceStatus.INITIAL].includes(i.status)) //.map(i => i.value).reduce((a, b) => a + b, 0)
   console.log('req', invoicesRequested)
-
+  
+  const totalPaidBack = invoicesPaidBack.map(i => i.value).reduce((a,b) => a+b, 0)
   const totalAvailable = creditLines.map(c => c.available).reduce((a,b) => a+b, 0)
   const totalUsed = creditLines.map(c => c.used).reduce((a,b) => a+b, 0)
   const totalRequested = creditLines.map(c => c.requested).reduce((a,b) => a+b, 0)
@@ -154,12 +156,17 @@ const AccountInfo = ({invoices, isLoading, isError, creditLines}: VendorAccountI
   const percUsed = dec_to_perc(totalUsed / total, 1)
   const percAvailable = dec_to_perc(totalAvailable / total, 1)
   const percRequested = dec_to_perc(totalRequested / total, 1)
+  const totalDebt = totalUsed * 1.05
 
-  const totalDebt = totalUsed * 1.2
+  const invoicesByReceiver = invoices.map(i => i.receiverInfo.receiverId)
 
-  let amounts = creditLines.map(c => c.used + c.requested)
-  let names = creditLines.map(c => c.name)
+  let usedAmounts = creditLines.map(c => c.used)
+  let requestedAmounts = creditLines.map(c => c.requested)
+  let amounts = requestedAmounts.concat(usedAmounts)
   amounts.push(totalAvailable)
+
+  let _names = creditLines.map(c => c.name)
+  let names = _names.concat(_names)
   names.push("available")
 
 
@@ -169,61 +176,69 @@ const AccountInfo = ({invoices, isLoading, isError, creditLines}: VendorAccountI
         <Stack w="100%" spacing={8}>
           <HStack spacing={20} marginTop={1}>
             <Stat>
-              <StatLabel fontSize="lg">Total Debt</StatLabel>
+              <StatLabel fontSize="lg">Total Current Debt</StatLabel>
               <StatNumber fontSize="3xl">
                 <Currency amount={totalDebt} />
               </StatNumber>
             </Stat>
             </HStack>
+
           <Heading size="md">Account Overview</Heading>
           <HStack spacing={20} marginTop={1}>
             <Stat>
-              <StatLabel fontSize="lg">Invoices Requested</StatLabel>
+              <StatLabel fontSize="lg">Available Credit</StatLabel>
               <StatNumber fontSize="3xl">
-                {invoicesRequested.length}
+                <Currency amount={totalAvailable} />
               </StatNumber>
             </Stat>
             <Stat>
-              <StatLabel fontSize="lg">Invoices Financed</StatLabel>
+              <StatLabel fontSize="lg">
+                Invoices Requested ({invoicesRequested.length})
+                </StatLabel>
               <StatNumber fontSize="3xl">
-                {invoicesFunded.length}
+                <Currency amount={totalRequested} />
               </StatNumber>
             </Stat>
             <Stat>
-              <StatLabel fontSize="lg">Invoices Repaid</StatLabel>
+              <StatLabel fontSize="lg">
+                Invoices Financed ({invoicesFunded.length})
+                </StatLabel>
               <StatNumber fontSize="3xl">
-                {invoicesPaidBack.length}
+                <Currency amount={totalUsed} />
+              </StatNumber>
+            </Stat>
+            <Stat>
+              <StatLabel fontSize="lg">
+                Invoices Repaid ({invoicesPaidBack.length})
+                </StatLabel>
+              <StatNumber fontSize="3xl">
+                <Currency amount={totalPaidBack} />
               </StatNumber>
             </Stat>
           </HStack>
-          <Stack spacing={20} w="100%">
-            <Wrap w="100%" margin={2}>
-              {Asset("Total Requested", totalRequested)}
-              {Asset("Total Used Credit", totalUsed)}
-              {Asset("Total Available", totalAvailable)}
-              {/* {Asset("Total Debt", totalDebt)} */}
-            </Wrap>
-          </Stack>
 
           <>
             <Heading size="md">Credit Allocation</Heading>
             <Wrap w="100%" spacing={[8, 0, 0, 0]}>
-              <Center minW={280} maxW="sm">
-                <Box w={160}>
-                  <DynamicDoughnut
-                    amounts={amounts}
-                    labels={names}
-                  />
-                </Box>
-              </Center>
               <Divider display={["none", "block"]} orientation="vertical" />
-              <Center minW={320} maxW="sm">
+
+            <Center minW={280} maxW="sm"> 
+              <Box w={160}> 
+                <DynamicDoughnut amounts={amounts} labels={names} />
+              </Box> 
+             </Center>
+              <Center minW={320} maxW="sm"> 
                 <Stack w="100%" spacing={6}>
-                  {AllocatedAsset("Requested", percRequested, "teal.500")}
-                  {AllocatedAsset("Used", percUsed, "teal.500")}
-                  {AllocatedAsset("Available", percAvailable, "gray.500")}
+                  {AllocatedAsset("Requested", percRequested, color1)}
+                  {AllocatedAsset("Used", percUsed, color2)}
+                  {AllocatedAsset("Available", percAvailable, color3)}
+                  {/* <Wrap w="100%">
+                  {creditLines.map((c) => ( 
+                    AllocatedAsset(c.name, parseFloat((c.used + c.requested) / c.available, 2).toFixed(2), "teal.500")
+                  ))}
+                  </Wrap> */}
                 </Stack>
-              </Center>
+              </Center> 
             </Wrap>
           </>
           <Box minW="xl">

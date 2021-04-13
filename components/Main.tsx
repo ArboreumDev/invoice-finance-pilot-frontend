@@ -47,8 +47,16 @@ export enum FinanceStatus {
   ERROR_SENDING_REQUEST = "ERROR_SENDING_REQUEST",
 }
 export interface ReceiverInfo {
-  receiverId: str
-  receiverName: str
+  receiverId: string
+  receiverName: string
+}
+
+export interface PaymentDetails {
+  requestId: string
+  repaymentId: string
+  interest: number
+  collectionDate: any
+  startDate: any
 }
 
 export interface Invoice {
@@ -58,6 +66,7 @@ export interface Invoice {
   shippingStatus: ShipmentStatus;
   status: FinanceStatus;
   receiverInfo: ReceiverInfo
+  paymentDetails: any
   // endDate: Date
 }
 
