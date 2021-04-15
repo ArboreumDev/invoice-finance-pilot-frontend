@@ -75,7 +75,7 @@ const LenderDashboard = ({invoices, isLoading, isError, creditInfo}: Props) => {
 //     requested: 0
 //   }
 // }
-  console.log('pay', invoices[0].paymentDetails)
+  // console.log('pay', invoices[0].paymentDetails)
 
   return (
     <>

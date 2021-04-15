@@ -3,6 +3,7 @@ import useSWR from "swr";
 import axios from "axios";
 import LenderDashboard from "./LenderDashboard";
 import AccountInfo from "./AccountInfo";
+import AdminView from "./AdminView";
 import BorrowerDashboard from "./BorrowerDashboard";
 import AdminDashboard from "./AdminDashboard";
 // import React from "react";
@@ -60,7 +61,7 @@ export interface PaymentDetails {
 }
 
 export interface Invoice {
-  invoiceId: number;
+  invoiceId: string;
   orderId: string;
   value: number;
   shippingStatus: ShipmentStatus;
@@ -106,6 +107,7 @@ const Main = () => {
   <TabList>
     <Tab>Invoices Dashboard</Tab>
     <Tab>Account</Tab>
+    <Tab>AminView(DemoOnly)</Tab>
   </TabList>
 
   <TabPanels >
@@ -125,6 +127,14 @@ const Main = () => {
         isLoading={isLoading}
         isError={isError}
       />
+    </TabPanel>
+
+    <TabPanel>
+      <AdminView 
+        creditInfo={creditLineInfo}
+        invoices={invoices}
+      />
+
     </TabPanel>
   </TabPanels>
 </Tabs>

@@ -22,7 +22,7 @@ import {FinanceStatus} from "../components/Main"
 
 
 
-interface CreditLineInfo {
+export interface CreditLineInfo {
   used: number
   name: string
   requested: number
