@@ -12,9 +12,6 @@ import React, { useEffect } from "react";
 import { resolveTxt } from "dns";
 import axiosInstance, {fetcher} from "../utils/fetcher"
 
-// for rc-admin role
-const SUPER_AUTH_TOKEN = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJyYyIsImV4cCI6MjA0Njk2MzQ1Niwicm9sZSI6InJjX2FkbWluIn0.GV0Q2mPmMUT4In6ro8QL_LO-nsXqUIV6NUlg46Q2_eg"
-
 
 // const axiosInstance = axios.create({
 //   baseURL: "http://localhost:8000/",

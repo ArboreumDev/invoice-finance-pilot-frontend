@@ -1,8 +1,12 @@
 import axios from 'axios';
 
+console.log('from env', process.env.BACKEND_URL)
+// TODO why is this not working?
+const baseUrl = process.env.BACKEND_URL || "http://localhost:8000/"
+
 const axiosInstance = () => {
   const defaultOptions = {
-    baseURL: "http://localhost:8000/",
+    baseURL: baseUrl,
     method: 'get',
     headers: {
       'Content-Type': 'application/json',
