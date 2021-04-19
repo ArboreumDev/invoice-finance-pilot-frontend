@@ -28,6 +28,7 @@ export default function Login() {
       const res = await axiosInstance.post("/token", bodyFormData)
       console.log('loginres', res)
       if (res.status === 200) {
+        window.localStorage.setItem("arboreum:name", email)
         window.localStorage.setItem("arboreum:info", JSON.stringify({
           token: res.data.access_token,
           role: res.data.role,

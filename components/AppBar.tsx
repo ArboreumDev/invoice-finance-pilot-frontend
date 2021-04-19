@@ -8,6 +8,7 @@ const AppBar = () => {
     window.localStorage.removeItem("arboreum:info")
     window.location.reload(false);
   }
+  const userName = () => window.localStorage.getItem("arboreum:name")
 
   return (
     <>
@@ -32,6 +33,7 @@ const AppBar = () => {
     </Flex>
     <Box flex="1"></Box>
     <HStack className="navButtons">
+      <Text as="samp">User: {userName()}</Text>
       <Button size="lg" colorScheme="teal">
         Log In
       </Button>
