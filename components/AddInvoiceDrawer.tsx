@@ -138,7 +138,6 @@ function AddInvoiceDrawer() {
                         <h4> {order.invoiceId} </h4>
                         <Input placeholder="upload invoice here (TODO)" />
                         <Divider />
-                        <p>some text explaining how this would affect credit...what to expect and whatnot</p>
 
                     </VStack>
                       </div>}
