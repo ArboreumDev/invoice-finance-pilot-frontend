@@ -17,14 +17,15 @@ import {
 import DynamicDoughnut, {color1, color2, color3} from "./doughnut"
 import { dec_to_perc } from "../lib/currency"
 import { Currency } from "../components/common/Currency"
-import {FinanceStatus} from "../components/Main"
+import {FinanceStatus, ReceiverInfo} from "../components/Main"
+import {ReceiverDetails} from "../components/ReceiverDetails"
 
 
 
 
 export interface CreditLineInfo {
   used: number
-  name: string
+  info: ReceiverInfo
   requested: number
   total: number
   available: number
@@ -40,6 +41,7 @@ const CreditLines = (props: { creditLines: CreditLineInfo[] }) => {
     // "Amount Repaid",
     "Total Credit Line Size",
     "Number of Invoices",
+    "Contact"
   ]
 
   return (
@@ -63,7 +65,7 @@ const CreditLines = (props: { creditLines: CreditLineInfo[] }) => {
           gap={3}
         >
           <Box verticalAlign="center" width="100%" textAlign="center">
-            <Text>{creditLine.name}</Text>
+            <Text>{creditLine.info.name}, {creditLine.info.city}</Text>
           </Box>
           <Box width="100%" textAlign="center">
             <Currency amount={creditLine.requested} />
@@ -79,6 +81,9 @@ const CreditLines = (props: { creditLines: CreditLineInfo[] }) => {
           </Box>
           <Box width="100%" textAlign="center">
             {creditLine.invoices} 
+          </Box>
+          <Box width="100%" textAlign="center">
+            <ReceiverDetails receiver={creditLine.info} />
           </Box>
         </Grid>
       ))}

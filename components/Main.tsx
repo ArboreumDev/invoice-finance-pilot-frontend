@@ -45,8 +45,10 @@ export enum FinanceStatus {
   ERROR_SENDING_REQUEST = "ERROR_SENDING_REQUEST",
 }
 export interface ReceiverInfo {
-  receiverId: string
-  receiverName: string
+  id: string
+  name: string
+  phone: string
+  city: string
 }
 
 export interface PaymentDetails {

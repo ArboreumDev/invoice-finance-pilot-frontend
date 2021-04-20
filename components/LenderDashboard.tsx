@@ -121,7 +121,7 @@ const LenderDashboard = ({invoices, isLoading, isError, creditInfo}: Props) => {
             </Box>
           </Grid>
 
-          {filteredInvoices().sort((a,b) => {return parseInt(b.orderId) - parseInt(a.orderId);})
+          {filteredInvoices && filteredInvoices().sort((a,b) => {return parseInt(b.orderId) - parseInt(a.orderId);})
           // .filter((l) => l.status == "NONE")
             .map((l: Invoice, idx) => (
               <>

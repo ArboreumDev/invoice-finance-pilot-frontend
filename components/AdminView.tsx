@@ -124,7 +124,7 @@ const AdminView = ({invoices, creditInfo}: Props) => {
             {creditInfo && (
                 <Select onChange={(e)=> setNewOrderReceiver(e.target.value)} placeholder="Select Receiver">
                 {Object.keys(creditInfo).map((c) => (
-                    <option value={c}> {creditInfo[c].name} </option>
+                    <option value={c}> {creditInfo[c].info.name} </option>
                 ))}
                 </Select>
                 )}
@@ -136,7 +136,7 @@ const AdminView = ({invoices, creditInfo}: Props) => {
             </HStack>
                 <ul>
                 {invoices && invoices.map((invoice: Invoice) => (
-                    <li>
+                    <li key={"inv" + invoice.invoiceId}>
                         <HStack padding="1" width="100%">
                             <Text >{invoice.orderId}     </Text>
                             <Button onClick={() => markDelivered(invoice.invoiceId)}>deliver</Button>

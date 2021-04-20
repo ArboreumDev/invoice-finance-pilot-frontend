@@ -20,7 +20,8 @@ const dummyOrder = {
     value: 0,
     status: "",
     shippingStatus: "",
-    invoiceId: ""
+    invoiceId: "",
+    receiverInfo: {}
 }
 
 interface Props {
@@ -41,12 +42,19 @@ function AddInvoiceDrawer() {
     await axiosInstance.get("/v1/order/" + orderRef)
       .then((result)=>{
         console.log('got', result)
+        toast({
+            title: "Invoice Found!",
+            description: "sdf",
+            duration: 2000
+        })
+ 
         setOrder({
             orderRef: result.data.orderId,
             value: result.data.value,
             invoiceId: result.data.invoiceId,
             status: result.data.status,
-            shippingStatus: result.data.shipping_status
+            shippingStatus: result.data.shipping_status,
+            receiverInfo: result.data.receiverInfo
         })
         // alert("Tusker has been notified.")
       })
@@ -62,7 +70,7 @@ function AddInvoiceDrawer() {
             // TODO display different things by error status
             description: msg,
             status: "error",
-            duration: 6000,
+            duration: 2000,
             isClosable: true,
           })
 
@@ -133,6 +141,7 @@ function AddInvoiceDrawer() {
 
                       Order found!
                         <p>Value: {order.value}</p>
+                        <p>receiver: {JSON.stringify(order.receiverInfo)}</p>
                         <p>reference number:  {order.orderRef}</p>
                         <p> please upload the invoice with the number: </p>
                         <h4> {order.invoiceId} </h4>
