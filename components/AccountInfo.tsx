@@ -181,7 +181,11 @@ const AccountInfo = ({invoices, isLoading, isError, creditLines}: VendorAccountI
         <Stack w="100%" spacing={8}>
           <HStack spacing={20} marginTop={1}>
             <Stat>
-              <StatLabel fontSize="lg">Total Current Debt</StatLabel>
+              <StatLabel fontSize="lg">
+                  <Tooltip label="assuming payback after 90 days">
+                    Total Current Debt
+                  </Tooltip>
+                </StatLabel>
               <StatNumber fontSize="3xl">
                 <Currency amount={totalDebt} />
               </StatNumber>

@@ -116,7 +116,7 @@ const AdminView = ({invoices, creditInfo}: Props) => {
         <>
         <Box>
             <VStack>
-            <Button onClick={updateDB}>
+            <Button disabled onClick={updateDB}>
                     <Tooltip label="in order to trigger status changes that happen upon delivery"> UpdateDb</Tooltip>
             </Button>
             <HStack>
@@ -139,10 +139,10 @@ const AdminView = ({invoices, creditInfo}: Props) => {
                     <li key={"inv" + invoice.invoiceId}>
                         <HStack padding="1" width="100%">
                             <Text >{invoice.orderId}     </Text>
-                            <Button onClick={() => markDelivered(invoice.invoiceId)}>deliver</Button>
-                                <Input placeholder={invoice.value} size="sm" onChange={(e) => setNewValue(e.target.value)}/>
+                            <Button disabled onClick={() => markDelivered(invoice.invoiceId)}>deliver</Button>
+                                <Input placeholder={"current value: " +invoice.value} size="sm" onChange={(e) => setNewValue(e.target.value)}/>
                             <Button onClick={() => changeValue(invoice.invoiceId)}>Change Value</Button>
-                                <Select onChange={(e)=> setNewStatus(e.target.value)} placeholder={invoice.status}>
+                                <Select onChange={(e)=> setNewStatus(e.target.value)} placeholder={"current status: " + invoice.status}>
                                 {possibleStatus.map((s) => (
                                     <option value={s}> {s} </option>
                                 ))}
