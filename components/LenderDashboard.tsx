@@ -90,7 +90,7 @@ const LenderDashboard = ({invoices, isLoading, isError, creditInfo}: Props) => {
       {creditInfo && (
         <Select onChange={(e)=> setReceiver(e.target.value)} placeholder="All Receivers">
           {Object.keys(creditInfo).map((c) => (
-            <option value={c}> {creditInfo[c].info.name} </option>
+            <option value={c}> {creditInfo[c].info.name} ({creditInfo[c].info.city}) </option>
           ))}
         </Select>
         )}
