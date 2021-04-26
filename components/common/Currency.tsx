@@ -8,7 +8,7 @@ interface Props {
         style: "currency",
         currency: type,
         minimumFractionDigits: 0,
-        maximumFractionDigits: 0,
+        maximumFractionDigits: 2,
       })}
     </span>
   )
