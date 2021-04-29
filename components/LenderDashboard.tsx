@@ -40,7 +40,7 @@ const LenderDashboard = ({invoices, isLoading, isError, creditInfo}: Props) => {
   // const [invoicesToShow, setInvoicesToShow] = useState(invoices)
 
   const filteredInvoices = () => {
-      return invoices .filter( i => receiverId ? i.receiverInfo.receiverId === receiverId : true)
+      return invoices .filter( i => receiverId ? i.receiverInfo.id === receiverId : true)
         .filter(i => invoiceStatus ? i.status === invoiceStatus : true)
 
     } 
@@ -121,7 +121,7 @@ const LenderDashboard = ({invoices, isLoading, isError, creditInfo}: Props) => {
             </Box>
           </Grid>
 
-          {filteredInvoices && filteredInvoices().sort((a,b) => {return parseInt(b.orderId) - parseInt(a.orderId);})
+          {invoices && filteredInvoices().sort((a,b) => {return parseInt(b.orderId) - parseInt(a.orderId);})
           // .filter((l) => l.status == "NONE")
             .map((l: Invoice, idx) => (
               <>

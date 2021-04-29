@@ -66,7 +66,7 @@ export const InvoiceDetails = ({invoice}) => {
                         <Tbody>
                             <Tr>
                                 <Td>receiver</Td>
-                                <Td isNumeric>{invoice.receiverInfo.receiverName}</Td>
+                                <Td isNumeric>{invoice.receiverInfo.name}</Td>
                             </Tr>
                             <Tr>
                                 <Td>invoice ID</Td>
