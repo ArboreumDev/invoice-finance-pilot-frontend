@@ -163,14 +163,14 @@ const AccountInfo = ({invoices, isLoading, isError, creditLines}: VendorAccountI
   const percRequested = dec_to_perc(totalRequested / total, 1)
   const totalDebt = totalUsed * 1.05
 
-  const invoicesByReceiver = invoices.map(i => i.receiverInfo.receiverId)
+  const invoicesByReceiver = invoices.map(i => i.receiverInfo.id)
 
   let usedAmounts = creditLines.map(c => c.used)
   let requestedAmounts = creditLines.map(c => c.requested)
   let amounts = requestedAmounts.concat(usedAmounts)
   amounts.push(totalAvailable)
 
-  let _names = creditLines.map(c => c.name)
+  let _names = creditLines.map(c => c.info.name)
   let names = _names.concat(_names)
   names.push("available")
 

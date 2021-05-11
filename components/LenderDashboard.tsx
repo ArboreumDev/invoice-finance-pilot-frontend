@@ -59,23 +59,6 @@ const LenderDashboard = ({invoices, isLoading, isError, creditInfo}: Props) => {
   const chart_options = {
     maintainAspectRatio: false
   }
-//   const creditorInfo = {
-//   "216c6829-6439-4fcb-b7dc-d35d337e9315": {
-//     name: "gurugrupa test receiver 1",
-//     available: 40000,
-//     used: 0,
-//     total: 50000,
-//     requested: 10000
-//   },
-//   "1aee8ce8-9c4c-4b7c-a790-6d8b4684e287": {
-//     name: "gurugrupa test receiver 2",
-//     available: 50000,
-//     used: 0,
-//     total: 50000,
-//     requested: 0
-//   }
-// }
-  // console.log('pay', invoices[0].paymentDetails)
 
   return (
     <>
