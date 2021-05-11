@@ -1,5 +1,15 @@
 import {
     Drawer,
+    Table,
+    Thead,
+    Text,
+    Tbody,
+    Tfoot,
+    Tr,
+    Th,
+    Td,
+    TableCaption,
+    ModalHeader,
     Divider,
     Box,
     DrawerBody,
@@ -10,7 +20,8 @@ import {
     DrawerCloseButton,
     Stack, Button, useDisclosure, Input,
     useToast,
-    VStack
+    VStack,
+    Heading
   } from "@chakra-ui/react"
 import React, { useEffect, useState,  } from "react";
 import axiosInstance from "../utils/fetcher"
@@ -136,20 +147,36 @@ function AddInvoiceDrawer() {
               {/* <Input placeholder="Enter order reference number" onChange={(e) => setOrderId(e.target.value)}/> */}
               <Input placeholder="Enter order reference number" onChange={(e) => getOrder(e.target.value)}/>
               <Box>
-                  {order.invoiceId && <div>
-                    <VStack>
+                  {order.invoiceId && (
+                    <Box>
 
-                      Order found!
-                        <p>Value: {order.value}</p>
-                        <p>receiver: {JSON.stringify(order.receiverInfo)}</p>
-                        <p>reference number:  {order.orderRef}</p>
+                    <VStack>
+                      <Heading size="md"> Order found!  </Heading>
+                        <Table size="lg" variant="simple" >
+                        <Tbody>
+                            <Tr>
+                                <Td>Receiver</Td>
+                                <Td isNumeric>
+                                  {order.receiverInfo.name}, {' '}
+                                  ({order.receiverInfo.city}),{' '}
+                                  {order.receiverInfo.phone}
+                                  </Td>
+                            </Tr>
+                            <Tr>
+                                <Td>Value</Td>
+                                <Td isNumeric>{order.value}</Td>
+                            </Tr>
+                        </Tbody>
+                        </Table>
+                        {/* <p>receiver: {JSON.stringify(order.receiverInfo)}</p> */}
                         <p> please upload the invoice with the number: </p>
                         <h4> {order.invoiceId} </h4>
-                        <Input placeholder="upload invoice here (TODO)" />
+                        <Input placeholder="upload invoice here" />
                         <Divider />
 
                     </VStack>
-                      </div>}
+                    </Box>
+                      )}
               </Box>
             </DrawerBody>
 
