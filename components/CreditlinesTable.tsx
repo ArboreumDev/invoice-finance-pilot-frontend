@@ -45,13 +45,13 @@ const CreditlinesTable = (props: { creditLines: CreditLineInfo[] }) => {
         accessor: "info.name",
       },
       {
-        Header: "Requested",
+        Header: "Requested ₹",
         accessor: "requested",
         // isNumeric: true
         sortDescFirst: true
       },
       {
-        Header: "Used",
+        Header: "Used ₹",
         accessor: "used",
         sortDescFirst: true,
       },
@@ -62,14 +62,14 @@ const CreditlinesTable = (props: { creditLines: CreditLineInfo[] }) => {
       },
 
       {
-        Header: "Available",
+        Header: "Available ₹",
         accessor: "available",
         // sortType: (a,b) => a.amount > b.amount
         // sortType: Function(rowA: <Row>, rowB: <Row>, columnId: String, desc: Bool)
         tDescFirst: true
       },
       {
-        Header: "Total Credit Line Size",
+        Header: "Total Credit Line Size ₹",
         accessor: "total",
         sortDescFirst: true
       },
