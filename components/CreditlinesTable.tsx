@@ -5,6 +5,8 @@ import React, { useMemo } from "react";
 import {FinanceStatus, ReceiverInfo} from "./Main"
 import {ReceiverDetails} from "./ReceiverDetails"
 import { dec_to_perc } from "../lib/currency"
+import { Currency } from "./common/Currency";
+import InvoiceStatusForm from "./InvoiceStatusForm";
 
 
 export interface CreditLineInfo {
@@ -23,6 +25,12 @@ const CreditlinesTable = (props: { creditLines: CreditLineInfo[] }) => {
     () => props.creditLines.map((c: CreditLineInfo) => {
         return {
           ...c,
+          // info: c.info,
+          // available: <Currency id={"amount"+ c.available} amount={c.available}/>,
+          // used: <Currency amount={c.used}/>,
+          // requested: <Currency amount={c.requested}/>,
+          // total: <Currency amount={c.total}/>,
+          // invoices: c.invoices,
           details: <ReceiverDetails receiver={c.info}/>,
           percUsed: dec_to_perc(c.used / c.total)
         }
@@ -39,31 +47,41 @@ const CreditlinesTable = (props: { creditLines: CreditLineInfo[] }) => {
       {
         Header: "Requested",
         accessor: "requested",
+        // isNumeric: true
+        sortDescFirst: true
       },
       {
         Header: "Used",
         accessor: "used",
+        sortDescFirst: true,
       },
       {
-        Header: " as %",
+        Header: " used (%)",
         accessor: "percUsed",
+        sortDescFirst: true
       },
 
       {
         Header: "Available",
         accessor: "available",
+        // sortType: (a,b) => a.amount > b.amount
+        // sortType: Function(rowA: <Row>, rowB: <Row>, columnId: String, desc: Bool)
+        tDescFirst: true
       },
       {
         Header: "Total Credit Line Size",
         accessor: "total",
+        sortDescFirst: true
       },
       {
         Header: "Number of invoices",
         accessor: "invoices",
+        sortDescFirst: true
       },
       {
         Header: "Contact",
-        accessor: "details"
+        accessor: "details",
+        disableSortBy: true,
       }
     ],
     [],
