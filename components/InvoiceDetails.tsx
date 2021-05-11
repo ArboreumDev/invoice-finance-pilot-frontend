@@ -55,14 +55,6 @@ export const InvoiceDetails = ({invoice}) => {
             <ModalBody>
                 <Box width="90%">
                         <Table size="lg" variant="simple" >
-                        {/* <TableCaption>Imperial to metric conversion factors</TableCaption> */}
-                        {/* <Thead> */}
-                            {/* <Tr>
-                            <Th>To convert</Th>
-                            <Th>into</Th>
-                            <Th isNumeric>multiply by</Th>
-                            </Tr> */}
-                        {/* </Thead> */}
                         <Tbody>
                             <Tr>
                                 <Td>receiver</Td>

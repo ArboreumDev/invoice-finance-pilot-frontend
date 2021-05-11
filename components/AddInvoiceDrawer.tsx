@@ -125,7 +125,7 @@ function AddInvoiceDrawer() {
 
   return (
     <>
-      <Button width="100%" ref={btnRef} colorScheme="teal" onClick={onOpen}>
+      <Button ref={btnRef} colorScheme="teal" onClick={onOpen}>
         Add New Invoice
       </Button>
       <Drawer

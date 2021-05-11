@@ -64,8 +64,8 @@ const LenderDashboard = ({invoices, isLoading, isError, creditInfo}: Props) => {
   return (
     <>
     <VStack>
-    <HStack width="100%">
-      <Text width="20%">Show Invoices:</Text>
+    <HStack >
+      <Text minW="110px" width="27%">Show Invoices:</Text>
       <Select onChange={(e)=> setInvoiceStatus(e.target.value)} placeholder="All Status">
         <option value={FinanceStatus.INITIAL}>requested & awaiting delivery (INITIAL)</option>
         <option value={FinanceStatus.DISBURSAL_REQUESTED}>delivered & awaiting disbursal (DISBURSAL_REQUESTED)</option>
@@ -75,15 +75,17 @@ const LenderDashboard = ({invoices, isLoading, isError, creditInfo}: Props) => {
         <Select onChange={(e)=> setReceiver(e.target.value)} placeholder="All Receivers">
           {Object.keys(creditInfo).map((c) => (
             <option value={c}> {creditInfo[c].info.name} ({creditInfo[c].info.city}) </option>
-          ))}
+            ))}
         </Select>
         )}
+        <Box minW="170px" width="10%">
+          <AddInvoiceDrawer />
+        </Box>
       </HStack>
-        <AddInvoiceDrawer />
       <Divider />
       <HStack width="100%">
-        <Center width="100%" minW="xl">
-          <Box minW="xl">
+        <Center width="100%">
+          <Box minW="xl" width="100%">
           <InvoiceTable invoices={
             filteredInvoices().sort((a,b) => {return parseInt(b.orderId) - parseInt(a.orderId);})
           } />
