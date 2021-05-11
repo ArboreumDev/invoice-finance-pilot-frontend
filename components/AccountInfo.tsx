@@ -19,6 +19,7 @@ import { dec_to_perc } from "../lib/currency"
 import { Currency } from "../components/common/Currency"
 import {FinanceStatus, ReceiverInfo} from "../components/Main"
 import {ReceiverDetails} from "../components/ReceiverDetails"
+import CreditlinesTable from "./CreditlinesTable"
 
 
 
@@ -251,7 +252,7 @@ const AccountInfo = ({invoices, isLoading, isError, creditLines}: VendorAccountI
             </Wrap>
           </>
           <Box minW="xl">
-            <CreditLines creditLines={creditLines} />
+            <CreditlinesTable creditLines={creditLines} />
           </Box>
         </Stack>
       </Box>
