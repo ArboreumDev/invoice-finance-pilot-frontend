@@ -38,6 +38,7 @@ const InvoiceTable = (props: { invoices: Invoice[] }) => {
             ...i,
           amount: currencyToString(i.value),
           details: <InvoiceDetails invoice={i}/>,
+          shortDate: i.paymentDetails.collectionDate ? i.paymentDetails.collectionDate.slice(0,10) : ""
         }
       }),
     [props.invoices, ]
@@ -66,7 +67,7 @@ const InvoiceTable = (props: { invoices: Invoice[] }) => {
 
       {
         Header: "Due Date",
-        accessor: "paymentDetails.collectionDate",
+        accessor: "shortDate",
       },
       {
         Header: "Details",

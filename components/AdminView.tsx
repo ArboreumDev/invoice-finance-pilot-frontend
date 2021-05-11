@@ -128,7 +128,7 @@ const AdminView = ({invoices, creditInfo}: Props) => {
                 ))}
                 </Select>
                 )}
-            <Button onClick={createNew}>
+            <Button onClick={createNew} width="220px">
                 <Tooltip label="then use order ref number to search for the invoice and reuqest it to be financed">
                     Create New Order
                 </Tooltip>
@@ -139,15 +139,17 @@ const AdminView = ({invoices, creditInfo}: Props) => {
                     <li key={"inv" + invoice.invoiceId}>
                         <HStack padding="1" width="100%">
                             <Text >{invoice.orderId}     </Text>
-                            <Button disabled onClick={() => markDelivered(invoice.invoiceId)}>deliver</Button>
-                                <Input placeholder={"current value: " +invoice.value} size="sm" onChange={(e) => setNewValue(e.target.value)}/>
-                            <Button onClick={() => changeValue(invoice.invoiceId)}>Change Value</Button>
+                            {/* <Button width="290px" disabled onClick={() => markDelivered(invoice.invoiceId)}>deliver</Button> */}
+                            <Input width="300px" placeholder={"current value: " +invoice.value} size="sm" onChange={(e) => setNewValue(e.target.value)}/>
+                            <Button width="240px" onClick={() => changeValue(invoice.invoiceId)}>Change Value</Button>
+                            <Box> 
                                 <Select onChange={(e)=> setNewStatus(e.target.value)} placeholder={"current status: " + invoice.status}>
-                                {possibleStatus.map((s) => (
-                                    <option value={s}> {s} </option>
-                                ))}
+                                    {possibleStatus.map((s) => (
+                                        <option value={s}> {s} </option>
+                                        ))}
                                 </Select>
-                            <Button onClick={() => changeStatus(invoice.invoiceId)}>Change Status</Button>
+                            </Box>
+                            <Button width="240px" onClick={() => changeStatus(invoice.invoiceId)}>Change Status</Button>
                         </HStack>
                     </li>
                     ))
