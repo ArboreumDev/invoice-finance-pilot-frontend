@@ -82,11 +82,13 @@ const LenderDashboard = ({invoices, isLoading, isError, creditInfo}: Props) => {
         <AddInvoiceDrawer />
       <Divider />
       <HStack width="100%">
-      <Center width="100%">
+        <Center width="100%" minW="xl">
+          <Box minW="xl">
           <InvoiceTable invoices={
-          filteredInvoices().sort((a,b) => {return parseInt(b.orderId) - parseInt(a.orderId);})
-            } />
-      </Center>
+            filteredInvoices().sort((a,b) => {return parseInt(b.orderId) - parseInt(a.orderId);})
+          } />
+        </Box>
+        </Center>
       </HStack>
     </VStack>
     </>
