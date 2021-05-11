@@ -21,16 +21,26 @@ export interface CreditLineInfo {
 
 const CreditlinesTable = (props: { creditLines: CreditLineInfo[] }) => {
 
+  const currencyToString = (amount) => {
+    return amount.toLocaleString("en-IN", { 
+        style: "currency",
+        currency: "INR" ,
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 2,
+      })
+    }
+ 
+
   const data = React.useMemo(
     () => props.creditLines.map((c: CreditLineInfo) => {
         return {
           ...c,
-          // info: c.info,
-          // available: <Currency id={"amount"+ c.available} amount={c.available}/>,
-          // used: <Currency amount={c.used}/>,
-          // requested: <Currency amount={c.requested}/>,
-          // total: <Currency amount={c.total}/>,
-          // invoices: c.invoices,
+          info: c.info,
+          available: currencyToString(c.available),
+          used: currencyToString(c.used),
+          requested: currencyToString(c.requested),
+          total: currencyToString(c.total),
+          invoices: c.invoices,
           details: <ReceiverDetails receiver={c.info}/>,
           percUsed: dec_to_perc(c.used / c.total)
         }
@@ -45,13 +55,13 @@ const CreditlinesTable = (props: { creditLines: CreditLineInfo[] }) => {
         accessor: "info.name",
       },
       {
-        Header: "Requested ₹",
+        Header: "Requested",
         accessor: "requested",
         // isNumeric: true
         sortDescFirst: true
       },
       {
-        Header: "Used ₹",
+        Header: "Used",
         accessor: "used",
         sortDescFirst: true,
       },
@@ -62,14 +72,12 @@ const CreditlinesTable = (props: { creditLines: CreditLineInfo[] }) => {
       },
 
       {
-        Header: "Available ₹",
+        Header: "Available",
         accessor: "available",
-        // sortType: (a,b) => a.amount > b.amount
-        // sortType: Function(rowA: <Row>, rowB: <Row>, columnId: String, desc: Bool)
-        tDescFirst: true
+        sortDescFirst: true
       },
       {
-        Header: "Total Credit Line Size ₹",
+        Header: "Total Credit Line Size",
         accessor: "total",
         sortDescFirst: true
       },
