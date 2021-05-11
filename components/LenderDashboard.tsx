@@ -11,6 +11,7 @@ import { useForm } from "react-hook-form"
 import {FinanceStatus} from "./Main"
 import {CreditLineInfo} from "./AccountInfo"
 import {InvoiceDetails} from "./InvoiceDetails"
+import InvoiceTable from "./InvoiceTable"
 import { Currency } from "./common/Currency";
 
 
@@ -80,65 +81,11 @@ const LenderDashboard = ({invoices, isLoading, isError, creditInfo}: Props) => {
       </HStack>
         <AddInvoiceDrawer />
       <Divider />
-      <HStack>
-      <Center>
-        <Box w="">
-          <Grid templateColumns={"repeat(" + 6 + ", 1fr)"} gap={3}>
-            <Box width="100%" textAlign="center" bg="gray.100">
-              Order ID
-            </Box>
-            <Box width="100%" textAlign="center" bg="gray.100">
-              Invoice Amount
-            </Box>
-            <Box width="100%" textAlign="center" bg="gray.100">
-              Shipment Status
-            </Box>
-            <Box width="100%" textAlign="center" bg="gray.100">
-              Status
-            </Box>
-            <Box width="100%" textAlign="center" bg="gray.100">
-              Due Date
-            </Box>
-            <Box width="100%" textAlign="center" bg="gray.100">
-              Details
-            </Box>
-          </Grid>
-
-          {invoices && filteredInvoices().sort((a,b) => {return parseInt(b.orderId) - parseInt(a.orderId);})
-          // .filter((l) => l.status == "NONE")
-            .map((l: Invoice, idx) => (
-              <>
-                <Grid
-                  p="10px"
-                  h="90px"
-                  templateColumns={"repeat(" + 6 + ", 1fr)"}
-                  gap={3}
-                  key={"loan_" + idx}
-                >
-                  <Box width="100%" textAlign="center">
-                    {l.orderId}
-                  </Box>
-                  <Box width="100%" textAlign="center">
-                    <Currency amount={l.value}/>
-                  </Box>
-                  <Box width="100%" textAlign="center">
-                    {l.shippingStatus}
-                  </Box>
-                  <Box width="100%" textAlign="center">
-                    {l.status}
-                  </Box>
-                  <Box width="100%" textAlign="center">
-                    {l.paymentDetails.collectionDate || "-"}
-                  </Box>
-                  <Box width="100%" textAlign="center">
-                    {/* <Button size="sm" onClick={() => handleFinance(l.invoiceId)} disabled={l.status!=="NONE"}>Repayment Info</Button> */}
-                    <InvoiceDetails invoice={l}/>
-                    {/* <Button size="sm" onClick={() => showDetails(l.invoiceId)} >...</Button> */}
-                  </Box>
-                </Grid>
-              </>
-            ))}
-        </Box>
+      <HStack width="100%">
+      <Center width="100%">
+          <InvoiceTable invoices={
+          filteredInvoices().sort((a,b) => {return parseInt(b.orderId) - parseInt(a.orderId);})
+            } />
       </Center>
       </HStack>
     </VStack>

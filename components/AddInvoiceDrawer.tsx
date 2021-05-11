@@ -129,7 +129,7 @@ function AddInvoiceDrawer() {
       >
         <DrawerOverlay>
           <DrawerContent>
-            <DrawerCloseButton />
+            <DrawerCloseButton onClick={onClose} />
             <DrawerHeader>Finance new invoice</DrawerHeader>
 
             <DrawerBody>
@@ -157,7 +157,7 @@ function AddInvoiceDrawer() {
               <Button variant="outline" mr={3} onClick={onClose}>
                 Cancel
               </Button>
-              <Button colorScheme="blue" onClick={handleFinance}>Finance</Button>
+              <Button colorScheme="teal" onClick={handleFinance}>Finance</Button>
             </DrawerFooter>
           </DrawerContent>
         </DrawerOverlay>
