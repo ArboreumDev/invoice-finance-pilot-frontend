@@ -107,7 +107,7 @@ function AddInvoiceDrawer() {
       .catch((err) => {
         toast({
             title: "Error!",
-            description: err.response.data.detail || "Unknown Error"
+            description: err.response.data.detail || "Unknown Error",
             status: "error",
             duration: 2000,
             isClosable: true,
