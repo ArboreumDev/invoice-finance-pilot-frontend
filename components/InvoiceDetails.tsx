@@ -42,7 +42,6 @@ interface Props {
 
 export const InvoiceDetails = ({invoice}) => {
     const { isOpen, onOpen, onClose } = useDisclosure()
-    console.log('got', invoice)
     return (
       <>
         <Button onClick={onOpen}>...</Button>
@@ -55,14 +54,6 @@ export const InvoiceDetails = ({invoice}) => {
             <ModalBody>
                 <Box width="90%">
                         <Table size="lg" variant="simple" >
-                        {/* <TableCaption>Imperial to metric conversion factors</TableCaption> */}
-                        {/* <Thead> */}
-                            {/* <Tr>
-                            <Th>To convert</Th>
-                            <Th>into</Th>
-                            <Th isNumeric>multiply by</Th>
-                            </Tr> */}
-                        {/* </Thead> */}
                         <Tbody>
                             <Tr>
                                 <Td>receiver</Td>

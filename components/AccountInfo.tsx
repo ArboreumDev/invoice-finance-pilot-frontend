@@ -19,6 +19,7 @@ import { dec_to_perc } from "../lib/currency"
 import { Currency } from "../components/common/Currency"
 import {FinanceStatus, ReceiverInfo} from "../components/Main"
 import {ReceiverDetails} from "../components/ReceiverDetails"
+import CreditlinesTable from "./CreditlinesTable"
 
 
 
@@ -151,7 +152,6 @@ const AccountInfo = ({invoices, isLoading, isError, creditLines}: VendorAccountI
   const invoicesFunded = invoices.filter(i => [FinanceStatus.FINANCED].includes(i.status)) //.map(i => i.value).reduce((a, b) => a + b, 0)
   const invoicesPaidBack = invoices.filter(i => [FinanceStatus.REPAID].includes(i.status)) //.map(i => i.value).reduce((a, b) => a + b, 0)
   const invoicesRequested = invoices.filter(i => [FinanceStatus.DISBURSAL_REQUESTED, FinanceStatus.INITIAL].includes(i.status)) //.map(i => i.value).reduce((a, b) => a + b, 0)
-  console.log('req', invoicesRequested)
   
   const totalPaidBack = invoicesPaidBack.map(i => i.value).reduce((a,b) => a+b, 0)
   const totalAvailable = creditLines.map(c => c.available).reduce((a,b) => a+b, 0)
@@ -163,14 +163,14 @@ const AccountInfo = ({invoices, isLoading, isError, creditLines}: VendorAccountI
   const percRequested = dec_to_perc(totalRequested / total, 1)
   const totalDebt = totalUsed * 1.05
 
-  const invoicesByReceiver = invoices.map(i => i.receiverInfo.receiverId)
+  const invoicesByReceiver = invoices.map(i => i.receiverInfo.id)
 
   let usedAmounts = creditLines.map(c => c.used)
   let requestedAmounts = creditLines.map(c => c.requested)
   let amounts = requestedAmounts.concat(usedAmounts)
   amounts.push(totalAvailable)
 
-  let _names = creditLines.map(c => c.name)
+  let _names = creditLines.map(c => c.info.name)
   let names = _names.concat(_names)
   names.push("available")
 
@@ -251,7 +251,7 @@ const AccountInfo = ({invoices, isLoading, isError, creditLines}: VendorAccountI
             </Wrap>
           </>
           <Box minW="xl">
-            <CreditLines creditLines={creditLines} />
+            <CreditlinesTable creditLines={creditLines} />
           </Box>
         </Stack>
       </Box>

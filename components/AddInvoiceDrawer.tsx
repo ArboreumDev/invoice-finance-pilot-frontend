@@ -1,5 +1,15 @@
 import {
     Drawer,
+    Table,
+    Thead,
+    Text,
+    Tbody,
+    Tfoot,
+    Tr,
+    Th,
+    Td,
+    TableCaption,
+    ModalHeader,
     Divider,
     Box,
     DrawerBody,
@@ -10,7 +20,8 @@ import {
     DrawerCloseButton,
     Stack, Button, useDisclosure, Input,
     useToast,
-    VStack
+    VStack,
+    Heading
   } from "@chakra-ui/react"
 import React, { useEffect, useState,  } from "react";
 import axiosInstance from "../utils/fetcher"
@@ -43,8 +54,8 @@ function AddInvoiceDrawer() {
       .then((result)=>{
         console.log('got', result)
         toast({
-            title: "Invoice Found!",
-            description: "sdf",
+            title: "Success!",
+            description: "Proceed to upload invoice.",
             duration: 2000
         })
  
@@ -62,8 +73,6 @@ function AddInvoiceDrawer() {
         let msg = "unknown error"
         if (err.message.includes("404")) {msg = "invoice not found"}
         if (err.message.includes("400")) {msg = "receveiver not whitelisted"}
-        console.log('err', err.message)
-        console.log('err', err.status)
         setOrder(dummyOrder)
         toast({
             title: "Error!",
@@ -96,12 +105,9 @@ function AddInvoiceDrawer() {
 
       })
       .catch((err) => {
-        console.log('err', err)
-        // setError("error")
         toast({
             title: "Error!",
-            // TODO display different things by error status
-            description: "Invoice already selected",
+            description: err.response.data.detail || "Unknown Error",
             status: "error",
             duration: 2000,
             isClosable: true,
@@ -114,7 +120,7 @@ function AddInvoiceDrawer() {
 
   return (
     <>
-      <Button width="100%" ref={btnRef} colorScheme="teal" onClick={onOpen}>
+      <Button ref={btnRef} colorScheme="teal" onClick={onOpen}>
         Add New Invoice
       </Button>
       <Drawer
@@ -129,27 +135,43 @@ function AddInvoiceDrawer() {
       >
         <DrawerOverlay>
           <DrawerContent>
-            <DrawerCloseButton />
+            <DrawerCloseButton onClick={onClose} />
             <DrawerHeader>Finance new invoice</DrawerHeader>
 
             <DrawerBody>
               {/* <Input placeholder="Enter order reference number" onChange={(e) => setOrderId(e.target.value)}/> */}
               <Input placeholder="Enter order reference number" onChange={(e) => getOrder(e.target.value)}/>
               <Box>
-                  {order.invoiceId && <div>
-                    <VStack>
+                  {order.invoiceId && (
+                    <Box>
 
-                      Order found!
-                        <p>Value: {order.value}</p>
-                        <p>receiver: {JSON.stringify(order.receiverInfo)}</p>
-                        <p>reference number:  {order.orderRef}</p>
+                    <VStack>
+                      <Heading size="md"> Order found!  </Heading>
+                        <Table size="lg" variant="simple" >
+                        <Tbody>
+                            <Tr>
+                                <Td>Receiver</Td>
+                                <Td isNumeric>
+                                  {order.receiverInfo.name}, {' '}
+                                  ({order.receiverInfo.city}),{' '}
+                                  {order.receiverInfo.phone}
+                                  </Td>
+                            </Tr>
+                            <Tr>
+                                <Td>Value</Td>
+                                <Td isNumeric>{order.value}</Td>
+                            </Tr>
+                        </Tbody>
+                        </Table>
+                        {/* <p>receiver: {JSON.stringify(order.receiverInfo)}</p> */}
                         <p> please upload the invoice with the number: </p>
                         <h4> {order.invoiceId} </h4>
-                        <Input placeholder="upload invoice here (TODO)" />
+                        <Input placeholder="upload invoice here" />
                         <Divider />
 
                     </VStack>
-                      </div>}
+                    </Box>
+                      )}
               </Box>
             </DrawerBody>
 
@@ -157,7 +179,7 @@ function AddInvoiceDrawer() {
               <Button variant="outline" mr={3} onClick={onClose}>
                 Cancel
               </Button>
-              <Button colorScheme="blue" onClick={handleFinance}>Finance</Button>
+              <Button colorScheme="teal" onClick={handleFinance}>Finance</Button>
             </DrawerFooter>
           </DrawerContent>
         </DrawerOverlay>

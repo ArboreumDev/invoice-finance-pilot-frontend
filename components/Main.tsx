@@ -104,7 +104,7 @@ const Main = () => {
   <TabList>
     <Tab>Account</Tab>
     <Tab>Invoices</Tab>
-    <Tab>AminView(DemoOnly)</Tab>
+    <Tab>AdminView</Tab>
   </TabList>
 
   <TabPanels >
