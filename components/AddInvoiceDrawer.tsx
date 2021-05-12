@@ -54,8 +54,8 @@ function AddInvoiceDrawer() {
       .then((result)=>{
         console.log('got', result)
         toast({
-            title: "Invoice Found!",
-            description: "sdf",
+            title: "Success!",
+            description: "Proceed to upload invoice.",
             duration: 2000
         })
  
