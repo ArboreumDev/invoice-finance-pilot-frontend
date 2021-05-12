@@ -152,7 +152,6 @@ const AccountInfo = ({invoices, isLoading, isError, creditLines}: VendorAccountI
   const invoicesFunded = invoices.filter(i => [FinanceStatus.FINANCED].includes(i.status)) //.map(i => i.value).reduce((a, b) => a + b, 0)
   const invoicesPaidBack = invoices.filter(i => [FinanceStatus.REPAID].includes(i.status)) //.map(i => i.value).reduce((a, b) => a + b, 0)
   const invoicesRequested = invoices.filter(i => [FinanceStatus.DISBURSAL_REQUESTED, FinanceStatus.INITIAL].includes(i.status)) //.map(i => i.value).reduce((a, b) => a + b, 0)
-  console.log('req', invoicesRequested)
   
   const totalPaidBack = invoicesPaidBack.map(i => i.value).reduce((a,b) => a+b, 0)
   const totalAvailable = creditLines.map(c => c.available).reduce((a,b) => a+b, 0)

@@ -42,7 +42,6 @@ interface Props {
 
 export const InvoiceDetails = ({invoice}) => {
     const { isOpen, onOpen, onClose } = useDisclosure()
-    console.log('got', invoice)
     return (
       <>
         <Button onClick={onOpen}>...</Button>
