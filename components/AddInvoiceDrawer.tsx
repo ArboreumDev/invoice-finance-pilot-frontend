@@ -73,8 +73,6 @@ function AddInvoiceDrawer() {
         let msg = "unknown error"
         if (err.message.includes("404")) {msg = "invoice not found"}
         if (err.message.includes("400")) {msg = "receveiver not whitelisted"}
-        console.log('err', err.message)
-        console.log('err', err.status)
         setOrder(dummyOrder)
         toast({
             title: "Error!",
@@ -107,12 +105,9 @@ function AddInvoiceDrawer() {
 
       })
       .catch((err) => {
-        console.log('err', err)
-        // setError("error")
         toast({
             title: "Error!",
-            // TODO display different things by error status
-            description: "Invoice already selected",
+            description: err.response.data.detail || "Unknown Error"
             status: "error",
             duration: 2000,
             isClosable: true,
