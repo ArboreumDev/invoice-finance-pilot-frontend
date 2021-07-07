@@ -77,6 +77,7 @@ function AddInvoiceDrawer() {
         if (err.message.includes("404")) {msg = "invoice not found"}
         if (err.message.includes("400")) {msg = "receveiver not whitelisted"}
         setOrder(dummyOrder)
+        setUploaded(false)
         toast({
             title: "Error!",
             // TODO display different things by error status
@@ -131,7 +132,7 @@ function AddInvoiceDrawer() {
         isOpen={isOpen}
         placement="right"
         lockFocusAcrossFrames={true}
-        onClose={() => {setOrder(dummyOrder); onClose}}
+        onClose={() => { setOrder(dummyOrder); setUploaded(false); onClose }}
         finalFocusRef={btnRef}
         isCentered={true}
         size="sm"
