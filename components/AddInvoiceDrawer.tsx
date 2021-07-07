@@ -1,6 +1,7 @@
 import {
     Drawer,
     Table,
+    Switch,
     Thead,
     Text,
     Tbody,
@@ -24,6 +25,7 @@ import {
     Heading
   } from "@chakra-ui/react"
 import React, { useEffect, useState,  } from "react";
+import { principalToInterest } from "../lib/invoice";
 import axiosInstance from "../utils/fetcher"
 
 const dummyOrder = {
@@ -43,6 +45,7 @@ function AddInvoiceDrawer() {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const btnRef = React.useRef()
   const [orderId, setOrderId] = useState("")
+  const [isUploaded, setUploaded] = useState(false)
   const [order, setOrder] = useState(dummyOrder)
 //   const [result, setResult] = useState("")
 //   const [error, setError] = useState("")
@@ -102,6 +105,7 @@ function AddInvoiceDrawer() {
           })
           onClose()
           setOrder(dummyOrder)
+          setUploaded(false)
 
       })
       .catch((err) => {
@@ -163,10 +167,27 @@ function AddInvoiceDrawer() {
                             </Tr>
                         </Tbody>
                         </Table>
+                        <Divider />
+                        <Text>
+                          If financed this invoice will accrue the following interest:
+                          <p>
+                            after one month: {principalToInterest(order.value, 1)}
+                          </p>
+                          <p>
+                            after two months: {principalToInterest(order.value, 2)}
+                          </p>
+                          <p>
+                            after three months: {principalToInterest(order.value, 3)}
+                          </p>
+                        </Text>
+                        <Divider />
+
                         {/* <p>receiver: {JSON.stringify(order.receiverInfo)}</p> */}
-                        <p> please upload the invoice with the number: </p>
-                        <h4> {order.invoiceId} </h4>
-                        <Input placeholder="upload invoice here" />
+                        <p> I have uploaded a readable photo of the invoice with the ID
+                          <b> {order.invoiceId} </b>
+                          onto the tusker-backend
+                        </p>
+                        <Switch onChange={() => setUploaded(!isUploaded)}/>
                         <Divider />
 
                     </VStack>
@@ -179,7 +200,7 @@ function AddInvoiceDrawer() {
               <Button variant="outline" mr={3} onClick={onClose}>
                 Cancel
               </Button>
-              <Button colorScheme="teal" onClick={handleFinance}>Finance</Button>
+              <Button disabled={!isUploaded} colorScheme="teal" onClick={handleFinance}>Finance</Button>
             </DrawerFooter>
           </DrawerContent>
         </DrawerOverlay>
