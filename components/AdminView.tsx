@@ -114,6 +114,28 @@ const AdminView = ({invoices, creditInfo}: Props) => {
         }
     }
 
+    // const addToWhitelist = async (locationId) => {
+    //     // const msg = "" + invoiceId + "->" + newValue
+    //     // alert(msg)
+    //     try {
+    //         const res = await axiosInstance.post("/v1/whitelist/new", {
+    //             supplierId: 
+    //         })
+    //         console.log(res.status)
+    //         if (res.status === 200) {
+    //             setNewStatus("")
+    //             alert("Updated")
+    //         } else {
+    //         alert("error")
+    //         }
+    //     } catch (err) {
+    //         console.log(err)
+    //         alert(err)
+    //     }
+    // }
+
+
+
     const filteredInvoices = () => {
         if (filterId) return invoices.filter(i => i.orderId === filterId)
         else return invoices

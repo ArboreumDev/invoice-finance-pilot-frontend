@@ -19,19 +19,8 @@ import { dec_to_perc } from "../lib/currency"
 import { Currency } from "../components/common/Currency"
 import {FinanceStatus, ReceiverInfo} from "../components/Main"
 import {ReceiverDetails} from "../components/ReceiverDetails"
-import CreditlinesTable from "./CreditlinesTable"
+import CreditlinesTable, {CreditLineInfo} from "./CreditlinesTable"
 
-
-
-
-export interface CreditLineInfo {
-  used: number
-  info: ReceiverInfo
-  requested: number
-  total: number
-  available: number
-  invoices: number
-}
 
 const CreditLines = (props: { creditLines: CreditLineInfo[] }) => {
   const cols = [

@@ -42,7 +42,6 @@ interface Props {
 function AddInvoiceDrawer() {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const btnRef = React.useRef()
-  const [orderId, setOrderId] = useState("")
   const [order, setOrder] = useState(dummyOrder)
 //   const [result, setResult] = useState("")
 //   const [error, setError] = useState("")
