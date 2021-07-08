@@ -1,4 +1,4 @@
-import { Stack, Box, Heading, Center, Table, Thead, Tbody, Tr, Th, Td, chakra } from "@chakra-ui/react"
+import { Stack, Button, Box, Heading, Center, Table, Thead, Tbody, Tr, Th, Td, chakra } from "@chakra-ui/react"
 import { TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons"
 import { useTable, useSortBy } from "react-table"
 import React, { useMemo } from "react";
@@ -8,10 +8,11 @@ import { dec_to_perc } from "../lib/currency"
 import { Currency } from "./common/Currency";
 import InvoiceStatusForm from "./InvoiceStatusForm";
 import { CreditLineInfo} from "./CreditlinesTable"
+import {ModWhitelistModal} from "./AddWhitelistModal"
 
 
 
-const WhitelistTable = (props: { whitelist: CreditLineInfo[] }) => {
+const WhitelistTable = (props: { whitelist: CreditLineInfo[], supplier: string }) => {
 
   const currencyToString = (amount) => {
     return amount.toLocaleString("en-IN", { 
@@ -27,6 +28,7 @@ const WhitelistTable = (props: { whitelist: CreditLineInfo[] }) => {
         return {
           ...w,
           creditlineSize: currencyToString(w.info.terms.creditlineSize),
+          edit: <ModWhitelistModal supplier={props.supplier} entry={w} />
         }
       }),
     [props.whitelist]
@@ -56,6 +58,10 @@ const WhitelistTable = (props: { whitelist: CreditLineInfo[] }) => {
         Header: "Phone",
         accessor: "info.phone",
         disableSortBy: true,
+      },
+      {
+        Header: "",
+        accessor: "edit"
       }
     ],
     [],
@@ -74,10 +80,6 @@ const WhitelistTable = (props: { whitelist: CreditLineInfo[] }) => {
 
   return (
     <Stack spacing="15px">
-      <Box>
-        <Heading size="md">Whitelist</Heading>
-      </Box>
-
 
     <Table {...getTableProps()}>
       <Thead

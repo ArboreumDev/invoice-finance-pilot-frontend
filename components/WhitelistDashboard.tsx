@@ -14,15 +14,17 @@ import InvoiceTable from "./InvoiceTable"
 import CreditLineInfo from "./CreditlinesTable"
 import { Currency } from "./common/Currency";
 import WhitelistTable from "./WhitelistTable"
+import {AddWhitelistModal} from "./AddWhitelistModal"
 
 
 interface Props {
   isLoading: boolean,
   isError: any
   creditInfo: any
+  supplier: string
 }
 
-const WhitelistDashboard = ({isLoading, isError, creditInfo}: Props) => {
+const WhitelistDashboard = ({isLoading, isError, creditInfo, supplier}: Props) => {
   if (isLoading) {
     return <Heading as="h2" size="lg" fontWeight="400" color="gray.500">
         Loading
@@ -37,8 +39,15 @@ const WhitelistDashboard = ({isLoading, isError, creditInfo}: Props) => {
   return (
       <>
       <div>
-        <WhitelistTable 
+      <HStack >
+          <Heading size="md">Whitelist for Supplier {supplier}</Heading>
+        <AddWhitelistModal 
+          supplier={supplier}
+          />
+      </HStack>
+      <WhitelistTable 
         whitelist={creditInfo}
+        supplier={supplier}
         />
 
       </div>

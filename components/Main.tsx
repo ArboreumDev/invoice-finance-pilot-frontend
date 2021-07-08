@@ -132,6 +132,7 @@ const Main = () => {
     <TabPanel>
       <WhitelistDashboard 
         creditInfo={creditLineInfo ? Object.values(creditLineInfo): []}
+        supplier="Gurugrupa (TODO)"
         isLoading={isLoading}
         isError={isError}
       />
