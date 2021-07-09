@@ -5,7 +5,7 @@ import WhitelistDashboard from "./WhitelistDashboard";
 import AccountInfo from "./AccountInfo";
 import AdminView from "./AdminView";
 import { useRouter } from "next/router";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {fetcher} from "../utils/fetcher"
 
 
@@ -54,6 +54,11 @@ export interface ReceiverInfo {
   terms: Terms
 }
 
+export interface SupplierInfo {
+  id: string
+  name: string
+}
+
 export interface PaymentDetails {
   requestId: string
   repaymentId: string
@@ -64,6 +69,7 @@ export interface PaymentDetails {
 
 export interface Invoice {
   invoiceId: string;
+  supplierId: string;
   orderId: string;
   value: number;
   shippingStatus: ShipmentStatus;
@@ -85,20 +91,27 @@ const getInvoices = () => {
     const { data, error } = useSWR<Invoice[]>("/v1/invoice", fetcher, {
       refreshInterval: 10000,
     });
-    const creditInfo =  useSWR<Invoice[]>("/v1/credit", fetcher, {
+    const creditResult = useSWR<Invoice[]>("/v1/credit", fetcher, {
       refreshInterval: 10000,
     });
-    // console.log('got creditinfo', Object.values(creditInfo.data))
+    const supplierResult = useSWR<Invoice[]>("/v1/supplier", fetcher, {
+      refreshInterval: 10000,
+    });
+    
+    const isError = error || creditResult.error || supplierResult.error
+    const isLoading = !isError && (!data || !creditResult.data || !supplierResult.data)
+    console.log('got ', creditResult.data, 'wile loading', isLoading)
   return {
+    suppliers: supplierResult.data,
     invoices: data,
-    creditLineInfo: creditInfo.data,
-    isError: error || creditInfo.error,
-    isLoading: !error && !data && !creditInfo.error && !creditInfo.data
+    creditInfo: creditResult.data,
+    isError,
+    isLoading
   }
 };
 
 const Main = () => {
-  const { invoices, creditLineInfo, isLoading, isError } = getInvoices();
+  const { invoices, creditInfo, isLoading, isError, suppliers} = getInvoices();
   return (
     <VStack align="left" textAlign="left" p="20px">
 
@@ -112,37 +125,38 @@ const Main = () => {
 
   <TabPanels >
     <TabPanel>
-      <AccountInfo 
+      {/* <AccountInfo 
         invoices={invoices}
         creditLines={creditLineInfo ? Object.values(creditLineInfo): []}
         isLoading={isLoading}
         isError={isError}
-      />
+      /> */}
     </TabPanel>
 
     <TabPanel>
       <LenderDashboard
-        creditInfo={creditLineInfo}
+        creditInfo={creditInfo}
         invoices={invoices}
         isLoading={isLoading}
         isError={isError}
+        suppliers={suppliers}
       />
     </TabPanel>
 
     <TabPanel>
-      <WhitelistDashboard 
+      {/* <WhitelistDashboard 
         creditInfo={creditLineInfo ? Object.values(creditLineInfo): []}
         supplier="Gurugrupa (TODO)"
         isLoading={isLoading}
         isError={isError}
-      />
+      /> */}
     </TabPanel>
 
     <TabPanel>
-      <AdminView 
+      {/* <AdminView 
         creditInfo={creditLineInfo}
         invoices={invoices}
-      />
+      /> */}
 
     </TabPanel>
   </TabPanels>
