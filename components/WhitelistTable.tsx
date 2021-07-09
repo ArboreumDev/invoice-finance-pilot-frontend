@@ -1,6 +1,6 @@
 import { Stack, Button, Box, Heading, Center, Table, Thead, Tbody, Tr, Th, Td, chakra } from "@chakra-ui/react"
 import { TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons"
-import { useTable, useSortBy } from "react-table"
+import { useTable, useSortBy, useFilters } from "react-table"
 import React, { useMemo } from "react";
 import {FinanceStatus, ReceiverInfo} from "./Main"
 import {ReceiverDetails} from "./ReceiverDetails"
@@ -10,6 +10,37 @@ import InvoiceStatusForm from "./InvoiceStatusForm";
 import { CreditLineInfo} from "./CreditlinesTable"
 import {ModWhitelistModal} from "./AddWhitelistModal"
 
+
+function SelectColumnFilter({
+  column: { filterValue, setFilter, preFilteredRows, id },
+}) {
+  // Calculate the options for filtering
+  // using the preFilteredRows
+  const options = React.useMemo(() => {
+    const options = new Set()
+    preFilteredRows.forEach(row => {
+      options.add(row.values[id])
+    })
+    return [...options.values()]
+  }, [id, preFilteredRows])
+
+   // Render a multi-select box
+  return (
+    <select
+      value={filterValue}
+      onChange={e => {
+        setFilter(e.target.value || undefined)
+      }}
+    >
+      <option value="">All</option>
+      {options.map((option, i) => (
+        <option key={i} value={option}>
+          {option}
+        </option>
+      ))}
+    </select>
+  )
+}
 
 
 const WhitelistTable = (props: { whitelist: CreditLineInfo[], supplier: string }) => {
@@ -36,6 +67,12 @@ const WhitelistTable = (props: { whitelist: CreditLineInfo[], supplier: string }
 
   const columns = React.useMemo(
     () => [
+      {
+        Header: "Supplier Name",
+        accessor: "supplierId",
+        Filter: SelectColumnFilter,
+        filter: 'includes',
+      },
       {
         Header: "Receiver Name",
         accessor: "info.name",
@@ -76,7 +113,7 @@ const WhitelistTable = (props: { whitelist: CreditLineInfo[], supplier: string }
   } = useTable(
     { columns, 
       data
-    }, useSortBy)
+    }, useSortBy, useFilters)
 
   return (
     <Stack spacing="15px">

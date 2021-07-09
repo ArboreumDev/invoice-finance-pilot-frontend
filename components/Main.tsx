@@ -1,4 +1,4 @@
-import { VStack, Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/react"
+import { Heading, Center, Spinner, VStack, Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/react"
 import useSWR from "swr";
 import LenderDashboard from "./LenderDashboard";
 import WhitelistDashboard from "./WhitelistDashboard";
@@ -57,6 +57,7 @@ export interface ReceiverInfo {
 export interface SupplierInfo {
   id: string
   name: string
+  default_terms: Terms
 }
 
 export interface PaymentDetails {
@@ -101,6 +102,7 @@ const getInvoices = () => {
     const isError = error || creditResult.error || supplierResult.error
     const isLoading = !isError && (!data || !creditResult.data || !supplierResult.data)
     console.log('got ', creditResult.data, 'wile loading', isLoading)
+
   return {
     suppliers: supplierResult.data,
     invoices: data,
@@ -112,10 +114,18 @@ const getInvoices = () => {
 
 const Main = () => {
   const { invoices, creditInfo, isLoading, isError, suppliers} = getInvoices();
+  if (isLoading) {
+    return <Heading as="h2" size="lg" fontWeight="400" color="gray.500">
+        <Center>
+          <Spinner />
+        </Center>
+      </Heading>
+  }
+
   return (
     <VStack align="left" textAlign="left" p="20px">
 
-<Tabs isFitted variant="enclosed">
+  <Tabs isFitted variant="enclosed">
   <TabList>
     <Tab>Account</Tab>
     <Tab>Invoices</Tab>
@@ -125,12 +135,13 @@ const Main = () => {
 
   <TabPanels >
     <TabPanel>
-      {/* <AccountInfo 
+      <AccountInfo 
+        suppliers={suppliers}
         invoices={invoices}
-        creditLines={creditLineInfo ? Object.values(creditLineInfo): []}
+        creditInfo={creditInfo}
         isLoading={isLoading}
         isError={isError}
-      /> */}
+      />
     </TabPanel>
 
     <TabPanel>
@@ -144,12 +155,12 @@ const Main = () => {
     </TabPanel>
 
     <TabPanel>
-      {/* <WhitelistDashboard 
-        creditInfo={creditLineInfo ? Object.values(creditLineInfo): []}
-        supplier="Gurugrupa (TODO)"
+       <WhitelistDashboard 
+        creditInfo={creditInfo}
+        suppliers={suppliers}
         isLoading={isLoading}
         isError={isError}
-      /> */}
+      /> 
     </TabPanel>
 
     <TabPanel>

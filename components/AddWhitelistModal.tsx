@@ -1,5 +1,6 @@
 import {
     Box,
+    Select,
     Spinner,
     Input,
     HStack,
@@ -19,10 +20,10 @@ import {
 import { CreditLineInfo} from "./CreditlinesTable"
 import React, { useState } from "react";
 import axiosInstance from "../utils/fetcher"
-import { ReceiverInfo, Terms } from "./Main";
+import { ReceiverInfo, SupplierInfo, Terms } from "./Main";
 
 interface Props {
-    supplier: string
+    suppliers: SupplierInfo[]
 }
 
 interface WhitelistInput {
@@ -41,9 +42,10 @@ interface WhitelistUpdateInput {
 }
 
 
-export const AddWhitelistModal = (props: {supplier}) => {
+export const AddWhitelistModal = (props: {suppliers: SupplierInfo[]} ) => {
     const [searchString, setSearchString] = useState(null)
     const [searchResults, setSearchResults] = useState([])
+    const [supplierId, setSupplierId] = useState(null)
     const [loading, setLoading] = useState(false)
     const [receiver, setReceiver] = React.useState("")
     const [newApr, setNewApr] = useState(null)
@@ -133,6 +135,7 @@ export const AddWhitelistModal = (props: {supplier}) => {
     }
 
 
+
     return (
         <>
         <Button onClick={onOpen} colorScheme="teal" >Add New</Button>
@@ -140,10 +143,18 @@ export const AddWhitelistModal = (props: {supplier}) => {
         <Modal isOpen={isOpen} onClose={onClose}>
             <ModalOverlay />
             <ModalContent>
-            <ModalHeader> Add new whitelist entry for {props.supplier}</ModalHeader>
+            <ModalHeader> Add new whitelist entry </ModalHeader>
             <ModalCloseButton />
             <ModalBody>
                 <Box>
+                    <Select onChange={(e)=> setSupplierId(e.target.value)} placeholder="Choose Supplier">
+                    {props.suppliers.map((s) => (
+                        // eslint-disable-next-line react/jsx-key
+                        <option value={s.id}> {s.name} </option>
+                        ))}
+                    </Select>
+
+
                     <Input 
                         width="300px" 
                         onChange={(e) => setSearchString(e.target.value)} 
@@ -170,7 +181,10 @@ export const AddWhitelistModal = (props: {supplier}) => {
                 {receiver && (
                     <div>
                         <TermsBox 
-                        terms={searchResults.filter(s => s.id === receiver)[0].terms} 
+                        terms={ {
+                            // TODO those shoudl be the default terms of the supplier, not sure why that is not happening
+                            ...props.suppliers.filter(s => s.id === supplierId)[0].default_terms,
+                        }}
                         setNewApr={setNewApr}
                         setNewCreditLimit={setNewCreditLimit}
                         setNewTenor={setNewTenor} />
@@ -195,6 +209,7 @@ export const AddWhitelistModal = (props: {supplier}) => {
 }
 
 const TermsBox = (props: {terms: Terms, setNewApr, setNewTenor, setNewCreditLimit}) => {
+    console.log('t', props.terms)
     return (
         <>
             <Box>

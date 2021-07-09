@@ -1,8 +1,9 @@
 
-import {Invoice, fetcher, axiosInstance} from "./Main"
+import {Invoice, fetcher, axiosInstance, SupplierInfo} from "./Main"
 import {
   Box, Button, Divider, Grid, Heading, HStack, Text, VStack, Spinner, Center,
   AlertIcon,
+  Select,
   AlertTitle,
   Flex,
   Progress,
@@ -15,11 +16,12 @@ import {
 
 } from "@chakra-ui/react"
 import DynamicDoughnut, {color1, color2, color3} from "./doughnut"
+import React, { useState } from "react";
 import { dec_to_perc } from "../lib/currency"
 import { Currency } from "../components/common/Currency"
 import {FinanceStatus, ReceiverInfo} from "../components/Main"
 import {ReceiverDetails} from "../components/ReceiverDetails"
-import CreditlinesTable, {CreditLineInfo} from "./CreditlinesTable"
+import CreditlinesTable, {CreditLineInfo, CreditSummary} from "./CreditlinesTable"
 
 
 const CreditLines = (props: { creditLines: CreditLineInfo[] }) => {
@@ -112,19 +114,17 @@ const AllocatedAsset = (title: string, percentage: number, color?: string) => (
   </Flex>
 )
 interface VendorAccountInfoProps {
-  user: User
-  loading?: boolean
-}
-
-interface VendorAccountInfoProps {
   invoices: Invoice[],
   isLoading: boolean,
-  isError: Object,
-  creditLines: CreditLineInfo[],
+  isError: any,
+  creditInfo: CreditSummary,
+  suppliers: SupplierInfo[]
 }
 
 
-const AccountInfo = ({invoices, isLoading, isError, creditLines}: VendorAccountInfoProps) => {
+const AccountInfo = ({invoices, isLoading, isError, creditInfo, suppliers}: VendorAccountInfoProps) => {
+  const [view, setView] = useState("tusker")
+
   if (isLoading) {
     return <Heading as="h2" size="lg" fontWeight="400" color="gray.500">
         <Center>
@@ -138,9 +138,14 @@ const AccountInfo = ({invoices, isLoading, isError, creditLines}: VendorAccountI
         There was an error
       </Heading>
   }
-  const invoicesFunded = invoices.filter(i => [FinanceStatus.FINANCED].includes(i.status)) //.map(i => i.value).reduce((a, b) => a + b, 0)
-  const invoicesPaidBack = invoices.filter(i => [FinanceStatus.REPAID].includes(i.status)) //.map(i => i.value).reduce((a, b) => a + b, 0)
-  const invoicesRequested = invoices.filter(i => [FinanceStatus.DISBURSAL_REQUESTED, FinanceStatus.INITIAL].includes(i.status)) //.map(i => i.value).reduce((a, b) => a + b, 0)
+
+  const creditLines = Object.values(creditInfo[view])
+
+  const filteredInvoices = invoices.filter(i => view != "tusker"? i.supplierId == view : true )
+
+  const invoicesFunded = filteredInvoices.filter(i => [FinanceStatus.FINANCED].includes(i.status)) //.map(i => i.value).reduce((a, b) => a + b, 0)
+  const invoicesPaidBack = filteredInvoices.filter(i => [FinanceStatus.REPAID].includes(i.status)) //.map(i => i.value).reduce((a, b) => a + b, 0)
+  const invoicesRequested = filteredInvoices.filter(i => [FinanceStatus.DISBURSAL_REQUESTED, FinanceStatus.INITIAL].includes(i.status)) //.map(i => i.value).reduce((a, b) => a + b, 0)
   
   const totalPaidBack = invoicesPaidBack.map(i => i.value).reduce((a,b) => a+b, 0)
   const totalAvailable = creditLines.map(c => c.available).reduce((a,b) => a+b, 0)
@@ -152,7 +157,6 @@ const AccountInfo = ({invoices, isLoading, isError, creditLines}: VendorAccountI
   const percRequested = dec_to_perc(totalRequested / total, 1)
   const totalDebt = totalUsed * 1.05
 
-  const invoicesByReceiver = invoices.map(i => i.receiverInfo.id)
 
   let usedAmounts = creditLines.map(c => c.used)
   let requestedAmounts = creditLines.map(c => c.requested)
@@ -167,6 +171,18 @@ const AccountInfo = ({invoices, isLoading, isError, creditLines}: VendorAccountI
   return (
     <>
       <Box margin={[0, 1, 2, 3]} padding={[2, 3, 4, 5]}>
+
+
+      <Select onChange={(e)=> setView(e.target.value)}>
+          <option value='tusker' selected> All Suppliers </option>
+          { suppliers && ( suppliers.map((s) => (
+            // eslint-disable-next-line react/jsx-key
+            <option value={s.id}> {s.name} </option>
+            )))}
+        </Select>
+
+
+
         <Stack w="100%" spacing={8}>
           <HStack spacing={20} marginTop={1}>
             <Stat>
