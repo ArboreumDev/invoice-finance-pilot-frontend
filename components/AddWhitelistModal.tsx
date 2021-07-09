@@ -1,5 +1,6 @@
 import {
     Box,
+    Spinner,
     Input,
     HStack,
     Stack,
@@ -18,19 +19,29 @@ import {
 import { CreditLineInfo} from "./CreditlinesTable"
 import React, { useState } from "react";
 import axiosInstance from "../utils/fetcher"
+import { ReceiverInfo, Terms } from "./Main";
 
 interface Props {
     supplier: string
 }
 
+interface WhitelistInput {
+    supplierId: string
+    purchaser: ReceiverInfo
+    tenorInDays: number
+    apr: number
+    creditlineSize: number
+}
+
 
 export const AddWhitelistModal = (props: {supplier}) => {
-    // const [newApr, setNewApr] = useState(null)
-    // const [newCreditLimit, setNewCreditLimit] = useState(null)
     const [searchString, setSearchString] = useState(null)
     const [searchResults, setSearchResults] = useState([])
-    const [receiver, setReceiver] = React.useState({})
-    const [value, setValue] = React.useState(0)
+    const [loading, setLoading] = useState(false)
+    const [receiver, setReceiver] = React.useState("")
+    const [newApr, setNewApr] = useState(null)
+    const [newCreditLimit, setNewCreditLimit] = useState(null)
+    const [newTenor, setNewTenor] = useState(null)
     const { isOpen, onOpen, onClose } = useDisclosure()
     const toast = useToast()
 
@@ -63,7 +74,56 @@ export const AddWhitelistModal = (props: {supplier}) => {
             })
         })
     }
+    const submit = async () => {
+        setLoading(true)
+        // setSearchResults([])
+        const receiverInfo = searchResults.filter((s) => s.id === receiver)[0]
+        axiosInstance.post(
+            "/v1/whitelist/new",
+            {
+                input: {
+                    supplierId: props.supplier,
+                    purchaser: {
+                        id: receiverInfo.id,
+                        name: receiverInfo.name,
+                        phone: receiverInfo.phone,
+                        city: receiverInfo.city,
+                        terms: {
+                            apr: newApr,
+                            tenorInDays: newTenor,
+                            creditlineSize: newCreditLimit
+                        } as Terms
+                    } as ReceiverInfo
+                } as WhitelistInput
+            })
 
+        .then((result)=>{
+            setLoading(false)
+            console.log(result)
+            if (result.status === 200) {
+                toast({
+                    title: "Success!",
+                    description: "Receiver has been added to whitelist!",
+                    status: "success",
+                    duration: 4000,
+                    isClosable: true,
+                })
+            }
+            setReceiver("")
+            setSearchResults([])
+            onClose()
+        })
+        .catch((err) => {
+            setLoading(false)
+            toast({
+                title: "Error!",
+                description: err.response.data.detail || "Unknown Error",
+                status: "error",
+                duration: 5000,
+                isClosable: true,
+            })
+        })
+    }
 
 
     return (
@@ -88,36 +148,69 @@ export const AddWhitelistModal = (props: {supplier}) => {
                 </Box>
 
                 <RadioGroup 
-                // onChange={setValue}
-                value={value}
+                    onChange={setReceiver}
+                    value={receiver}
                 >
-                    {/* // TODO this behaves super weird! */}
-                    {searchResults  && searchResults.map((s, index) => (
+                    {searchResults  && searchResults.map((s) => (
                         <Box key={"option-" + s.id}>
                             <Stack direction="row">
-                                <Radio 
-                                value={index}
-                                onChange={() => {setValue(index); setReceiver(s)}}
-                                >
-                                    {s.name}({s.city}) {s.phone}
-                                </Radio>
+                                <Radio value={s.id} > {s.name}({s.city}) {s.phone} </Radio>
                             </Stack>
                         </Box>
                         ) 
                     )}
                 </RadioGroup>
-
+                {receiver && (
+                    <div>
+                        <TermsBox 
+                        terms={searchResults.filter(s => s.id === receiver)[0].terms} 
+                        setNewApr={setNewApr}
+                        setNewCreditLimit={setNewCreditLimit}
+                        setNewTenor={setNewTenor} />
+                    </div>
+                )}
             </ModalBody>
     
             <ModalFooter>
                 <Button colorScheme="blue" mr={3} onClick={onClose}>
-                Close
+                Back
                 </Button>
-                <Button variant="ghost">Secondary Action</Button>
+                <Button 
+                colorScheme="teal" 
+                mr={3} 
+                onClick={submit} 
+                disabled={!(receiver && newApr && newTenor && newCreditLimit)}
+                >
+                    {!loading ? "Submit" : <Spinner />}
+                </Button>
             </ModalFooter>
             </ModalContent>
         </Modal>
         </>
+    )
+}
+
+const TermsBox = (props: {terms: Terms, setNewApr, setNewTenor, setNewCreditLimit}) => {
+    return (
+        <>
+            <Box>
+                <Input 
+                    width="300px" 
+                    onChange={(e) => props.setNewApr(parseFloat(e.target.value))} 
+                    placeholder={"new apr: "+props.terms.apr}
+                />
+                <Input 
+                    width="300px" 
+                    onChange={(e) => props.setNewCreditLimit(parseFloat(e.target.value))} 
+                    placeholder={"new credit line size: "+props.terms.creditlineSize}
+                />
+                    <Input 
+                    width="300px" 
+                    onChange={(e) => props.setNewTenor(parseFloat(e.target.value))} 
+                    placeholder={"new default tenor (in days): "+props.terms.tenorInDays}
+                />
+                </Box>
+            </>
     )
 }
 
@@ -143,27 +236,10 @@ export const ModWhitelistModal = (props: {entry: CreditLineInfo, supplier: strin
             <ModalHeader>Modify Credit Terms for {props.entry.info.name}</ModalHeader>
             <ModalCloseButton />
             <ModalBody>
-                <Box>
-                    <Input 
-                        width="300px" 
-                        onChange={(e) => setNewApr(parseFloat(e.target.value))} 
-                        placeholder={"new apr: "+props.entry.info.terms.apr}
-                    />
-                    <Input 
-                        width="300px" 
-                        onChange={(e) => setNewCreditLimit(parseFloat(e.target.value))} 
-                        placeholder={"new credit line size: "+props.entry.info.terms.creditlineSize}
-                    />
-                     <Input 
-                        width="300px" 
-                        onChange={(e) => setNewTenor(parseFloat(e.target.value))} 
-                        placeholder={"new default tenor (in days): "+props.entry.info.terms.tenorInDays}
-                    />
- 
+                <TermsBox terms={props.entry.info.terms} setNewApr={setNewApr} setNewCreditLimit={setNewCreditLimit} setNewTenor={setNewTenor} />
                     <Button onClick={update} width="150px">
                         Update
                     </Button>
-                </Box>
 
             </ModalBody>
     
