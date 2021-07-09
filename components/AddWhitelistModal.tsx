@@ -32,6 +32,13 @@ interface WhitelistInput {
     apr: number
     creditlineSize: number
 }
+interface WhitelistUpdateInput {
+    supplierId: string
+    purchaserId: string
+    tenorInDays: number
+    apr: number
+    creditlineSize: number
+}
 
 
 export const AddWhitelistModal = (props: {supplier}) => {
@@ -172,13 +179,10 @@ export const AddWhitelistModal = (props: {supplier}) => {
             </ModalBody>
     
             <ModalFooter>
-                <Button colorScheme="blue" mr={3} onClick={onClose}>
+                <Button colorScheme="gray" mr={3} onClick={onClose}>
                 Back
                 </Button>
-                <Button 
-                colorScheme="teal" 
-                mr={3} 
-                onClick={submit} 
+                <Button colorScheme="teal" mr={3} onClick={submit} 
                 disabled={!(receiver && newApr && newTenor && newCreditLimit)}
                 >
                     {!loading ? "Submit" : <Spinner />}
@@ -218,12 +222,48 @@ export const ModWhitelistModal = (props: {entry: CreditLineInfo, supplier: strin
     const [newApr, setNewApr] = useState(null)
     const [newCreditLimit, setNewCreditLimit] = useState(null)
     const [newTenor, setNewTenor] = useState(null)
+    const [loading, setLoading] = useState(false)
     const { isOpen, onOpen, onClose } = useDisclosure()
+    const toast = useToast()
 
 
     const update = () => {
-        // TODO use newAPR &... to hit update api
-        console.log("TODO hit /update api") 
+        setLoading(true)
+        axiosInstance.post(
+            "/v1/whitelist/update",
+            {
+                update: {
+                    supplierId: props.supplier,
+                    purchaserId: props.entry.info.id,
+                    apr: newApr,
+                    tenorInDays: newTenor,
+                    creditlineSize: newCreditLimit
+                } as WhitelistUpdateInput
+        })
+        .then((result)=>{
+            setLoading(false)
+            console.log(result)
+            if (result.status === 200) {
+                toast({
+                    title: "Success!",
+                    description: "Receiver has been modified!",
+                    status: "success",
+                    duration: 4000,
+                    isClosable: true,
+                })
+            }
+            onClose()
+        })
+        .catch((err) => {
+            setLoading(false)
+            toast({
+                title: "Error!",
+                description: err.response.data.detail || "Unknown Error",
+                status: "error",
+                duration: 5000,
+                isClosable: true,
+            })
+        })
     }
 
     return (
@@ -237,17 +277,18 @@ export const ModWhitelistModal = (props: {entry: CreditLineInfo, supplier: strin
             <ModalCloseButton />
             <ModalBody>
                 <TermsBox terms={props.entry.info.terms} setNewApr={setNewApr} setNewCreditLimit={setNewCreditLimit} setNewTenor={setNewTenor} />
-                    <Button onClick={update} width="150px">
-                        Update
-                    </Button>
-
             </ModalBody>
     
             <ModalFooter>
-                <Button colorScheme="blue" mr={3} onClick={onClose}>
-                Close
+                <Button colorScheme="gray" mr={3} onClick={onClose}>
+                Back
                 </Button>
-                <Button variant="ghost">Secondary Action</Button>
+                <Button colorScheme="teal" mr={3} onClick={update} 
+                disabled={!(newApr || newTenor || newCreditLimit)}
+                >
+                    {!loading ? "Submit" : <Spinner />}
+                </Button>
+ 
             </ModalFooter>
             </ModalContent>
         </Modal>
