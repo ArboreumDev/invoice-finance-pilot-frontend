@@ -20,6 +20,7 @@ import { Currency } from "../components/common/Currency"
 import {FinanceStatus, ReceiverInfo} from "../components/Main"
 import {ReceiverDetails} from "../components/ReceiverDetails"
 import CreditlinesTable from "./CreditlinesTable"
+import {principalToInterest} from "./../lib/invoice"
 
 
 
@@ -161,7 +162,8 @@ const AccountInfo = ({invoices, isLoading, isError, creditLines}: VendorAccountI
   const percUsed = dec_to_perc(totalUsed / total, 1)
   const percAvailable = dec_to_perc(totalAvailable / total, 1)
   const percRequested = dec_to_perc(totalRequested / total, 1)
-  const totalDebt = totalUsed * 1.05
+  // const totalDebt = totalUsed * 1.05
+  const totalDebt = totalUsed + principalToInterest(totalUsed, 0.0166666, 3)
 
   const invoicesByReceiver = invoices.map(i => i.receiverInfo.id)
 
