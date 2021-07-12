@@ -91,7 +91,7 @@ export const AddWhitelistModal = (props: {suppliers: SupplierInfo[]} ) => {
             "/v1/whitelist/new",
             {
                 input: {
-                    supplierId: props.supplier,
+                    supplierId: supplierId,
                     purchaser: {
                         id: receiverInfo.id,
                         name: receiverInfo.name,
@@ -108,7 +108,6 @@ export const AddWhitelistModal = (props: {suppliers: SupplierInfo[]} ) => {
 
         .then((result)=>{
             setLoading(false)
-            console.log(result)
             if (result.status === 200) {
                 toast({
                     title: "Success!",
@@ -124,9 +123,10 @@ export const AddWhitelistModal = (props: {suppliers: SupplierInfo[]} ) => {
         })
         .catch((err) => {
             setLoading(false)
+            console.log('err', err)
             toast({
                 title: "Error!",
-                description: err.response.data.detail || "Unknown Error",
+                description: err.response?.data?.detail || "Unknown Error",
                 status: "error",
                 duration: 5000,
                 isClosable: true,
@@ -183,7 +183,7 @@ export const AddWhitelistModal = (props: {suppliers: SupplierInfo[]} ) => {
                         <TermsBox 
                         terms={ {
                             // TODO those shoudl be the default terms of the supplier, not sure why that is not happening
-                            ...props.suppliers.filter(s => s.id === supplierId)[0].default_terms,
+                            ...props.suppliers.filter((s) => s.id === supplierId)[0].defaultTerms,
                         }}
                         setNewApr={setNewApr}
                         setNewCreditLimit={setNewCreditLimit}
@@ -209,7 +209,6 @@ export const AddWhitelistModal = (props: {suppliers: SupplierInfo[]} ) => {
 }
 
 const TermsBox = (props: {terms: Terms, setNewApr, setNewTenor, setNewCreditLimit}) => {
-    console.log('t', props.terms)
     return (
         <>
             <Box>

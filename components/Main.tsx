@@ -57,7 +57,7 @@ export interface ReceiverInfo {
 export interface SupplierInfo {
   id: string
   name: string
-  default_terms: Terms
+  defaultTerms: Terms
 }
 
 export interface PaymentDetails {
