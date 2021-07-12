@@ -232,7 +232,7 @@ const TermsBox = (props: {terms: Terms, setNewApr, setNewTenor, setNewCreditLimi
     )
 }
 
-export const ModWhitelistModal = (props: {entry: CreditLineInfo, supplier: string}) => {
+export const ModWhitelistModal = (props: {entry: CreditLineInfo, supplierId: string}) => {
     const [newApr, setNewApr] = useState(null)
     const [newCreditLimit, setNewCreditLimit] = useState(null)
     const [newTenor, setNewTenor] = useState(null)
@@ -247,7 +247,7 @@ export const ModWhitelistModal = (props: {entry: CreditLineInfo, supplier: strin
             "/v1/whitelist/update",
             {
                 update: {
-                    supplierId: props.supplier,
+                    supplierId: props.supplierId,
                     purchaserId: props.entry.info.id,
                     apr: newApr,
                     tenorInDays: newTenor,

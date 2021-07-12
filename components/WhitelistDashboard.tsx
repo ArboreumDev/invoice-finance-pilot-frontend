@@ -45,11 +45,11 @@ const WhitelistDashboard = ({isLoading, isError, creditInfo, suppliers}: Props) 
           suppliers={suppliers}
           />
       </HStack>
-      {/* <WhitelistTable 
+      <WhitelistTable 
         whitelist={creditInfo}
-        supplier={"Gurugrupa"}
+        suppliers={suppliers}
         />
- */}
+
       </div>
       </>
   )

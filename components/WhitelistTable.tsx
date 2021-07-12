@@ -2,7 +2,7 @@ import { Stack, Button, Box, Heading, Center, Table, Thead, Tbody, Tr, Th, Td, c
 import { TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons"
 import { useTable, useSortBy, useFilters } from "react-table"
 import React, { useMemo } from "react";
-import {FinanceStatus, ReceiverInfo} from "./Main"
+import {FinanceStatus, ReceiverInfo, SupplierInfo} from "./Main"
 import {ReceiverDetails} from "./ReceiverDetails"
 import { dec_to_perc } from "../lib/currency"
 import { Currency } from "./common/Currency";
@@ -43,7 +43,7 @@ function SelectColumnFilter({
 }
 
 
-const WhitelistTable = (props: { whitelist: CreditLineInfo[], supplier: string }) => {
+const WhitelistTable = (props: { whitelist: CreditLineInfo[], suppliers: SupplierInfo[] }) => {
 
   const currencyToString = (amount) => {
     return amount.toLocaleString("en-IN", { 
@@ -59,7 +59,7 @@ const WhitelistTable = (props: { whitelist: CreditLineInfo[], supplier: string }
         return {
           ...w,
           creditlineSize: currencyToString(w.info.terms.creditlineSize),
-          edit: <ModWhitelistModal supplier={props.supplier} entry={w} />
+          edit: <ModWhitelistModal supplierId={w.supplierId} entry={w} />
         }
       }),
     [props.whitelist]
@@ -70,7 +70,8 @@ const WhitelistTable = (props: { whitelist: CreditLineInfo[], supplier: string }
       {
         Header: "Supplier Name",
         accessor: "supplierId",
-        Filter: SelectColumnFilter,
+        // @vishal this is where we stopped (SelectColumnFilter is already there on the top)
+        // Filter: SelectColumnFilter,
         filter: 'includes',
       },
       {
