@@ -134,8 +134,6 @@ export const AddWhitelistModal = (props: {suppliers: SupplierInfo[]} ) => {
         })
     }
 
-
-
     return (
         <>
         <Button onClick={onOpen} colorScheme="teal" >Add New</Button>
@@ -155,6 +153,9 @@ export const AddWhitelistModal = (props: {suppliers: SupplierInfo[]} ) => {
                     </Select>
 
 
+                    { supplierId && (
+                    <Box>
+
                     <Input 
                         width="300px" 
                         onChange={(e) => setSearchString(e.target.value)} 
@@ -163,6 +164,8 @@ export const AddWhitelistModal = (props: {suppliers: SupplierInfo[]} ) => {
                     <Button onClick={search} width="150px" disabled={!searchString}>
                         Search
                     </Button>
+                    </Box>
+                    )}
                 </Box>
 
                 <RadioGroup 
@@ -178,7 +181,7 @@ export const AddWhitelistModal = (props: {suppliers: SupplierInfo[]} ) => {
                         ) 
                     )}
                 </RadioGroup>
-                {receiver && (
+                {supplierId && receiver && (
                     <div>
                         <TermsBox 
                         terms={ {
