@@ -19,21 +19,23 @@ import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import axiosInstance, {fetcher} from "../utils/fetcher"
 import { useForm } from "react-hook-form"
-import {FinanceStatus, Invoice} from "./Main"
-import {CreditLineInfo} from "./AccountInfo"
+import {FinanceStatus, Invoice, SupplierInfo} from "./Main"
+import {CreditSummary} from "./CreditlinesTable"
 import {InvoiceDetails} from "./InvoiceDetails"
 import { Currency } from "./common/Currency";
 
 interface Props {
     invoices: Invoice[]
-    creditInfo: any
+    creditInfo: CreditSummary
+    suppliers: SupplierInfo[]
 }
    
 
-const AdminView = ({invoices, creditInfo}: Props) => {
+const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
     const [newOrderValue, setNewOrderValue] = useState(2000)
     const [newValue, setNewValue] = useState("0")
     const [newStatus, setNewStatus] = useState("")
+    const [supplier, setSupplier] = useState({id: "", name: ""})
     const [newOrderReceiver, setNewOrderReceiver] = useState("")
     const [filterId, setFilterId] = useState("")
 
@@ -49,7 +51,7 @@ const AdminView = ({invoices, creditInfo}: Props) => {
 
     const createNew = async () => {
         try {
-            const res = await axiosInstance.post(`/v1/test/new/order/${newOrderReceiver}/${newOrderValue}`)
+            const res = await axiosInstance.post(`/v1/test/new/order/${supplier.id}/${newOrderReceiver}/${newOrderValue}`)
             console.log(res.status, res.data)
             if (res.status === 200) {
                 alert(`created new order:${res.data.orderRef}`)
@@ -114,12 +116,36 @@ const AdminView = ({invoices, creditInfo}: Props) => {
         }
     }
 
+    // const addToWhitelist = async (locationId) => {
+    //     // const msg = "" + invoiceId + "->" + newValue
+    //     // alert(msg)
+    //     try {
+    //         const res = await axiosInstance.post("/v1/whitelist/new", {
+    //             supplierId: 
+    //         })
+    //         console.log(res.status)
+    //         if (res.status === 200) {
+    //             setNewStatus("")
+    //             alert("Updated")
+    //         } else {
+    //         alert("error")
+    //         }
+    //     } catch (err) {
+    //         console.log(err)
+    //         alert(err)
+    //     }
+    // }
+
+
+
     const filteredInvoices = () => {
         if (filterId) return invoices.filter(i => i.orderId === filterId)
         else return invoices
     }
 
     const possibleStatus = ["FINANCED", "DISBURSAL_REQUESTED", "REPAID", "INITIAL"]
+    console.log('inf', creditInfo)
+    console.log('suppjl', supplier)
 
     return (
         <>
@@ -132,11 +158,20 @@ const AdminView = ({invoices, creditInfo}: Props) => {
             <Divider />
             <Heading size="sm" alignContent="left">Create a New Order</Heading>
             <HStack>
-                {creditInfo && (
+                {suppliers && (
+                    <Select onChange={(e)=> setSupplier(suppliers.filter(s => s.id == e.target.value)[0])} placeholder="Select Supplier">
+                    { suppliers.map((s) => (
+                        // eslint-disable-next-line react/jsx-key
+                        <option value={s.id}> {s.name} </option>
+                    ))}
+                    </Select>
+                )}
+                {creditInfo && supplier.id && (
                     <Box>
                     <Select onChange={(e)=> setNewOrderReceiver(e.target.value)} placeholder="Select Receiver">
-                        {Object.keys(creditInfo).map((c) => (
-                            <option value={c}> {creditInfo[c].info.name} </option>
+                        {Object.values(creditInfo[supplier.id]).map((c) => (
+                            // <option value={c}> {c.info.name} </option>
+                            <option value={c.info.id}> {c.info.name} ({c.info.city}, {c.info.phone}) </option>
                             ))}
                     </Select>
                     </Box>

@@ -12,12 +12,14 @@ import InvoiceStatusForm from "./InvoiceStatusForm";
 export interface CreditLineInfo {
   used: number
   info: ReceiverInfo
+  supplierId: string
   requested: number
   total: number
   available: number
   invoices: number
 }
 
+export interface CreditSummary { [key: string]: CreditLineInfo[]; }
 
 const CreditlinesTable = (props: { creditLines: CreditLineInfo[] }) => {
 

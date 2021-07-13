@@ -8,7 +8,7 @@ import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import axiosInstance, {fetcher} from "../utils/fetcher"
 import { useForm } from "react-hook-form"
-import {FinanceStatus} from "./Main"
+import {FinanceStatus, SupplierInfo} from "./Main"
 import {CreditLineInfo} from "./AccountInfo"
 import {InvoiceDetails} from "./InvoiceDetails"
 import InvoiceTable from "./InvoiceTable"
@@ -20,10 +20,11 @@ interface Props {
   isLoading: boolean,
   isError: Object
   creditInfo: any
+  suppliers: SupplierInfo[]
 
 }
 
-const LenderDashboard = ({invoices, isLoading, isError, creditInfo}: Props) => {
+const LenderDashboard = ({invoices, isLoading, isError, creditInfo, suppliers}: Props) => {
   if (isLoading) {
     return <Heading as="h2" size="lg" fontWeight="400" color="gray.500">
         Loading
@@ -35,13 +36,17 @@ const LenderDashboard = ({invoices, isLoading, isError, creditInfo}: Props) => {
         There was an error
       </Heading>
   }
+  console.log('in dashboard', creditInfo)
 
   const [receiverId, setReceiver] = useState("")
+  const [supplierId, setSupplier] = useState("")
   const [invoiceStatus, setInvoiceStatus] = useState("")
   // const [invoicesToShow, setInvoicesToShow] = useState(invoices)
 
   const filteredInvoices = () => {
-      return invoices .filter( i => receiverId ? i.receiverInfo.id === receiverId : true)
+      return invoices 
+      .filter( i => supplierId ? i.supplierId === supplierId : true)
+      .filter( i => receiverId ? i.receiverInfo.id === receiverId : true)
         .filter(i => invoiceStatus ? i.status === invoiceStatus : true)
 
     } 
@@ -61,6 +66,23 @@ const LenderDashboard = ({invoices, isLoading, isError, creditInfo}: Props) => {
     maintainAspectRatio: false
   }
 
+  const filteredReceiversCreditInfo = () => {
+    if (supplierId) {
+      return Object.values(creditInfo[supplierId])
+    } 
+    else {
+      let ret = []
+      for (const supplier in creditInfo) {
+        console.log('supplierloop', supplier)
+        if (supplier !== "tusker") {
+          ret = ret.concat(Object.values(creditInfo[supplier]))
+        }
+      }
+      console.log('ret', ret)
+      return ret
+    }
+  }
+
   return (
     <>
     <VStack>
@@ -71,10 +93,21 @@ const LenderDashboard = ({invoices, isLoading, isError, creditInfo}: Props) => {
         <option value={FinanceStatus.DISBURSAL_REQUESTED}>delivered & awaiting disbursal (DISBURSAL_REQUESTED)</option>
         <option value={FinanceStatus.FINANCED}>disbursed & to be paid back (FINANCED)</option>
       </Select>
+      {suppliers && (
+        <Select onChange={(e)=> setSupplier(e.target.value)} placeholder="All Suppliers">
+          {suppliers.map((s) => (
+            // eslint-disable-next-line react/jsx-key
+            <option value={s.id}> {s.name} </option>
+            ))}
+        </Select>
+        )}
+
       {creditInfo && (
         <Select onChange={(e)=> setReceiver(e.target.value)} placeholder="All Receivers">
-          {Object.keys(creditInfo).map((c) => (
-            <option value={c}> {creditInfo[c].info.name} ({creditInfo[c].info.city}) </option>
+          { 
+          filteredReceiversCreditInfo().map((c) => (
+            // eslint-disable-next-line react/jsx-key
+            <option value={c.info.id}> {c.info.name} ({c.info.city}) </option>
             ))}
         </Select>
         )}

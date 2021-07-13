@@ -44,10 +44,8 @@ interface Props {
 function AddInvoiceDrawer() {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const btnRef = React.useRef()
-  const [orderId, setOrderId] = useState("")
   const [isUploaded, setUploaded] = useState(false)
   const [order, setOrder] = useState(dummyOrder)
-//   const [result, setResult] = useState("")
 //   const [error, setError] = useState("")
   const toast = useToast()
 
@@ -61,7 +59,6 @@ function AddInvoiceDrawer() {
             description: "Proceed to upload invoice.",
             duration: 2000
         })
- 
         setOrder({
             orderRef: result.data.orderId,
             value: result.data.value,
@@ -144,7 +141,6 @@ function AddInvoiceDrawer() {
             <DrawerHeader>Finance new invoice</DrawerHeader>
 
             <DrawerBody>
-              {/* <Input placeholder="Enter order reference number" onChange={(e) => setOrderId(e.target.value)}/> */}
               <Input placeholder="Enter order reference number" onChange={(e) => getOrder(e.target.value)}/>
               <Box>
                   {order.invoiceId && (
