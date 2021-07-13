@@ -1,6 +1,7 @@
 import {
     Drawer,
     Table,
+    Switch,
     Thead,
     Text,
     Tbody,
@@ -24,6 +25,7 @@ import {
     Heading
   } from "@chakra-ui/react"
 import React, { useEffect, useState,  } from "react";
+import { principalToInterest } from "../lib/invoice";
 import axiosInstance from "../utils/fetcher"
 
 const dummyOrder = {
@@ -42,8 +44,8 @@ interface Props {
 function AddInvoiceDrawer() {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const btnRef = React.useRef()
+  const [isUploaded, setUploaded] = useState(false)
   const [order, setOrder] = useState(dummyOrder)
-//   const [result, setResult] = useState("")
 //   const [error, setError] = useState("")
   const toast = useToast()
 
@@ -57,7 +59,6 @@ function AddInvoiceDrawer() {
             description: "Proceed to upload invoice.",
             duration: 2000
         })
- 
         setOrder({
             orderRef: result.data.orderId,
             value: result.data.value,
@@ -73,6 +74,7 @@ function AddInvoiceDrawer() {
         if (err.message.includes("404")) {msg = "invoice not found"}
         if (err.message.includes("400")) {msg = "receveiver not whitelisted"}
         setOrder(dummyOrder)
+        setUploaded(false)
         toast({
             title: "Error!",
             // TODO display different things by error status
@@ -101,6 +103,7 @@ function AddInvoiceDrawer() {
           })
           onClose()
           setOrder(dummyOrder)
+          setUploaded(false)
 
       })
       .catch((err) => {
@@ -126,7 +129,7 @@ function AddInvoiceDrawer() {
         isOpen={isOpen}
         placement="right"
         lockFocusAcrossFrames={true}
-        onClose={() => {setOrder(dummyOrder); onClose}}
+        onClose={() => { setOrder(dummyOrder); setUploaded(false); onClose }}
         finalFocusRef={btnRef}
         isCentered={true}
         size="sm"
@@ -138,7 +141,6 @@ function AddInvoiceDrawer() {
             <DrawerHeader>Finance new invoice</DrawerHeader>
 
             <DrawerBody>
-              {/* <Input placeholder="Enter order reference number" onChange={(e) => setOrderId(e.target.value)}/> */}
               <Input placeholder="Enter order reference number" onChange={(e) => getOrder(e.target.value)}/>
               <Box>
                   {order.invoiceId && (
@@ -162,10 +164,27 @@ function AddInvoiceDrawer() {
                             </Tr>
                         </Tbody>
                         </Table>
+                        <Divider />
+                        <Text>
+                          If financed this invoice will accrue the following interest:
+                          <p>
+                            after one month: {principalToInterest(order.value, 1)}
+                          </p>
+                          <p>
+                            after two months: {principalToInterest(order.value, 2)}
+                          </p>
+                          <p>
+                            after three months: {principalToInterest(order.value, 3)}
+                          </p>
+                        </Text>
+                        <Divider />
+
                         {/* <p>receiver: {JSON.stringify(order.receiverInfo)}</p> */}
-                        <p> please upload the invoice with the number: </p>
-                        <h4> {order.invoiceId} </h4>
-                        <Input placeholder="upload invoice here" />
+                        <p> I have uploaded a readable photo of the invoice with the ID
+                          <b> {order.invoiceId} </b>
+                          onto the tusker-backend
+                        </p>
+                        <Switch onChange={() => setUploaded(!isUploaded)}/>
                         <Divider />
 
                     </VStack>
@@ -178,7 +197,7 @@ function AddInvoiceDrawer() {
               <Button variant="outline" mr={3} onClick={onClose}>
                 Cancel
               </Button>
-              <Button colorScheme="teal" onClick={handleFinance}>Finance</Button>
+              <Button disabled={!isUploaded} colorScheme="teal" onClick={handleFinance}>Finance</Button>
             </DrawerFooter>
           </DrawerContent>
         </DrawerOverlay>

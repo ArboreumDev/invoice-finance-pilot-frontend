@@ -165,10 +165,11 @@ const Main = () => {
     </TabPanel>
 
     <TabPanel>
-      {/* <AdminView 
-        creditInfo={creditLineInfo}
+      <AdminView 
+        creditInfo={creditInfo}
         invoices={invoices}
-      /> */}
+        suppliers={suppliers}
+      />
 
     </TabPanel>
   </TabPanels>
