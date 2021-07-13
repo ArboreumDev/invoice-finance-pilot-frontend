@@ -71,7 +71,8 @@ const WhitelistTable = (props: { creditInfo: CreditSummary, suppliers: SupplierI
         return {
           ...w,
           creditlineSize: currencyToString(w.info.terms.creditlineSize),
-          edit: <ModWhitelistModal supplierId={w.supplierId} entry={w} />
+          edit: <ModWhitelistModal supplierId={w.supplierId} entry={w} />,
+          supplier: {...props.suppliers.filter((s) => s.id === w.supplierId)[0]}
         }
       }),
     [props.creditInfo]
@@ -81,7 +82,7 @@ const WhitelistTable = (props: { creditInfo: CreditSummary, suppliers: SupplierI
     () => [
       {
         Header: "Supplier Name",
-        accessor: "supplier_id",
+        accessor: "supplier.name",
         Filter: SelectColumnFilter,
         filter: 'includes',
       },

@@ -247,7 +247,7 @@ export const ModWhitelistModal = (props: {entry: CreditLineInfo, supplierId: str
             "/v1/whitelist/update",
             {
                 update: {
-                    supplierId: props.supplierId,
+                    supplierId: props.entry.supplierId,
                     purchaserId: props.entry.info.id,
                     apr: newApr,
                     tenorInDays: newTenor,
