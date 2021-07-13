@@ -7,7 +7,6 @@ import {Invoice, SupplierInfo} from "./Main"
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import axiosInstance, {fetcher} from "../utils/fetcher"
-import { useForm } from "react-hook-form"
 import {FinanceStatus} from "./Main"
 import {InvoiceDetails} from "./InvoiceDetails"
 import InvoiceTable from "./InvoiceTable"
@@ -46,7 +45,7 @@ const WhitelistDashboard = ({isLoading, isError, creditInfo, suppliers}: Props) 
           />
       </HStack>
       <WhitelistTable 
-        whitelist={creditInfo}
+        creditInfo={creditInfo}
         suppliers={suppliers}
         />
 

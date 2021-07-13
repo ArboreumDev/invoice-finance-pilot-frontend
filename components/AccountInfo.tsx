@@ -1,5 +1,5 @@
 
-import {Invoice, fetcher, axiosInstance, SupplierInfo} from "./Main"
+import {Invoice, fetcher, SupplierInfo} from "./Main"
 import {
   Box, Button, Divider, Grid, Heading, HStack, Text, VStack, Spinner, Center,
   AlertIcon,

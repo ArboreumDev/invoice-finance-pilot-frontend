@@ -7,6 +7,7 @@ import AdminView from "./AdminView";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import {fetcher} from "../utils/fetcher"
+import {CreditLineInfo, CreditSummary} from "./CreditlinesTable";
 
 
 // const axiosInstance = axios.create({
@@ -92,10 +93,10 @@ const getInvoices = () => {
     const { data, error } = useSWR<Invoice[]>("/v1/invoice", fetcher, {
       refreshInterval: 10000,
     });
-    const creditResult = useSWR<Invoice[]>("/v1/credit", fetcher, {
+    const creditResult = useSWR<CreditSummary>("/v1/credit", fetcher, {
       refreshInterval: 10000,
     });
-    const supplierResult = useSWR<Invoice[]>("/v1/supplier", fetcher, {
+    const supplierResult = useSWR<SupplierInfo[]>("/v1/supplier", fetcher, {
       refreshInterval: 10000,
     });
     

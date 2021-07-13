@@ -1,13 +1,9 @@
-import { Stack, Button, Box, Heading, Center, Table, Thead, Tbody, Tr, Th, Td, chakra } from "@chakra-ui/react"
+import {Stack, Button, Box, Input, Table, Thead, Tbody, Tr, Th, Td, chakra, Select} from "@chakra-ui/react"
 import { TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons"
 import { useTable, useSortBy, useFilters } from "react-table"
-import React, { useMemo } from "react";
+import React, {useMemo, useState} from "react";
 import {FinanceStatus, ReceiverInfo, SupplierInfo} from "./Main"
-import {ReceiverDetails} from "./ReceiverDetails"
-import { dec_to_perc } from "../lib/currency"
-import { Currency } from "./common/Currency";
-import InvoiceStatusForm from "./InvoiceStatusForm";
-import { CreditLineInfo} from "./CreditlinesTable"
+import {CreditLineInfo, CreditSummary} from "./CreditlinesTable"
 import {ModWhitelistModal} from "./AddWhitelistModal"
 
 
@@ -26,7 +22,7 @@ function SelectColumnFilter({
 
    // Render a multi-select box
   return (
-    <select
+    <Select
       value={filterValue}
       onChange={e => {
         setFilter(e.target.value || undefined)
@@ -38,13 +34,29 @@ function SelectColumnFilter({
           {option}
         </option>
       ))}
-    </select>
+    </Select>
   )
 }
 
+function DefaultColumnFilter({
+  column: { filterValue, preFilteredRows, setFilter },
+}) {
+  const count = preFilteredRows.length
 
-const WhitelistTable = (props: { whitelist: CreditLineInfo[], suppliers: SupplierInfo[] }) => {
+  return (
+    <Input
+      value={filterValue || ''}
+      onChange={e => {
+        setFilter(e.target.value || undefined) // Set undefined to remove the filter entirely
+      }}
+      placeholder={`Search ${count} records...`}
+    />
+  )
+}
 
+const WhitelistTable = (props: { creditInfo: CreditSummary, suppliers: SupplierInfo[] }) => {
+  const {tusker, ...whitelistSummary} = props.creditInfo
+  const whitelist = Object.values(Object.assign({}, ...Object.values(whitelistSummary)))
   const currencyToString = (amount) => {
     return amount.toLocaleString("en-IN", { 
         style: "currency",
@@ -55,51 +67,56 @@ const WhitelistTable = (props: { whitelist: CreditLineInfo[], suppliers: Supplie
     }
 
   const data = React.useMemo(
-    () => props.whitelist.map((w: CreditLineInfo) => {
+    () => whitelist.map((w: CreditLineInfo) => {
         return {
           ...w,
           creditlineSize: currencyToString(w.info.terms.creditlineSize),
           edit: <ModWhitelistModal supplierId={w.supplierId} entry={w} />
         }
       }),
-    [props.whitelist]
+    [props.creditInfo]
   )
 
   const columns = React.useMemo(
     () => [
       {
         Header: "Supplier Name",
-        accessor: "supplierId",
-        // @vishal this is where we stopped (SelectColumnFilter is already there on the top)
-        // Filter: SelectColumnFilter,
+        accessor: "supplier_id",
+        Filter: SelectColumnFilter,
         filter: 'includes',
       },
       {
         Header: "Receiver Name",
         accessor: "info.name",
+        disableFilters: true
       },
       {
         Header: "Credit Limit",
         accessor: "info.terms.creditlineSize",
         // isNumeric: true
-        sortDescFirst: true
+        sortDescFirst: true,
+        disableFilters: true
       },
       {
         Header: "APR",
         accessor: "info.terms.apr",
+        disableFilters: true
       },
       {
         Header: "tenor (days)",
         accessor: "info.terms.tenorInDays",
+        disableFilters: true
       },
       {
         Header: "Phone",
         accessor: "info.phone",
         disableSortBy: true,
+        disableFilters: true
       },
       {
         Header: "",
-        accessor: "edit"
+        accessor: "edit",
+        disableFilters: true
       }
     ],
     [],
@@ -114,7 +131,7 @@ const WhitelistTable = (props: { whitelist: CreditLineInfo[], suppliers: Supplie
   } = useTable(
     { columns, 
       data
-    }, useSortBy, useFilters)
+    }, useFilters, useSortBy)
 
   return (
     <Stack spacing="15px">
@@ -126,20 +143,20 @@ const WhitelistTable = (props: { whitelist: CreditLineInfo[], suppliers: Supplie
         {headerGroups.map((headerGroup) => (
           <Tr {...headerGroup.getHeaderGroupProps()}>
             {headerGroup.headers.map((column) => (
-              <Th
-                {...column.getHeaderProps(column.getSortByToggleProps())}
-                isNumeric={column.isNumeric}
-              >
-                {column.render("Header")}
-                <chakra.span pl="4">
-                  {column.isSorted ? (
-                    column.isSortedDesc ? (
-                      <TriangleDownIcon aria-label="sorted descending" />
-                    ) : (
-                      <TriangleUpIcon aria-label="sorted ascending" />
-                    )
-                  ) : null}
-                </chakra.span>
+              <Th isNumeric={column.isNumeric}>
+                <Box {...column.getHeaderProps(column.getSortByToggleProps())}>
+                  {column.render("Header")}
+                  <chakra.span pl="4">
+                    {column.isSorted ? (
+                      column.isSortedDesc ? (
+                        <TriangleDownIcon aria-label="sorted descending" />
+                      ) : (
+                        <TriangleUpIcon aria-label="sorted ascending" />
+                      )
+                    ) : null}
+                  </chakra.span>
+                </Box>
+                <Box>{column.canFilter ? column.render('Filter') : null}</Box>
               </Th>
             ))}
           </Tr>
