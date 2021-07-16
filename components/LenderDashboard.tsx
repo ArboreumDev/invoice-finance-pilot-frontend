@@ -1,18 +1,9 @@
 import {Select,Spacer, Flex, Box, Button, Center, Divider, Grid, Heading, HStack, Text, VStack} from "@chakra-ui/react"
-import {Line} from 'react-chartjs-2';
-import useSWR from 'swr'
-import AmountInput from "./AmountInput"
 import AddInvoiceDrawer from "./AddInvoiceDrawer"
 import {Invoice} from "./Main"
-import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import axiosInstance, {fetcher} from "../utils/fetcher"
-import { useForm } from "react-hook-form"
 import {FinanceStatus, SupplierInfo} from "./Main"
-import {CreditLineInfo} from "./AccountInfo"
-import {InvoiceDetails} from "./InvoiceDetails"
 import InvoiceTable from "./InvoiceTable"
-import { Currency } from "./common/Currency";
 
 
 interface Props {
@@ -36,7 +27,6 @@ const LenderDashboard = ({invoices, isLoading, isError, creditInfo, suppliers}: 
         There was an error
       </Heading>
   }
-  console.log('in dashboard', creditInfo)
 
   const [receiverId, setReceiver] = useState("")
   const [supplierId, setSupplier] = useState("")
@@ -53,7 +43,6 @@ const LenderDashboard = ({invoices, isLoading, isError, creditInfo, suppliers}: 
 
   const onInvest = () => {
     // invest in loan
-    console.log("invested")
   }  
 
   const showDetails = (invoiceId) => {
@@ -73,12 +62,10 @@ const LenderDashboard = ({invoices, isLoading, isError, creditInfo, suppliers}: 
     else {
       let ret = []
       for (const supplier in creditInfo) {
-        console.log('supplierloop', supplier)
         if (supplier !== "tusker") {
           ret = ret.concat(Object.values(creditInfo[supplier]))
         }
       }
-      console.log('ret', ret)
       return ret
     }
   }
@@ -96,8 +83,7 @@ const LenderDashboard = ({invoices, isLoading, isError, creditInfo, suppliers}: 
       {suppliers && (
         <Select onChange={(e)=> setSupplier(e.target.value)} placeholder="All Suppliers">
           {suppliers.map((s) => (
-            // eslint-disable-next-line react/jsx-key
-            <option value={s.id}> {s.name} </option>
+            <option key={s.id} value={s.id}> {s.name} </option>
             ))}
         </Select>
         )}
@@ -106,8 +92,7 @@ const LenderDashboard = ({invoices, isLoading, isError, creditInfo, suppliers}: 
         <Select onChange={(e)=> setReceiver(e.target.value)} placeholder="All Receivers">
           { 
           filteredReceiversCreditInfo().map((c) => (
-            // eslint-disable-next-line react/jsx-key
-            <option value={c.info.id}> {c.info.name} ({c.info.city}) </option>
+            <option key={c.info.id} value={c.info.id}> {c.info.name} ({c.info.city}) </option>
             ))}
         </Select>
         )}

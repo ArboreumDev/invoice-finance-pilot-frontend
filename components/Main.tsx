@@ -1,13 +1,14 @@
 import { Heading, Center, Spinner, VStack, Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/react"
 import useSWR from "swr";
 import LenderDashboard from "./LenderDashboard";
-import WhitelistDashboard from "./WhitelistDashboard";
+import WhitelistDashboard from "./whitelist/WhitelistDashboard";
 import AccountInfo from "./AccountInfo";
 import AdminView from "./AdminView";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import {fetcher} from "../utils/fetcher"
 import {CreditLineInfo, CreditSummary} from "./CreditlinesTable";
+import SupplierDashboard from "./supplier/SupplierDashboard";
 
 
 // const axiosInstance = axios.create({
@@ -102,7 +103,6 @@ const getInvoices = () => {
     
     const isError = error || creditResult.error || supplierResult.error
     const isLoading = !isError && (!data || !creditResult.data || !supplierResult.data)
-    console.log('got ', creditResult.data, 'wile loading', isLoading)
 
   return {
     suppliers: supplierResult.data,
@@ -130,6 +130,7 @@ const Main = () => {
   <TabList>
     <Tab>Account</Tab>
     <Tab>Invoices</Tab>
+    <Tab>Suppliers</Tab>
     <Tab>Whitelist</Tab>
     <Tab>AdminView</Tab>
   </TabList>
@@ -152,6 +153,14 @@ const Main = () => {
         isLoading={isLoading}
         isError={isError}
         suppliers={suppliers}
+      />
+    </TabPanel>
+
+    <TabPanel>
+       <SupplierDashboard
+        suppliers={suppliers}
+        isLoading={isLoading}
+        isError={isError}
       />
     </TabPanel>
 

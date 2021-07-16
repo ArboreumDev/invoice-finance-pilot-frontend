@@ -6,7 +6,6 @@ import {Box, Heading, HStack, Text, Table,
   Th,
   Td} from "@chakra-ui/react"
 import {Invoice, FinanceStatus,ShipmentStatus} from "./Main"
-import LoanStatusForm from "./InvoiceStatusForm";
 import React from "react";
 import InvoiceStatusForm from "./InvoiceStatusForm";
 
@@ -58,8 +57,8 @@ const AdminDashboard = ({invoices, isLoading, isError}: Props) => {
                 .map((l, idx) => (
                   <>
                     <Tr>
-                      <Td>{l.destination}</Td>
-                      <Td>{l.amount}</Td>
+                      <Td>{l.receiverInfo.name}</Td>
+                      <Td>{l.value}</Td>
                       <Td>{l.shippingStatus}</Td>
                       <Td>{l.status}</Td>
                       <Td><InvoiceStatusForm invoice={l} /></Td>

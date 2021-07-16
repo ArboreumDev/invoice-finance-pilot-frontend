@@ -1,15 +1,8 @@
 import { Stack, Box, Heading, Center, Table, Thead, Tbody, Tr, Th, Td, chakra } from "@chakra-ui/react"
 import { TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons"
 import { useTable, useSortBy, useFilters} from "react-table"
-import {ReceiverDetails} from "./ReceiverDetails"
-import { dec_to_perc } from "../lib/currency"
-import { Currency } from "./common/Currency";
-import InvoiceStatusForm from "./InvoiceStatusForm";
 import {Invoice} from "./Main"
-import { useRouter } from "next/router";
 import React, { useMemo, useEffect, useState } from "react";
-import axiosInstance, {fetcher} from "../utils/fetcher"
-import {FinanceStatus} from "./Main"
 import {InvoiceDetails} from "./InvoiceDetails"
 
 
@@ -121,11 +114,9 @@ const InvoiceTable = (props: { invoices: Invoice[] }) => {
           return (
             <Tr {...row.getRowProps()}>
               {row.cells.map((cell) => (
-                <>
                 <Td {...cell.getCellProps()} isNumeric={cell.column.isNumeric}>
                   {cell.render("Cell")}
                 </Td>
-                </>
               ))}
             </Tr>
           )

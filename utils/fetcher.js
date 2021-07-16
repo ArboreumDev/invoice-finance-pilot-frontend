@@ -1,6 +1,5 @@
 import axios from 'axios';
 
-console.log('from env', process.env.BACKEND_URL)
 // TODO why is this not working?
 // const baseUrl = "http://app.arbo.link:8000/"
 const baseUrl = "http://localhost:8000/"
