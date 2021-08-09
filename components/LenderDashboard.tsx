@@ -57,16 +57,17 @@ const LenderDashboard = ({invoices, isLoading, isError, creditInfo, suppliers}: 
 
   const filteredReceiversCreditInfo = () => {
     if (supplierId) {
-      return Object.values(creditInfo[supplierId])
+      return Object.values(creditInfo[supplierId]).map((c)=>c.info)
     } 
     else {
-      let ret = []
+      let ret = {}
       for (const supplier in creditInfo) {
         if (supplier !== "tusker") {
-          ret = ret.concat(Object.values(creditInfo[supplier]))
+            Object.assign(ret, Object.fromEntries(Object.values(creditInfo[supplier])
+                                                        .map((creditInfo) => [creditInfo.info.id, creditInfo.info])))
         }
       }
-      return ret
+      return Object.values(ret)
     }
   }
 
@@ -92,7 +93,7 @@ const LenderDashboard = ({invoices, isLoading, isError, creditInfo, suppliers}: 
         <Select onChange={(e)=> setReceiver(e.target.value)} placeholder="All Receivers">
           { 
           filteredReceiversCreditInfo().map((c) => (
-            <option key={c.info.id} value={c.info.id}> {c.info.name} ({c.info.city}) </option>
+            <option key={c.id} value={c.id}> {c.name} ({c.city}) </option>
             ))}
         </Select>
         )}

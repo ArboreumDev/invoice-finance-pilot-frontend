@@ -23,7 +23,7 @@ export const TuskerSearch = (props: {submit: (toast) => void, loading, searchRes
         }
     })
     .catch((err) => {
-        const message = err.response?.data?.detail?.[0]?.msg || "Unknown Error"
+        const message = err.response?.data?.detail || "Unknown Error"
         error(message)
     })
   }
@@ -33,7 +33,7 @@ export const TuskerSearch = (props: {submit: (toast) => void, loading, searchRes
         <Input
             width="300px"
             onChange={(e) => setSearchString(e.target.value)}
-            placeholder={"phone number of name of receiver"}
+            placeholder={"phone number of name"}
         />
       </Box>
       <Box mt={3} mb={3}>

@@ -96,7 +96,7 @@ export const AddWhitelistModal = (props: {suppliers: SupplierInfo[]} ) => {
         })
         .catch((err) => {
             setLoading(false)
-            const message = err.response?.data?.detail?.[0]?.msg || "Unknown Error"
+            const message = err.response?.data?.detail || "Unknown Error"
             error(message)
         })
     }
@@ -174,7 +174,7 @@ export const ModTermsModal = (props: {name: string, purchaserId?: string, suppli
         })
         .catch((err) => {
             setLoading(false)
-            const message = err.response?.data?.detail?.[0]?.msg || "Unknown Error"
+            const message = err.response?.data?.detail || "Unknown Error"
             error(message)
         })
     }
