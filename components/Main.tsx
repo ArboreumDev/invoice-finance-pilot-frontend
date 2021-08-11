@@ -10,21 +10,6 @@ import {fetcher} from "../utils/fetcher"
 import {CreditLineInfo, CreditSummary} from "./CreditlinesTable";
 import SupplierDashboard from "./supplier/SupplierDashboard";
 
-
-// const axiosInstance = axios.create({
-//   baseURL: "http://localhost:8000/",
-//   // headers: { Authorization: SUPER_AUTH_TOKEN },
-// });
-
-// axiosInstance.interceptors.request.use(function (config) {
-//   const token = localStorage.getItem('arboreum:info');
-//   config.headers.Authorization =  token ? `Bearer ${token}` : '';
-//   return config;
-// });
-
-// export const axiosInstance;
-
-
 export enum ShipmentStatus {
   DEFAULTED = "DEFAULTED",
   AWAITING_SHIPMENT = "AWAITING_SHIPMENT",
@@ -43,6 +28,7 @@ export enum FinanceStatus {
   ERROR_SENDING_REQUEST = "ERROR_SENDING_REQUEST",
 }
 
+// TODO: We are using this type for default terms but we do not have a default creditline
 export interface Terms {
   apr: number
   tenorInDays: number

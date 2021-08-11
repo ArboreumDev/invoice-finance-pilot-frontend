@@ -39,23 +39,23 @@ export const AddWhitelistModal = (props: {suppliers: SupplierInfo[]} ) => {
     const [newApr, setNewApr] = useState(null)
     const [newCreditLimit, setNewCreditLimit] = useState(null)
     const [newTenor, setNewTenor] = useState(null)
-    const [terms, setTerms] = useState(null)
+    const [defaultTerms, setDefaultTerms] = useState(null)
     const [close, setClose] = useState(false)
     const resetTerms = () => {
-        setNewTenor(terms ? terms.tenorInDays : null)
-        setNewCreditLimit(terms ? terms.creditlineSize : null)
-        setNewApr(terms ? terms.apr : null)
+        setNewTenor(defaultTerms ? defaultTerms.tenorInDays : null)
+        setNewCreditLimit(defaultTerms ? defaultTerms.creditlineSize : null)
+        setNewApr(defaultTerms ? defaultTerms.apr : null)
     }
     useEffect(() => {
         const filtered_supplier = props.suppliers.filter((s) => s.id === supplierId)
         if(filtered_supplier.length) {
-            setTerms(filtered_supplier[0].defaultTerms)
+            setDefaultTerms(filtered_supplier[0].defaultTerms)
         }
 
     },[supplierId])
     useEffect(() => {
         resetTerms()
-    },[terms])
+    },[defaultTerms])
 
     const submit = async () => {
         if(supplierId === null) {
@@ -121,11 +121,11 @@ export const AddWhitelistModal = (props: {suppliers: SupplierInfo[]} ) => {
                                     setReceiver={setReceiver}
                                     searchResults={searchResults}
                                     setSearchResults={setSearchResults}
-                                    newApr={terms ? terms.apr : null}
+                                    defaultApr={defaultTerms ? defaultTerms.apr : null}
                                     setNewApr={setNewApr}
-                                    newCreditLimit={terms ? terms.creditlineSize : null}
+                                    defaultCreditLimit={defaultTerms ? defaultTerms.creditlineSize : null}
                                     setNewCreditLimit={setNewCreditLimit}
-                                    newTenor={terms ? terms.tenorInDays : null}
+                                    defaultTenor={defaultTerms ? defaultTerms.tenorInDays : null}
                                     setNewTenor={setNewTenor} />  : null }
                             </Box>
                          }
@@ -184,9 +184,9 @@ export const ModTermsModal = (props: {name: string, purchaserId?: string, suppli
           buttonText={"edit"}
           heading={"Modify Credit Terms for " + props.name}
           body={
-              <TermsBox apr={props.apr} setNewApr={setNewApr}
-                        creditLimit={props.creditline}
-                        setNewCreditLimit={setNewCreditLimit} tenor={props.tenor}
+              <TermsBox defaultApr={props.apr} setNewApr={setNewApr}
+                        defaultCreditLimit={props.creditline}
+                        setNewCreditLimit={setNewCreditLimit} defaultTenor={props.tenor}
                         setNewTenor={setNewTenor} />
           }
           footer={

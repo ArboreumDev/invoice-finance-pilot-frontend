@@ -4,12 +4,22 @@ import axiosInstance from "../../utils/fetcher";
 import TermsBox from "./TermsBox";
 import {error} from "./popups";
 
-export const TuskerSearch = (props: {submit: (toast) => void, loading, searchResults: any,
-  setSearchResults: React.Dispatch<React.SetStateAction<any>>, receiver: string,
-  setReceiver: React.Dispatch<React.SetStateAction<any>>, newApr: number,
-  setNewApr: React.Dispatch<React.SetStateAction<any>>, newCreditLimit: number,
-  setNewCreditLimit: React.Dispatch<React.SetStateAction<any>>, newTenor: number,
-  setNewTenor: React.Dispatch<React.SetStateAction<any>>}) => {
+interface Props {
+  submit: () => void,
+  loading: boolean,
+  searchResults: Array<any>,
+  setSearchResults: React.Dispatch<React.SetStateAction<any>>,
+  receiver: string,
+  setReceiver: React.Dispatch<React.SetStateAction<any>>,
+  defaultApr: number,
+  setNewApr: React.Dispatch<React.SetStateAction<any>>,
+  defaultCreditLimit: number,
+  setNewCreditLimit: React.Dispatch<React.SetStateAction<any>>,
+  defaultTenor: number,
+  setNewTenor: React.Dispatch<React.SetStateAction<any>>
+}
+
+export const TuskerSearch = (props: Props) => {
   const [searchString, setSearchString] = useState(null)
   const search = async () => {
     props.setSearchResults([])
@@ -61,17 +71,17 @@ export const TuskerSearch = (props: {submit: (toast) => void, loading, searchRes
       {props.receiver && (
           <Box mb={3}>
               <TermsBox
-              apr={props.newApr}
+              defaultApr={props.defaultApr}
               setNewApr={props.setNewApr}
-              creditLimit={props.newCreditLimit}
+              defaultCreditLimit={props.defaultCreditLimit}
               setNewCreditLimit={props.setNewCreditLimit}
-              tenor={props.newTenor}
+              defaultTenor={props.defaultTenor}
               setNewTenor={props.setNewTenor} />
           </Box>
       )}
       <Box>
         <Button colorScheme="teal" mr={3} onClick={props.submit}
-        disabled={!(props.receiver && props.newApr && props.newTenor && props.newCreditLimit)}
+        disabled={!(props.receiver && props.defaultApr && props.defaultTenor && props.defaultCreditLimit)}
         >
             {!props.loading ? "Submit" : <Spinner />}
         </Button>
