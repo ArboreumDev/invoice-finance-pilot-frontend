@@ -122,10 +122,13 @@ export const AddWhitelistModal = (props: {suppliers: SupplierInfo[]} ) => {
                                     searchResults={searchResults}
                                     setSearchResults={setSearchResults}
                                     defaultApr={defaultTerms ? defaultTerms.apr : null}
+                                    newApr={newApr}
                                     setNewApr={setNewApr}
-                                    defaultCreditLimit={defaultTerms ? defaultTerms.creditlineSize : null}
+                                    defaultCreditLimit={0}
+                                    newCreditLimit={newCreditLimit}
                                     setNewCreditLimit={setNewCreditLimit}
                                     defaultTenor={defaultTerms ? defaultTerms.tenorInDays : null}
+                                    newTenor={newTenor}
                                     setNewTenor={setNewTenor} />  : null }
                             </Box>
                          }

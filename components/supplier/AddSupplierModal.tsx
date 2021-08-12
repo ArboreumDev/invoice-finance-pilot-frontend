@@ -66,10 +66,13 @@ export const AddSupplierModal = () => {
                                     searchResults={searchResults}
                                     setSearchResults={setSearchResults}
                                     defaultApr={defaultTuskerApr}
+                                    newApr={newApr}
                                     setNewApr={setNewApr}
                                     defaultCreditLimit={defaultTuskerCreditLineSize}
+                                    newCreditLimit={newCreditLimit}
                                     setNewCreditLimit={setNewCreditLimit}
                                     defaultTenor={defaultTuskerTenor}
+                                    newTenor={newTenor}
                                     setNewTenor={setNewTenor} />
                             </Box>
                          }

@@ -12,10 +12,13 @@ interface Props {
   receiver: string,
   setReceiver: React.Dispatch<React.SetStateAction<any>>,
   defaultApr: number,
+  newApr: number,
   setNewApr: React.Dispatch<React.SetStateAction<any>>,
   defaultCreditLimit: number,
+  newCreditLimit: number,
   setNewCreditLimit: React.Dispatch<React.SetStateAction<any>>,
   defaultTenor: number,
+  newTenor: number,
   setNewTenor: React.Dispatch<React.SetStateAction<any>>
 }
 
@@ -81,7 +84,7 @@ export const TuskerSearch = (props: Props) => {
       )}
       <Box>
         <Button colorScheme="teal" mr={3} onClick={props.submit}
-        disabled={!(props.receiver && props.defaultApr && props.defaultTenor && props.defaultCreditLimit)}
+        disabled={!(props.receiver && props.newApr && props.newTenor && props.newCreditLimit)}
         >
             {!props.loading ? "Submit" : <Spinner />}
         </Button>
