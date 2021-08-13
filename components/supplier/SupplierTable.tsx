@@ -20,9 +20,9 @@ const SupplierTable = (props: { suppliers: SupplierInfo[] }) => {
     () => props.suppliers.map((s: SupplierInfo) => {
         return {
           ...s,
-          creditlineSize: currencyToString(s.defaultTerms.creditlineSize),
+          creditlineSize: currencyToString(s.creditlineSize),
           edit: <ModTermsModal supplierId={s.id} name={s.name} apr={s.defaultTerms.apr}
-                                         tenor={s.defaultTerms.tenorInDays} creditline={s.defaultTerms.creditlineSize}
+                                         tenor={s.defaultTerms.tenorInDays} creditline={s.creditlineSize}
                                          />,
           }
       }),

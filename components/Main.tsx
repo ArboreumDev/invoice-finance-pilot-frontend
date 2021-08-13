@@ -45,6 +45,7 @@ export interface ReceiverInfo {
 export interface SupplierInfo {
   id: string
   name: string
+  creditlineSize: number
   defaultTerms: Terms
 }
 
