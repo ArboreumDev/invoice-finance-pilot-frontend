@@ -24,7 +24,7 @@ export const AddSupplierModal = () => {
         axiosInstance.post(
             "/v1/supplier/new",
             {
-                supplier: {
+                input: {
                     id: receiverInfo.id,
                     name: receiverInfo.name,
                     defaultTerms: {
