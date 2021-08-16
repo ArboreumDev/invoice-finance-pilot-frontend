@@ -1,28 +1,14 @@
 import { Heading, Center, Spinner, VStack, Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/react"
 import useSWR from "swr";
 import LenderDashboard from "./LenderDashboard";
-import WhitelistDashboard from "./WhitelistDashboard";
+import WhitelistDashboard from "./whitelist/WhitelistDashboard";
 import AccountInfo from "./AccountInfo";
 import AdminView from "./AdminView";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import {fetcher} from "../utils/fetcher"
 import {CreditLineInfo, CreditSummary} from "./CreditlinesTable";
-
-
-// const axiosInstance = axios.create({
-//   baseURL: "http://localhost:8000/",
-//   // headers: { Authorization: SUPER_AUTH_TOKEN },
-// });
-
-// axiosInstance.interceptors.request.use(function (config) {
-//   const token = localStorage.getItem('arboreum:info');
-//   config.headers.Authorization =  token ? `Bearer ${token}` : '';
-//   return config;
-// });
-
-// export const axiosInstance;
-
+import SupplierDashboard from "./supplier/SupplierDashboard";
 
 export enum ShipmentStatus {
   DEFAULTED = "DEFAULTED",
@@ -42,6 +28,7 @@ export enum FinanceStatus {
   ERROR_SENDING_REQUEST = "ERROR_SENDING_REQUEST",
 }
 
+// TODO: We are using this type for default terms but we do not have a default creditline
 export interface Terms {
   apr: number
   tenorInDays: number
@@ -58,6 +45,7 @@ export interface ReceiverInfo {
 export interface SupplierInfo {
   id: string
   name: string
+  creditlineSize: number
   defaultTerms: Terms
 }
 
@@ -102,7 +90,6 @@ const getInvoices = () => {
     
     const isError = error || creditResult.error || supplierResult.error
     const isLoading = !isError && (!data || !creditResult.data || !supplierResult.data)
-    console.log('got ', creditResult.data, 'wile loading', isLoading)
 
   return {
     suppliers: supplierResult.data,
@@ -130,6 +117,7 @@ const Main = () => {
   <TabList>
     <Tab>Account</Tab>
     <Tab>Invoices</Tab>
+    <Tab>Suppliers</Tab>
     <Tab>Whitelist</Tab>
     <Tab>AdminView</Tab>
   </TabList>
@@ -152,6 +140,14 @@ const Main = () => {
         isLoading={isLoading}
         isError={isError}
         suppliers={suppliers}
+      />
+    </TabPanel>
+
+    <TabPanel>
+       <SupplierDashboard
+        suppliers={suppliers}
+        isLoading={isLoading}
+        isError={isError}
       />
     </TabPanel>
 

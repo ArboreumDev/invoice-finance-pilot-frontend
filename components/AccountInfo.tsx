@@ -1,10 +1,8 @@
 
-import {Invoice, fetcher, SupplierInfo} from "./Main"
+import {Invoice, SupplierInfo} from "./Main"
 import {
-  Box, Button, Divider, Grid, Heading, HStack, Text, VStack, Spinner, Center,
-  AlertIcon,
+  Box, Divider, Grid, Heading, HStack, Text, VStack, Spinner, Center,
   Select,
-  AlertTitle,
   Flex,
   Progress,
   Stack,
@@ -18,11 +16,11 @@ import {
 import DynamicDoughnut, {color1, color2, color3} from "./doughnut"
 import React, { useState } from "react";
 import { dec_to_perc } from "../lib/currency"
-import { Currency } from "../components/common/Currency"
-import {FinanceStatus, ReceiverInfo} from "../components/Main"
-import {ReceiverDetails} from "../components/ReceiverDetails"
+import { Currency } from "./common/Currency"
+import {FinanceStatus } from "./Main"
+import {ReceiverDetails} from "./ReceiverDetails"
 import CreditlinesTable, {CreditLineInfo, CreditSummary} from "./CreditlinesTable"
-import {principalToInterest} from "./../lib/invoice"
+import {principalToInterest} from "../lib/invoice"
 
 
 const CreditLines = (props: { creditLines: CreditLineInfo[] }) => {
@@ -175,11 +173,11 @@ const AccountInfo = ({invoices, isLoading, isError, creditInfo, suppliers}: Vend
       <Box margin={[0, 1, 2, 3]} padding={[2, 3, 4, 5]}>
 
 
-      <Select onChange={(e)=> setView(e.target.value)}>
-          <option value='tusker' selected> All Suppliers </option>
+      <Select onChange={(e)=> setView(e.target.value)}
+              value={view}>
+          <option value='tusker'> All Suppliers </option>
           { suppliers && ( suppliers.map((s) => (
-            // eslint-disable-next-line react/jsx-key
-            <option value={s.id}> {s.name} </option>
+            <option key={s.id} value={s.id}> {s.name} </option>
             )))}
         </Select>
 

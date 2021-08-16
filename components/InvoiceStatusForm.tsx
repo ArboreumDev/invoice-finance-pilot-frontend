@@ -1,6 +1,6 @@
 import {Stack, Button, Input, InputGroup, FormControl, FormLabel, Radio, RadioGroup} from "@chakra-ui/react"
 
-import {axiosInstance, Invoice, FinanceStatus, ShipmentStatus} from "./Main"
+import {Invoice, FinanceStatus} from "./Main"
 import {useState} from "react";
 
 interface Props {
@@ -24,7 +24,7 @@ const InvoiceStatusForm = ({ invoice }: Props) => {
     // }
     const handleSubmit = (e) => {
         e.preventDefault()
-        let {id, amount, destination, status:_, shippingStatus} = invoice
+        let {invoiceId, value, receiverInfo, status:_, shippingStatus} = invoice
         // if (status == LoanStatus.LIVE) {
         //     startDate = date
         // }
@@ -43,7 +43,7 @@ const InvoiceStatusForm = ({ invoice }: Props) => {
         return (
             <form onSubmit={handleSubmit}>
                 <InputGroup size="sm">
-                    <RadioGroup onChange={setStatus} value={status}>
+                    <RadioGroup onChange={(value)=>{setStatus(FinanceStatus[value])}} value={status}>
                         <Stack direction="row">
                             <Radio value={FinanceStatus.FINANCED}>Financed</Radio>
                             <Radio value={FinanceStatus.REPAID}>Repaid</Radio>

@@ -1,7 +1,6 @@
 import { Box, Heading, Text, Button, Input, InputGroup, HStack } from "@chakra-ui/react"
 import {useState} from "react";
-import {axiosInstance, FinanceStatus} from "./Main";
-
+import axiosInstance from "../utils/fetcher"
 
 
 const BorrowerDashboard = () => {

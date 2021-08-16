@@ -2,9 +2,9 @@ import {Stack, Button, Box, Input, Table, Thead, Tbody, Tr, Th, Td, chakra, Sele
 import { TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons"
 import { useTable, useSortBy, useFilters } from "react-table"
 import React, {useMemo, useState} from "react";
-import {FinanceStatus, ReceiverInfo, SupplierInfo} from "./Main"
-import {CreditLineInfo, CreditSummary} from "./CreditlinesTable"
-import {ModWhitelistModal} from "./AddWhitelistModal"
+import {FinanceStatus, ReceiverInfo, SupplierInfo} from "../Main"
+import {CreditLineInfo, CreditSummary} from "../CreditlinesTable"
+import {ModTermsModal} from "./AddWhitelistModal"
 
 
 function SelectColumnFilter({
@@ -56,7 +56,7 @@ function DefaultColumnFilter({
 
 const WhitelistTable = (props: { creditInfo: CreditSummary, suppliers: SupplierInfo[] }) => {
   const {tusker, ...whitelistSummary} = props.creditInfo
-  const whitelist = Object.values(Object.assign({}, ...Object.values(whitelistSummary)))
+  const whitelist = [].concat(...[...Object.values(whitelistSummary)].map(x=>Object.values(x)))
   const currencyToString = (amount) => {
     return amount.toLocaleString("en-IN", { 
         style: "currency",
@@ -71,7 +71,9 @@ const WhitelistTable = (props: { creditInfo: CreditSummary, suppliers: SupplierI
         return {
           ...w,
           creditlineSize: currencyToString(w.info.terms.creditlineSize),
-          edit: <ModWhitelistModal supplierId={w.supplierId} entry={w} />,
+          edit: <ModTermsModal supplierId={w.supplierId} name={w.info.name} apr={w.info.terms.apr}
+                               tenor={w.info.terms.tenorInDays} creditline={w.info.terms.creditlineSize}
+                               purchaserId={w.info.id} />,
           supplier: {...props.suppliers.filter((s) => s.id === w.supplierId)[0]}
         }
       }),
@@ -144,8 +146,8 @@ const WhitelistTable = (props: { creditInfo: CreditSummary, suppliers: SupplierI
         {headerGroups.map((headerGroup) => (
           <Tr {...headerGroup.getHeaderGroupProps()}>
             {headerGroup.headers.map((column) => (
-              <Th isNumeric={column.isNumeric}>
-                <Box {...column.getHeaderProps(column.getSortByToggleProps())}>
+              <Th {...column.getHeaderProps(column.getSortByToggleProps())} isNumeric={column.isNumeric}>
+                <Box>
                   {column.render("Header")}
                   <chakra.span pl="4">
                     {column.isSorted ? (
@@ -169,11 +171,9 @@ const WhitelistTable = (props: { creditInfo: CreditSummary, suppliers: SupplierI
           return (
             <Tr {...row.getRowProps()}>
               {row.cells.map((cell) => (
-                <>
                 <Td {...cell.getCellProps()} isNumeric={cell.column.isNumeric}>
                   {cell.render("Cell")}
                 </Td>
-                </>
               ))}
             </Tr>
           )

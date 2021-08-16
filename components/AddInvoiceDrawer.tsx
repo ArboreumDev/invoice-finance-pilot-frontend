@@ -9,8 +9,6 @@ import {
     Tr,
     Th,
     Td,
-    TableCaption,
-    ModalHeader,
     Divider,
     Box,
     DrawerBody,
@@ -20,13 +18,13 @@ import {
     DrawerContent,
     DrawerCloseButton,
     Stack, Button, useDisclosure, Input,
-    useToast,
     VStack,
     Heading
   } from "@chakra-ui/react"
 import React, { useEffect, useState,  } from "react";
 import { principalToInterest } from "../lib/invoice";
 import axiosInstance from "../utils/fetcher"
+import {error, success} from "./common/popups";
 
 const dummyOrder = {
     orderRef: "",
@@ -46,19 +44,11 @@ function AddInvoiceDrawer() {
   const btnRef = React.useRef()
   const [isUploaded, setUploaded] = useState(false)
   const [order, setOrder] = useState(dummyOrder)
-//   const [error, setError] = useState("")
-  const toast = useToast()
 
   const getOrder = async (orderRef) => {
-    console.log('try fund: ', orderRef)
     await axiosInstance.get("/v1/order/" + orderRef)
       .then((result)=>{
-        console.log('got', result)
-        toast({
-            title: "Success!",
-            description: "Proceed to upload invoice.",
-            duration: 2000
-        })
+        success("Proceed to upload invoice.")
         setOrder({
             orderRef: result.data.orderId,
             value: result.data.value,
@@ -75,45 +65,24 @@ function AddInvoiceDrawer() {
         if (err.message.includes("400")) {msg = "receveiver not whitelisted"}
         setOrder(dummyOrder)
         setUploaded(false)
-        toast({
-            title: "Error!",
-            // TODO display different things by error status
-            description: msg,
-            status: "error",
-            duration: 2000,
-            isClosable: true,
-          })
-
+        error(msg) // TODO display different things by error status
       })
 }
 
   const handleFinance = async () => {
-    console.log('try fund: ', order.invoiceId)
     axiosInstance.post("/v1/invoice/" +  order.orderRef)
       .then((result)=>{
-        console.log('got', result)
         // setResult("success")
-        // alert("Tusker has been notified.")
-        toast({
-            title: "Success!",
-            description: "Your request is being processed",
-            status: "success",
-            duration: 2000,
-            isClosable: true,
-          })
+        // alert
+          success("Your request is being processed")
           onClose()
           setOrder(dummyOrder)
           setUploaded(false)
 
       })
       .catch((err) => {
-        toast({
-            title: "Error!",
-            description: err.response.data.detail || "Unknown Error",
-            status: "error",
-            duration: 2000,
-            isClosable: true,
-          })
+        const message = err.response?.data?.detail || "Unknown Error"
+        error(message)
       })
 }
 

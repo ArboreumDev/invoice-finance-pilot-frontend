@@ -1,24 +1,19 @@
 import { Stack, Box, Heading, Center, Table, Thead, Tbody, Tr, Th, Td, chakra } from "@chakra-ui/react"
 import { TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons"
 import { useTable, useSortBy, useFilters} from "react-table"
-import {ReceiverDetails} from "./ReceiverDetails"
-import { dec_to_perc } from "../lib/currency"
-import { Currency } from "./common/Currency";
-import InvoiceStatusForm from "./InvoiceStatusForm";
 import {Invoice} from "./Main"
-import { useRouter } from "next/router";
 import React, { useMemo, useEffect, useState } from "react";
-import axiosInstance, {fetcher} from "../utils/fetcher"
-import {FinanceStatus} from "./Main"
 import {InvoiceDetails} from "./InvoiceDetails"
 
 
+export interface SupplierMap { [key: string]: string; }
 interface Props {
   invoices: Invoice[]
+  supplierMap: SupplierMap
 }
  
 
-const InvoiceTable = (props: { invoices: Invoice[] }) => {
+const InvoiceTable = (props: Props) => {
 
   const currencyToString = (amount) => {
     return amount.toLocaleString("en-IN", { 
@@ -35,6 +30,7 @@ const InvoiceTable = (props: { invoices: Invoice[] }) => {
         return {
             ...i,
           amount: currencyToString(i.value),
+          supplierName: props.supplierMap[i.supplierId],
           details: <InvoiceDetails invoice={i}/>,
           shortDate: i.paymentDetails.collectionDate ? i.paymentDetails.collectionDate.slice(0,10) : ""
         }
@@ -47,6 +43,14 @@ const InvoiceTable = (props: { invoices: Invoice[] }) => {
       {
         Header: "Order Id",
         accessor: "orderId",
+      },
+      {
+        Header: "Receiver",
+        accessor: "receiverInfo.name",
+      },
+      {
+        Header: "Supplier",
+        accessor: "supplierName",
       },
       {
         Header: "Invoice Amount",
@@ -121,11 +125,9 @@ const InvoiceTable = (props: { invoices: Invoice[] }) => {
           return (
             <Tr {...row.getRowProps()}>
               {row.cells.map((cell) => (
-                <>
                 <Td {...cell.getCellProps()} isNumeric={cell.column.isNumeric}>
                   {cell.render("Cell")}
                 </Td>
-                </>
               ))}
             </Tr>
           )

@@ -78,7 +78,7 @@ export default function Login() {
             {/* <Button width="full" mt={4} type="submit"> */}
             <Button
               type="submit"
-              variantColor="teal"
+              colorScheme="teal"
               variant="outline"
               width="full"
               mt={4}

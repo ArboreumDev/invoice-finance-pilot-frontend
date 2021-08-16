@@ -1,28 +1,14 @@
 
 import {
-  Box, Button, Divider, Grid, Heading, HStack, Text, VStack, Spinner, Center, Select, Option,
-  AlertIcon,
-  AlertTitle,
-  Flex,
-  Progress,
-  Stack,
-  Form,
+  Box, Button, Divider, Heading, HStack, Text, VStack, Select,
   Input,
-  Stat,
-  StatLabel,
-  StatNumber,
   Tooltip,
-  Wrap,
 
 } from "@chakra-ui/react"
-import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-import axiosInstance, {fetcher} from "../utils/fetcher"
-import { useForm } from "react-hook-form"
-import {FinanceStatus, Invoice, SupplierInfo} from "./Main"
+import axiosInstance from "../utils/fetcher"
+import {Invoice, SupplierInfo} from "./Main"
 import {CreditSummary} from "./CreditlinesTable"
-import {InvoiceDetails} from "./InvoiceDetails"
-import { Currency } from "./common/Currency";
 
 interface Props {
     invoices: Invoice[]
@@ -41,7 +27,6 @@ const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
 
     const updateDB = async () => {
       const res = await axiosInstance.post("/v1/invoice/update")
-      console.log(res.status)
       if (res.status === 200) {
           alert("Updated")
       } else {
@@ -52,7 +37,6 @@ const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
     const createNew = async () => {
         try {
             const res = await axiosInstance.post(`/v1/test/new/order/${supplier.id}/${newOrderReceiver}/${newOrderValue}`)
-            console.log(res.status, res.data)
             if (res.status === 200) {
                 alert(`created new order:${res.data.orderRef}`)
             } else {
@@ -68,7 +52,6 @@ const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
         try {
 
             const res = await axiosInstance.patch(`/v1/test/update/shipment/${invoiceId}`)
-            console.log(res.status, res)
             if (res.status === 200) alert("marked as delivered")
         } catch (err) {
             console.log(err)
@@ -85,7 +68,6 @@ const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
         // alert(msg)
         try {
             const res = await axiosInstance.post("/v1/test/update/value/"+invoiceId+"/"+newValue)
-            console.log(res.status)
             if (res.status === 200) {
                 alert("Updated")
                 setNewValue("")
@@ -103,7 +85,6 @@ const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
         // alert(msg)
         try {
             const res = await axiosInstance.post("/v1/test/update/status/"+invoiceId+"/"+newStatus)
-            console.log(res.status)
             if (res.status === 200) {
                 setNewStatus("")
                 alert("Updated")
@@ -144,8 +125,6 @@ const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
     }
 
     const possibleStatus = ["FINANCED", "DISBURSAL_REQUESTED", "REPAID", "INITIAL"]
-    console.log('inf', creditInfo)
-    console.log('suppjl', supplier)
 
     return (
         <>

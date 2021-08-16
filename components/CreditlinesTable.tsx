@@ -147,11 +147,9 @@ const CreditlinesTable = (props: { creditLines: CreditLineInfo[] }) => {
           return (
             <Tr {...row.getRowProps()}>
               {row.cells.map((cell) => (
-                <>
                 <Td {...cell.getCellProps()} isNumeric={cell.column.isNumeric}>
                   {cell.render("Cell")}
                 </Td>
-                </>
               ))}
             </Tr>
           )

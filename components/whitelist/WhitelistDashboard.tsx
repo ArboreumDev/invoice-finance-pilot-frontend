@@ -1,17 +1,7 @@
-import {Select,Spacer, Flex, Box, Button, Center, Divider, Grid, Heading, HStack, Text, VStack} from "@chakra-ui/react"
-import {Line} from 'react-chartjs-2';
-import useSWR from 'swr'
-import AmountInput from "./AmountInput"
-import AddInvoiceDrawer from "./AddInvoiceDrawer"
-import {Invoice, SupplierInfo} from "./Main"
-import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
-import axiosInstance, {fetcher} from "../utils/fetcher"
-import {FinanceStatus} from "./Main"
-import {InvoiceDetails} from "./InvoiceDetails"
-import InvoiceTable from "./InvoiceTable"
-import {CreditLineInfo, CreditSummary} from "./CreditlinesTable"
-import { Currency } from "./common/Currency";
+import {Heading, HStack} from "@chakra-ui/react"
+import {SupplierInfo} from "../Main"
+import React from "react";
+import {CreditSummary} from "../CreditlinesTable"
 import WhitelistTable from "./WhitelistTable"
 import {AddWhitelistModal} from "./AddWhitelistModal"
 
