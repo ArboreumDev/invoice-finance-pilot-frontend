@@ -174,7 +174,7 @@ const AccountInfo = ({invoices, isLoading, isError, creditInfo, suppliers}: Vend
 
 
       <Select onChange={(e)=> setView(e.target.value)}
-              value={'tusker'}>
+              value={view}>
           <option value='tusker'> All Suppliers </option>
           { suppliers && ( suppliers.map((s) => (
             <option key={s.id} value={s.id}> {s.name} </option>
