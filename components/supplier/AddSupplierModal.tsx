@@ -3,11 +3,18 @@ import {
 } from "@chakra-ui/react"
 import React, { useState } from "react";
 import axiosInstance from "../../utils/fetcher"
-import { SupplierInfo, Terms } from "../Main";
 import {TuskerSearch} from "../common/TuskerSearch";
 import {defaultTuskerCreditLineSize, defaultTuskerTenor, defaultTuskerApr} from "../common/constants";
 import {ChakraModal} from "../common/ChakraModal";
 import {error, success} from "../common/popups";
+
+export interface SupplierInput {
+  supplierId: string
+  name: string
+  creditlineSize: number
+  defaultApr: number
+  defaultTenorInDays: number
+}
 
 export const AddSupplierModal = () => {
     const [loading, setLoading] = useState(false)
@@ -25,14 +32,12 @@ export const AddSupplierModal = () => {
             "/v1/supplier/new",
             {
                 input: {
-                    id: receiverInfo.id,
+                    supplierId: receiverInfo.id,
                     name: receiverInfo.name,
-                    defaultTerms: {
-                            apr: newApr,
-                            tenorInDays: newTenor,
-                            creditlineSize: newCreditLimit
-                        } as Terms
-                    } as SupplierInfo
+                    creditlineSize: newCreditLimit,
+                    defaultApr: newApr,
+                    defaultTenorInDays: newTenor
+                } as SupplierInput
             })
 
         .then((result)=>{
