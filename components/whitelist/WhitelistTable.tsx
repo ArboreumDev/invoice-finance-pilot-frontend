@@ -56,7 +56,7 @@ function DefaultColumnFilter({
 
 const WhitelistTable = (props: { creditInfo: CreditSummary, suppliers: SupplierInfo[] }) => {
   const {tusker, ...whitelistSummary} = props.creditInfo
-  const whitelist = Object.values(Object.assign({}, ...Object.values(whitelistSummary)))
+  const whitelist = [].concat(...[...Object.values(whitelistSummary)].map(x=>Object.values(x)))
   const currencyToString = (amount) => {
     return amount.toLocaleString("en-IN", { 
         style: "currency",
