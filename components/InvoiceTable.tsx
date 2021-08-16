@@ -6,12 +6,14 @@ import React, { useMemo, useEffect, useState } from "react";
 import {InvoiceDetails} from "./InvoiceDetails"
 
 
+export interface SupplierMap { [key: string]: string; }
 interface Props {
   invoices: Invoice[]
+  supplierMap: SupplierMap
 }
  
 
-const InvoiceTable = (props: { invoices: Invoice[] }) => {
+const InvoiceTable = (props: Props) => {
 
   const currencyToString = (amount) => {
     return amount.toLocaleString("en-IN", { 
@@ -28,6 +30,7 @@ const InvoiceTable = (props: { invoices: Invoice[] }) => {
         return {
             ...i,
           amount: currencyToString(i.value),
+          supplierName: props.supplierMap[i.supplierId],
           details: <InvoiceDetails invoice={i}/>,
           shortDate: i.paymentDetails.collectionDate ? i.paymentDetails.collectionDate.slice(0,10) : ""
         }
@@ -40,6 +43,14 @@ const InvoiceTable = (props: { invoices: Invoice[] }) => {
       {
         Header: "Order Id",
         accessor: "orderId",
+      },
+      {
+        Header: "Receiver",
+        accessor: "receiverInfo.name",
+      },
+      {
+        Header: "Supplier",
+        accessor: "supplierName",
       },
       {
         Header: "Invoice Amount",

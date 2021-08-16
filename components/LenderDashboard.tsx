@@ -4,6 +4,7 @@ import {Invoice} from "./Main"
 import React, { useEffect, useState } from "react";
 import {FinanceStatus, SupplierInfo} from "./Main"
 import InvoiceTable from "./InvoiceTable"
+import SupplierTable from "./supplier/SupplierTable";
 
 
 interface Props {
@@ -55,6 +56,15 @@ const LenderDashboard = ({invoices, isLoading, isError, creditInfo, suppliers}: 
     maintainAspectRatio: false
   }
 
+  const supplierMap = suppliers.reduce((obj, item: SupplierInfo) => {
+    return {
+      ...obj,
+      [item.id]: item.name
+    }
+  }, {})
+
+
+
   const filteredReceiversCreditInfo = () => {
     if (supplierId) {
       return Object.values(creditInfo[supplierId]).map((c)=>c.info)
@@ -105,9 +115,12 @@ const LenderDashboard = ({invoices, isLoading, isError, creditInfo, suppliers}: 
       <HStack width="100%">
         <Center width="100%">
           <Box minW="xl" width="100%">
-          <InvoiceTable invoices={
-            filteredInvoices().sort((a,b) => {return parseInt(b.orderId) - parseInt(a.orderId);})
-          } />
+          <InvoiceTable 
+            invoices={ filteredInvoices().sort((a,b) => {return parseInt(b.orderId) - parseInt(a.orderId);})} 
+            supplierMap={ suppliers.reduce(
+              (obj, supplier: SupplierInfo) => { return { ...obj, [supplier.id]: supplier.name } }
+              , {})}
+            />
         </Box>
         </Center>
       </HStack>
