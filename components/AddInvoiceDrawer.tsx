@@ -32,7 +32,11 @@ const dummyOrder = {
     status: "",
     shippingStatus: "",
     invoiceId: "",
-    receiverInfo: {}
+    receiverInfo: {
+      name: null,
+      city: null,
+      phone: null
+    }
 }
 
 interface Props {

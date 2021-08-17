@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // TODO why is this not working?
 // const baseUrl = "http://app.arbo.link:8000/"
-const baseUrl = "http://localhost:8000/"
+const baseUrl = process.env.NEXT_PUBLIC_BACKEND
 
 const axiosInstance = () => {
   const defaultOptions = {

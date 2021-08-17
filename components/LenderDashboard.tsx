@@ -1,10 +1,11 @@
 import {Select,Spacer, Flex, Box, Button, Center, Divider, Grid, Heading, HStack, Text, VStack} from "@chakra-ui/react"
 import AddInvoiceDrawer from "./AddInvoiceDrawer"
-import {Invoice} from "./Main"
+import {Invoice, ReceiverInfo} from "./Main"
 import React, { useEffect, useState } from "react";
 import {FinanceStatus, SupplierInfo} from "./Main"
 import InvoiceTable from "./InvoiceTable"
 import SupplierTable from "./supplier/SupplierTable";
+import {CreditLineInfo} from "./CreditlinesTable";
 
 
 interface Props {
@@ -67,14 +68,14 @@ const LenderDashboard = ({invoices, isLoading, isError, creditInfo, suppliers}: 
 
   const filteredReceiversCreditInfo = () => {
     if (supplierId) {
-      return Object.values(creditInfo[supplierId]).map((c)=>c.info)
+      return Object.values(creditInfo[supplierId]).map((c: CreditLineInfo)=>c.info)
     } 
     else {
       let ret = {}
       for (const supplier in creditInfo) {
         if (supplier !== "tusker") {
             Object.assign(ret, Object.fromEntries(Object.values(creditInfo[supplier])
-                                                        .map((creditInfo) => [creditInfo.info.id, creditInfo.info])))
+                                                        .map((creditInfo: CreditLineInfo) => [creditInfo.info.id, creditInfo.info])))
         }
       }
       return Object.values(ret)
@@ -102,7 +103,7 @@ const LenderDashboard = ({invoices, isLoading, isError, creditInfo, suppliers}: 
       {creditInfo && (
         <Select onChange={(e)=> setReceiver(e.target.value)} placeholder="All Receivers">
           { 
-          filteredReceiversCreditInfo().map((c) => (
+          filteredReceiversCreditInfo().map((c: ReceiverInfo) => (
             <option key={c.id} value={c.id}> {c.name} ({c.city}) </option>
             ))}
         </Select>
