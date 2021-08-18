@@ -9,6 +9,7 @@ import React, { useEffect, useState } from "react";
 import {fetcher} from "../utils/fetcher"
 import {CreditLineInfo, CreditSummary} from "./CreditlinesTable";
 import SupplierDashboard from "./supplier/SupplierDashboard";
+import axiosInstance from "../utils/fetcher"
 
 export enum ShipmentStatus {
   DEFAULTED = "DEFAULTED",
@@ -71,30 +72,44 @@ export interface Invoice {
 
 const getInvoices = () => {
   const router = useRouter();
-  useEffect(function mount() {
+  useEffect(() => {
     const r = JSON.parse(window.localStorage.getItem("arboreum:info"))
     if (!r) {
       console.log("couldnt find user info!")
       router.push("/login");
+    } else {
+      // verify token by making a simple request
+      axiosInstance.get("/v1/credit")
+      .then(() => {
+        router.push("/")
+      })
+      .catch((error) => {
+        if (error.response?.status === 401) {
+          window.localStorage.removeItem("arboreum:info")
+          console.log("invalid token -> login again")
+          router.push("/login");
+        }
+      })
     }
-  })
-    const { data, error } = useSWR<Invoice[]>("/v1/invoice", fetcher, {
-      refreshInterval: 10000,
-    });
-    const creditResult = useSWR<CreditSummary>("/v1/credit", fetcher, {
-      refreshInterval: 10000,
-    });
-    const supplierResult = useSWR<SupplierInfo[]>("/v1/supplier", fetcher, {
-      refreshInterval: 10000,
-    });
+  },[])
 
-    if (error && error?.response?.status === 401) {
-      window.localStorage.removeItem("arboreum:info")
-      router.push("/login");
-    }
-    
-    const isError = error || creditResult.error || supplierResult.error
-    const isLoading = !isError && (!data || !creditResult.data || !supplierResult.data)
+  const { data, error } = useSWR<Invoice[]>("/v1/invoice", fetcher, {
+      refreshInterval: 10000,
+    });
+  const creditResult = useSWR<CreditSummary>("/v1/credit", fetcher, {
+    refreshInterval: 10000,
+  });
+  const supplierResult = useSWR<SupplierInfo[]>("/v1/supplier", fetcher, {
+    refreshInterval: 10000,
+  });
+
+  if (error && error?.response?.status === 401) {
+    console.log('invalid auth, -> login')
+    router.push("/login");
+  }
+  
+  const isError = error || creditResult.error || supplierResult.error
+  const isLoading = !isError && (!data || !creditResult.data || !supplierResult.data)
 
   return {
     suppliers: supplierResult.data,
