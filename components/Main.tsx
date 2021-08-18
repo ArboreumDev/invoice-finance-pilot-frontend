@@ -103,13 +103,9 @@ const getInvoices = () => {
     refreshInterval: 10000,
   });
 
-  if (error && error?.response?.status === 401) {
-    console.log('invalid auth, -> login')
-    router.push("/login");
-  }
-  
   const isError = error || creditResult.error || supplierResult.error
-  const isLoading = !isError && (!data || !creditResult.data || !supplierResult.data)
+  const isLoading = !isError && (!data || !creditResult.data || !supplierResult.data) || error?.response?.status === 401
+
 
   return {
     suppliers: supplierResult.data,
