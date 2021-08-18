@@ -87,6 +87,11 @@ const getInvoices = () => {
     const supplierResult = useSWR<SupplierInfo[]>("/v1/supplier", fetcher, {
       refreshInterval: 10000,
     });
+
+    if (error && error?.response?.status === 401) {
+      window.localStorage.removeItem("arboreum:info")
+      router.push("/login");
+    }
     
     const isError = error || creditResult.error || supplierResult.error
     const isLoading = !isError && (!data || !creditResult.data || !supplierResult.data)
