@@ -196,7 +196,11 @@ const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
                                     <Input width="300px" value={loanId} placeholder={"enter liquiloans loan ID "} size="sm" onChange={(e) => setLoanId(e.target.value)}/>
                                 </>
                             )}
-                            <Button width="150px" onClick={() => changeStatus(invoice.invoiceId)}>Change Status</Button>
+                            <Button 
+                                disabled={!newStatus || (newStatus === "FINANCED" && !loanId)}
+                                width="150px" 
+                                onClick={() => changeStatus(invoice.invoiceId)}
+                            >Change Status</Button>
                         </HStack>
                     </li>
                     ))

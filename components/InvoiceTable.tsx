@@ -66,7 +66,10 @@ const InvoiceTable = (props: Props) => {
         Header: " Status",
         accessor: "status",
       },
-
+      {
+        Header: " LoanId",
+        accessor: "paymentDetails.loanId",
+      },
       {
         Header: "Due Date",
         accessor: "shortDate",
