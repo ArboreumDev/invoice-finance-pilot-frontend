@@ -22,11 +22,10 @@ const SupplierTable = (props: { suppliers: SupplierInfo[] }) => {
           ...s,
           creditlineSize: currencyToString(s.creditlineSize),
           edit: <ModTermsModal 
-          supplierId={s.id} name={s.name} apr={s.defaultTerms.apr}
-          tenor={s.defaultTerms.tenorInDays} creditline={s.creditlineSize}
-          creditlineId={s.creditlineId}
-
-                                         />,
+            supplierId={s.id} name={s.name} apr={s.defaultTerms.apr}
+            tenor={s.defaultTerms.tenorInDays} creditline={s.creditlineSize}
+            creditlineId={s.creditlineId}
+          />,
           }
       }),
     [props.suppliers]

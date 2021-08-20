@@ -173,7 +173,6 @@ export const ModTermsModal = (props: {
             }
         }        
         setLoading(true)
-        console.log('up', params)
         axiosInstance.post(endpoint, {update: params})
         .then((result)=>{
             setLoading(false)
