@@ -11,6 +11,7 @@ import TermsBox from "../common/TermsBox";
 import {TuskerSearch} from "../common/TuskerSearch";
 import {ChakraModal} from "../common/ChakraModal";
 import {error, success} from "../common/popups";
+import CreditlineIdBox from "../supplier/CreditlineIdBox";
 
 
 interface WhitelistInput extends SupplierUpdateInput {
@@ -25,6 +26,7 @@ interface SupplierUpdateInput {
     supplierId: string
     tenorInDays: number
     apr: number
+    creditlineId: number
 }
 
 
@@ -134,36 +136,45 @@ export const AddWhitelistModal = (props: {suppliers: SupplierInfo[]} ) => {
         </>
     )}
 
-export const ModTermsModal = (props: {name: string, purchaserId?: string, supplierId: string, apr: number, tenor: number,
-    creditline: number}) => {
+export const ModTermsModal = (props: {
+    name: string, purchaserId?: string, supplierId: string, apr: number, tenor: number,
+    creditline: number, creditlineId?: string 
+}) => {
     const [newApr, setNewApr] = useState(null)
     const [newCreditLimit, setNewCreditLimit] = useState(null)
+    const [newCreditlineId, setNewCreditlineId] = useState(null)
     const [newTenor, setNewTenor] = useState(null)
     const [loading, setLoading] = useState(false)
     const [close, setClose] = useState(false)
 
 
     const update = () => {
-        const endpoint = props.purchaserId ? "/v1/whitelist/update" : "/v1/supplier/update"
-        const input = props.purchaserId ? {
-                update: {
-                    supplierId: props.supplierId,
-                    purchaserId: props.purchaserId,
-                    apr: newApr !== null ? newApr : props.apr,
-                    tenorInDays: newTenor ? newTenor : props.tenor,
-                    creditlineSize: newCreditLimit !== null ? newCreditLimit : props.creditline
-                } as WhitelistUpdateInput
-        } :
-        {
-                update: {
-                    supplierId: props.supplierId,
-                    apr: newApr !== null ? newApr : props.apr,
-                    tenorInDays: newTenor ? newTenor : props.tenor,
-                    creditlineSize: newCreditLimit !== null ? newCreditLimit : props.creditline
-                    } as SupplierUpdateInput
-        }
+        const isWhitelistUpdate = props.purchaserId
+        const endpoint = isWhitelistUpdate ? "/v1/whitelist/update" : "/v1/supplier/update"
+        let params
+        if (isWhitelistUpdate) {
+            params = {
+                supplierId: props.supplierId,
+                purchaserId: props.purchaserId,
+                apr: newApr !== null ? newApr : props.apr,
+                tenorInDays: newTenor ? newTenor : props.tenor,
+                creditlineSize: newCreditLimit !== null ? newCreditLimit : props.creditline
+            } as WhitelistUpdateInput
+        } else {
+            params = {
+                supplierId: props.supplierId,
+                apr: newApr !== null ? newApr : props.apr,
+                tenorInDays: newTenor ? newTenor : props.tenor,
+                creditlineSize: newCreditLimit !== null ? newCreditLimit : props.creditline,
+                creditlineId: newCreditlineId
+            } as SupplierUpdateInput
+            if (newCreditlineId) {
+                params.creditlineId = newCreditlineId
+            }
+        }        
         setLoading(true)
-        axiosInstance.post(endpoint, input)
+        console.log('up', params)
+        axiosInstance.post(endpoint, {update: params})
         .then((result)=>{
             setLoading(false)
             if (result.status === 200) {
@@ -184,14 +195,25 @@ export const ModTermsModal = (props: {name: string, purchaserId?: string, suppli
           buttonText={"edit"}
           heading={"Modify Credit Terms for " + props.name}
           body={
-              <TermsBox defaultApr={props.apr} setNewApr={setNewApr}
+                <>
+                    <TermsBox 
+                        defaultApr={props.apr} setNewApr={setNewApr}
                         defaultCreditLimit={props.creditline}
                         setNewCreditLimit={setNewCreditLimit} defaultTenor={props.tenor}
-                        setNewTenor={setNewTenor} />
+                        setNewTenor={setNewTenor} 
+                    />
+                    {/* if this is for the supplier, also allow updating the supplierCreditlineID */}
+                    {!props.purchaserId && (
+                        <CreditlineIdBox 
+                            currentCreditlineId={newCreditlineId}
+                            setCreditlineID={setNewCreditlineId}
+                        />
+                    )}
+                </>
           }
           footer={
                <Button colorScheme="teal" mr={3} onClick={update}
-                disabled={!(newApr || newTenor || newCreditLimit)}
+                disabled={!(newApr || newTenor || newCreditLimit || (!props.purchaserId && newCreditlineId))}
                 >
                     {!loading ? "Submit" : <Spinner />}
                 </Button>

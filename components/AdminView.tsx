@@ -21,6 +21,7 @@ const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
     const [newOrderValue, setNewOrderValue] = useState(2000)
     const [newValue, setNewValue] = useState("0")
     const [newStatus, setNewStatus] = useState("")
+    const [loanId, setLoanId] = useState("")
     const [supplier, setSupplier] = useState({id: "", name: ""})
     const [newOrderReceiver, setNewOrderReceiver] = useState("")
     const [filterId, setFilterId] = useState("")
@@ -84,7 +85,7 @@ const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
         const msg = "" + invoiceId + "->" + newValue
         // alert(msg)
         try {
-            const res = await axiosInstance.post("/v1/test/update/status/"+invoiceId+"/"+newStatus)
+            const res = await axiosInstance.post("/v1/test/update/status/"+invoiceId+"/"+newStatus +'/'+loanId)
             if (res.status === 200) {
                 setNewStatus("")
                 alert("Updated")
@@ -190,6 +191,11 @@ const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
                                         ))}
                                 </Select>
                             </Box>
+                            { newStatus == "FINANCED" && (
+                                <>
+                                    <Input width="300px" value={loanId} placeholder={"enter liquiloans loan ID "} size="sm" onChange={(e) => setLoanId(e.target.value)}/>
+                                </>
+                            )}
                             <Button width="150px" onClick={() => changeStatus(invoice.invoiceId)}>Change Status</Button>
                         </HStack>
                     </li>

@@ -21,19 +21,28 @@ const SupplierTable = (props: { suppliers: SupplierInfo[] }) => {
         return {
           ...s,
           creditlineSize: currencyToString(s.creditlineSize),
-          edit: <ModTermsModal supplierId={s.id} name={s.name} apr={s.defaultTerms.apr}
-                                         tenor={s.defaultTerms.tenorInDays} creditline={s.creditlineSize}
+          edit: <ModTermsModal 
+          supplierId={s.id} name={s.name} apr={s.defaultTerms.apr}
+          tenor={s.defaultTerms.tenorInDays} creditline={s.creditlineSize}
+          creditlineId={s.creditlineId}
+
                                          />,
           }
       }),
     [props.suppliers]
   )
+  console.log('s', props.suppliers)
 
   const columns = React.useMemo(
     () => [
       {
         Header: "Supplier Name",
         accessor: "name",
+        disableFilters: true
+      },
+      {
+        Header: "Creditline ID",
+        accessor: "creditlineId",
         disableFilters: true
       },
       {

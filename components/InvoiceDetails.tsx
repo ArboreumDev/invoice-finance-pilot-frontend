@@ -40,7 +40,7 @@ interface Props {
 
 
 
-export const InvoiceDetails = ({invoice}) => {
+export const InvoiceDetails = ({invoice}: Props) => {
     const { isOpen, onOpen, onClose } = useDisclosure()
     return (
       <>
@@ -66,6 +66,10 @@ export const InvoiceDetails = ({invoice}) => {
                             <Tr>
                                 <Td>order ID</Td>
                                 <Td isNumeric>{invoice.orderId}</Td>
+                            </Tr>
+                            <Tr>
+                                <Td>loan ID</Td>
+                                <Td isNumeric>{invoice.paymentDetails.loanId}</Td>
                             </Tr>
                             <Tr>
                                 <Td>invoice value</Td>
