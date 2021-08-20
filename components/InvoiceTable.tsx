@@ -1,9 +1,45 @@
-import { Stack, Box, Heading, Center, Table, Thead, Tbody, Tr, Th, Td, chakra } from "@chakra-ui/react"
+import { Select, Stack, Box, Heading, Center, Table, Thead, Tbody, Tr, Th, Td, chakra } from "@chakra-ui/react"
 import { TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons"
 import { useTable, useSortBy, useFilters} from "react-table"
 import {Invoice} from "./Main"
 import React, { useMemo, useEffect, useState } from "react";
 import {InvoiceDetails} from "./InvoiceDetails"
+
+
+function SelectColumnFilter({
+  column: { filterValue, setFilter, preFilteredRows, id },
+}) {
+  // Calculate the options for filtering
+  // using the preFilteredRows
+  console.log('dfddfd', filterValue, preFilteredRows)
+  const options = React.useMemo(() => {
+    const options = new Set()
+    preFilteredRows.forEach(row => {
+      console.log('r', row)
+      options.add(row.values[id])
+    })
+    return [...options.values()]
+  }, [id, preFilteredRows])
+
+   // Render a multi-select box
+  return (
+    <Select
+      value={filterValue}
+      onChange={e => {
+        setFilter(e.target.value || undefined)
+      }}
+    >
+      <option value="">All</option>
+      {options.map((option, i) => (
+        <option key={i} value={option}>
+          {option}
+        </option>
+      ))}
+    </Select>
+    // <div>TODO</div>
+  )
+}
+
 
 
 export interface SupplierMap { [key: string]: string; }
@@ -35,7 +71,7 @@ const InvoiceTable = (props: Props) => {
           shortDate: i.paymentDetails.collectionDate ? i.paymentDetails.collectionDate.slice(0,10) : ""
         }
       }),
-    [props.invoices, ]
+    [props.invoices]
   )
 
   const columns = React.useMemo(
@@ -43,40 +79,50 @@ const InvoiceTable = (props: Props) => {
       {
         Header: "Order Id",
         accessor: "orderId",
+        disableFilters: true
       },
       {
         Header: "Receiver",
         accessor: "receiverInfo.name",
+        disableFilters: true
       },
       {
         Header: "Supplier",
         accessor: "supplierName",
+        disableFilters: true
       },
       {
         Header: "Invoice Amount",
         accessor: "amount",
         // isNumeric: true
-        sortDescFirst: true
+        sortDescFirst: true,
+        disableFilters: true
       },
       {
         Header: "Shipment Status",
         accessor: "shippingStatus",
+        disableFilters: true
       },
       {
         Header: " Status",
         accessor: "status",
+        disableFilters: true
       },
       {
-        Header: " LoanId",
+        Header: " Loan Id",
         accessor: "paymentDetails.loanId",
+        Filter: SelectColumnFilter,
+        filter: "includes",
       },
       {
         Header: "Due Date",
         accessor: "shortDate",
+        disableFilters: true
       },
       {
         Header: "Details",
         accessor: "details",
+        disableFilters: true
       },
     ],
     [],
@@ -107,6 +153,7 @@ const InvoiceTable = (props: Props) => {
                 {...column.getHeaderProps(column.getSortByToggleProps())}
                 isNumeric={column.isNumeric}
               >
+                <Box>
                 {column.render("Header")}
                 <chakra.span pl="4">
                   {column.isSorted ? (
@@ -117,6 +164,8 @@ const InvoiceTable = (props: Props) => {
                     )
                   ) : null}
                 </chakra.span>
+                </Box>
+                <Box>{column.canFilter ? column.render('Filter') : null}</Box>
               </Th>
             ))}
           </Tr>
