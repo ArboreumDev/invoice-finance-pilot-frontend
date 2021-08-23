@@ -9,6 +9,7 @@ import React, { useEffect, useState } from "react";
 import axiosInstance from "../utils/fetcher"
 import {Invoice, SupplierInfo} from "./Main"
 import {CreditSummary} from "./CreditlinesTable"
+import UpdateInvoiceRow from "./UpdateInvoiceRow"
 
 interface Props {
     invoices: Invoice[]
@@ -19,9 +20,6 @@ interface Props {
 
 const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
     const [newOrderValue, setNewOrderValue] = useState(2000)
-    const [newValue, setNewValue] = useState("0")
-    const [newStatus, setNewStatus] = useState("")
-    const [loanId, setLoanId] = useState("")
     const [supplier, setSupplier] = useState({id: "", name: ""})
     const [newOrderReceiver, setNewOrderReceiver] = useState("")
     const [filterId, setFilterId] = useState("")
@@ -64,14 +62,13 @@ const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
         // }
     }
 
-    const changeValue = async (invoiceId) => {
-        const msg = "" + invoiceId + "->" + newValue
+    const changeValue = async (invoiceId, newValue) => {
+        // const msg = "" + invoiceId + "->" + newValue
         // alert(msg)
         try {
             const res = await axiosInstance.post("/v1/test/update/value/"+invoiceId+"/"+newValue)
             if (res.status === 200) {
                 alert("Updated")
-                setNewValue("")
             } else {
             alert("error")
             }
@@ -81,13 +78,13 @@ const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
         }
     }
 
-    const changeStatus = async (invoiceId) => {
-        const msg = "" + invoiceId + "->" + newValue
+    const changeStatus = async (invoiceId, newStatus, loanId = "") => {
+        // const msg = "" + invoiceId + "->" + newValue
+        const url = `/v1/test/update/status/${invoiceId}/${newStatus}${loanId ? "/?loan_id="+loanId : ""}`
         // alert(msg)
         try {
-            const res = await axiosInstance.post("/v1/test/update/status/"+invoiceId+"/"+newStatus +'/'+loanId)
+            const res = await axiosInstance.post(url)
             if (res.status === 200) {
-                setNewStatus("")
                 alert("Updated")
             } else {
             alert("error")
@@ -176,31 +173,7 @@ const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
                 {invoices && filteredInvoices().map((invoice: Invoice) => (
                     <li key={"inv" + invoice.invoiceId}>
                         <HStack padding="1" width="100%">
-                            <Text >{invoice.orderId}     </Text>
-                            {/* <Button width="290px" disabled onClick={() => markDelivered(invoice.invoiceId)}>deliver</Button> */}
-                            <Input width="300px" value={newValue} placeholder={"current value: " +invoice.value} size="sm" onChange={(e) => setNewValue(e.target.value)}/>
-                            <Button width="150px" onClick={() => changeValue(invoice.invoiceId)}>
-                                <Tooltip label="Note that this only changes the value in the arboreum DB and not in the Tusker data">
-                                Change Value
-                                </Tooltip>
-                            </Button>
-                            <Box> 
-                                <Select value={newStatus} onChange={(e)=> setNewStatus(e.target.value)} placeholder={"current status: " + invoice.status}>
-                                    {possibleStatus.map((s) => (
-                                        <option value={s}> {s} </option>
-                                        ))}
-                                </Select>
-                            </Box>
-                            { newStatus == "FINANCED" && (
-                                <>
-                                    <Input width="300px" value={loanId} placeholder={"enter liquiloans loan ID "} size="sm" onChange={(e) => setLoanId(e.target.value)}/>
-                                </>
-                            )}
-                            <Button 
-                                disabled={!newStatus || (newStatus === "FINANCED" && !loanId)}
-                                width="150px" 
-                                onClick={() => changeStatus(invoice.invoiceId)}
-                            >Change Status</Button>
+                            <UpdateInvoiceRow changeStatus={changeStatus} changeValue={changeValue} invoice={invoice} />
                         </HStack>
                     </li>
                     ))
