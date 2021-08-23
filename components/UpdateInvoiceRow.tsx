@@ -7,27 +7,43 @@ import {
 import React, { useEffect, useState } from "react";
 import {Invoice} from "./Main"
 
+
 interface Props {
     invoice: Invoice
-    changeValue: React.Dispatch<React.SetStateAction<any>>,
-    changeStatus: React.Dispatch<React.SetStateAction<any>>
+    changeValue: any
+    changeStatus: any
 }
 
 const possibleStatus = ["FINANCED", "DISBURSAL_REQUESTED", "REPAID", "INITIAL"]
+const moneyStates = ["FINANCED", "REPAID"]
 
 const UpdateInvoiceRow = ({invoice, changeStatus, changeValue}: Props) => {
     const [loanId, setLoanId] = useState("")
+    const [txId, setTxId] = useState("")
     const [newValue, setNewValue] = useState("")
     const [newStatus, setNewStatus] = useState("")
     
     const resetState = () => {
         setLoanId("")
+        setTxId("")
         setNewValue("")
         setNewStatus("")
     }
 
+    /**
+     * prevent incomplete updates
+     */
+    const allowStatusUpdate = () => {
+        if (!newStatus) return false
+        if (newStatus == 'FINANCED' && loanId && txId) return true
+        if (newStatus == 'REPAID' && txId) return true
+        return false
+    }
+
     return (
         <>
+            <Text>{invoice.orderId}</Text>
+            <Text>({invoice.paymentDetails.loanId})</Text>
             <Input 
                 width="300px" 
                 value={newValue}
@@ -61,13 +77,19 @@ const UpdateInvoiceRow = ({invoice, changeStatus, changeValue}: Props) => {
                             <Input width="300px" value={loanId} placeholder={"enter liquiloans loan ID "} size="sm" onChange={(e) => setLoanId(e.target.value)}/>
                         </>
                     )}
+                    { moneyStates.includes(newStatus) && (
+                        <>
+                            <Input width="300px" value={txId} placeholder={"enter transaction ID "} size="sm" onChange={(e) => setTxId(e.target.value)}/>
+                        </>
+                    )}
+ 
                 </VStack>
             </Box>
             { newStatus && (
                 <Button 
-                    disabled={!newStatus || (newStatus === "FINANCED" && !loanId)}
+                    disabled={!allowStatusUpdate()}
                     width="150px" 
-                    onClick={() => {changeStatus(invoice.invoiceId, newStatus, loanId) ; resetState()}}
+                    onClick={() => {changeStatus(invoice.invoiceId, newStatus, loanId, txId) ; resetState()}}
                 >Change Status
                 </Button>
             )}

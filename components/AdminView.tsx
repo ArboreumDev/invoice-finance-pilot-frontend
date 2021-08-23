@@ -22,7 +22,8 @@ const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
     const [newOrderValue, setNewOrderValue] = useState(2000)
     const [supplier, setSupplier] = useState({id: "", name: ""})
     const [newOrderReceiver, setNewOrderReceiver] = useState("")
-    const [filterId, setFilterId] = useState("")
+    const [orderRefFilter, setOrderRefFilter] = useState("")
+    const [loanIdFilter, setLoanIdFilter] = useState("")
 
     const updateDB = async () => {
       const res = await axiosInstance.post("/v1/invoice/update")
@@ -66,7 +67,7 @@ const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
         // const msg = "" + invoiceId + "->" + newValue
         // alert(msg)
         try {
-            const res = await axiosInstance.post("/v1/test/update/value/"+invoiceId+"/"+newValue)
+            const res = await axiosInstance.post("/v1/test/update/value/"+invoiceId+"/"+newValue+"/")
             if (res.status === 200) {
                 alert("Updated")
             } else {
@@ -78,9 +79,9 @@ const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
         }
     }
 
-    const changeStatus = async (invoiceId, newStatus, loanId = "") => {
+    const changeStatus = async (invoiceId, newStatus, loanId = "", txId = "") => {
         // const msg = "" + invoiceId + "->" + newValue
-        const url = `/v1/test/update/status/${invoiceId}/${newStatus}${loanId ? "/?loan_id="+loanId : ""}`
+        const url = `/v1/test/update/status/${invoiceId}/${newStatus}${loanId ? "/?loan_id="+loanId : ""}${txId ? "&tx_id="+txId : ""}`
         // alert(msg)
         try {
             const res = await axiosInstance.post(url)
@@ -118,7 +119,11 @@ const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
 
 
     const filteredInvoices = () => {
-        if (filterId) return invoices.filter(i => i.orderId === filterId)
+        if (loanIdFilter || orderRefFilter) {
+            return invoices.filter(
+                i => orderRefFilter ? i.orderId === orderRefFilter : true).filter(
+                    i => loanIdFilter ? i.paymentDetails.loanId === loanIdFilter : true)
+        }
         else return invoices
     }
 
@@ -148,7 +153,7 @@ const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
                     <Select onChange={(e)=> setNewOrderReceiver(e.target.value)} placeholder="Select Receiver">
                         {Object.values(creditInfo[supplier.id]).map((c) => (
                             // <option value={c}> {c.info.name} </option>
-                            <option value={c.info.id}> {c.info.name} ({c.info.city}, {c.info.phone}) </option>
+                            <option key={c} value={c.info.id}> {c.info.name} ({c.info.city}, {c.info.phone}) </option>
                             ))}
                     </Select>
                     </Box>
@@ -164,10 +169,14 @@ const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
                 <Heading size="sm" alignContent="left">Change existing Invoices:</Heading>
             <HStack>
                 <Input 
-                width="300px" placeholder="search for order ID" onChange={(e)=>setFilterId(e.target.value)} 
-                value={filterId}
+                    width="300px" placeholder="search for a specific order ref no" onChange={(e)=>setOrderRefFilter(e.target.value)} 
+                    value={orderRefFilter}
                 />
-                <Button width="150px" onClick={()=>setFilterId("")}>Clear</Button>
+                <Input 
+                    width="300px" placeholder="filter by loanID" onChange={(e)=>setLoanIdFilter(e.target.value)} 
+                    value={loanIdFilter}
+                />
+                <Button width="150px" onClick={()=>{setOrderRefFilter(""), setLoanIdFilter("")}}>Clear</Button>
             </HStack>
                 <ul>
                 {invoices && filteredInvoices().map((invoice: Invoice) => (

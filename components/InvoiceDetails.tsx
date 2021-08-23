@@ -42,6 +42,7 @@ interface Props {
 
 export const InvoiceDetails = ({invoice}: Props) => {
     const { isOpen, onOpen, onClose } = useDisclosure()
+    console.log('det', invoice)
     return (
       <>
         <Button onClick={onOpen}>...</Button>
@@ -81,9 +82,14 @@ export const InvoiceDetails = ({invoice}: Props) => {
                                 <Td isNumeric>{invoice.status}</Td>
                             </Tr>
 
-                            <Tr>
+                            {/* <Tr>
                                 <Td>request reference number</Td>
                                 <Td isNumeric>{invoice.paymentDetails.requestId}</Td>
+                            </Tr> */}
+
+                            <Tr>
+                                <Td>disbursal transaction ID </Td>
+                                <Td isNumeric>{invoice.paymentDetails.disbursalTransactionId}</Td>
                             </Tr>
 
                             <Tr>
