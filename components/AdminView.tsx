@@ -67,7 +67,7 @@ const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
         // const msg = "" + invoiceId + "->" + newValue
         // alert(msg)
         try {
-            const res = await axiosInstance.post("/v1/test/update/value/"+invoiceId+"/"+newValue+"/")
+            const res = await axiosInstance.post("/v1/admin/update/value/"+invoiceId+"/"+newValue+"/")
             if (res.status === 200) {
                 alert("Updated")
             } else {
@@ -81,7 +81,7 @@ const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
 
     const changeStatus = async (invoiceId, newStatus, loanId = "", txId = "") => {
         // const msg = "" + invoiceId + "->" + newValue
-        const url = `/v1/test/update/status/${invoiceId}/${newStatus}${loanId ? "/?loan_id="+loanId : ""}${txId ? "&tx_id="+txId : ""}`
+        const url = `/v1/admin/update/status/${invoiceId}/${newStatus}${loanId ? "/?loan_id="+loanId : ""}${txId ? "&tx_id="+txId : ""}`
         // alert(msg)
         try {
             const res = await axiosInstance.post(url)
