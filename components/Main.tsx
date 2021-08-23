@@ -40,6 +40,7 @@ export interface ReceiverInfo {
   phone: string
   city: string
   terms: Terms
+  locationId: string
 }
 
 export interface SupplierInfo {

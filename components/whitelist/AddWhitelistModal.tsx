@@ -70,6 +70,7 @@ export const AddWhitelistModal = (props: {suppliers: SupplierInfo[]} ) => {
                     supplierId: supplierId,
                     purchaser: {
                         id: receiverInfo.id,
+                        locationId: receiverInfo.locationId,
                         name: receiverInfo.name,
                         phone: receiverInfo.phone,
                         city: receiverInfo.city,
