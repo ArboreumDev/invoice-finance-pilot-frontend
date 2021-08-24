@@ -34,9 +34,11 @@ const UpdateInvoiceRow = ({invoice, changeStatus, changeValue}: Props) => {
      * prevent incomplete updates
      */
     const allowStatusUpdate = () => {
+        console.log('nn', !newStatus)
         if (!newStatus) return false
         if (newStatus == 'FINANCED' && loanId && txId) return true
         if (newStatus == 'REPAID' && txId) return true
+        if (newStatus == "INITIAL") return true
         return false
     }
 
