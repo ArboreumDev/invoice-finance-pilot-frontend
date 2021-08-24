@@ -114,29 +114,13 @@ const AllocatedAsset = (title: string, percentage: number, color?: string) => (
 )
 interface VendorAccountInfoProps {
   invoices: Invoice[],
-  isLoading: boolean,
-  isError: any,
   creditInfo: CreditSummary,
   suppliers: SupplierInfo[]
 }
 
 
-const AccountInfo = ({invoices, isLoading, isError, creditInfo, suppliers}: VendorAccountInfoProps) => {
+const AccountInfo = ({invoices, creditInfo, suppliers}: VendorAccountInfoProps) => {
   const [view, setView] = useState("tusker")
-
-  if (isLoading) {
-    return <Heading as="h2" size="lg" fontWeight="400" color="gray.500">
-        <Center>
-          <Spinner />
-        </Center>
-      </Heading>
-  }
-
-  if (isError) {
-    return <Heading as="h2" size="lg" fontWeight="400" color="gray.500">
-        There was an error
-      </Heading>
-  }
 
   const creditLines = Object.values(creditInfo[view])
 
