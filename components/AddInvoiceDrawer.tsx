@@ -153,20 +153,11 @@ function AddInvoiceDrawer() {
                         </Text>
                         <Divider />
 
-                        { order.orderRef && (
-                          <ConfirmInvoiceImageModal 
-                            invoiceId={order.invoiceId}
-                            orderRef={order.orderRef}
-                            invoiceDocId={order.invoiceDocId}
-                            setConfirmation={setConfirmed}
-                          />
-                        )}
-
                         {/* <p> I have uploaded a readable photo of the invoice with the ID */}
                           {/* <b> {order.invoiceId} </b> */}
                           {/* onto the tusker-backend */}
                         {/* </p> */}
-                        <Switch isChecked={confirmed}/>
+                        <Switch isChecked={confirmed} onChange={() => setConfirmed(!confirmed)}/>
                         <Divider />
 
                     </VStack>
@@ -179,7 +170,10 @@ function AddInvoiceDrawer() {
               <Button variant="outline" mr={3} onClick={onClose}>
                 Cancel
               </Button>
-              <Button disabled={!confirmed} colorScheme="teal" onClick={handleFinance}>Finance</Button>
+              <Button 
+              // disabled={!confirmed} 
+              colorScheme="teal" 
+              onClick={handleFinance}>Finance</Button>
             </DrawerFooter>
           </DrawerContent>
         </DrawerOverlay>

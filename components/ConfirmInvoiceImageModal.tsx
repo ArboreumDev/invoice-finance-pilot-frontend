@@ -1,6 +1,7 @@
 import {
     Box,
     Select,
+    Image,
     Spinner,
     Text,
     Button,
@@ -10,65 +11,72 @@ import axiosInstance from "./../utils/fetcher"
 import {ChakraModal} from "./common/ChakraModal";
 import {error, success} from "./common/popups";
 import axios from 'axios';
+import {Invoice} from "./Main"
+import { InvoiceDetails } from "./InvoiceDetails";
 
 interface Props {
-  invoiceId: string,
-  orderRef: string,
-  setConfirmation: React.Dispatch<React.SetStateAction<any>>,
-  invoiceDocId: string,
+  invoice: Invoice,
 }
 
-
-const TUSKER_S3_BUCKET_URL = "https://fleet-non-prod.s3.amazonaws.com/consgt"
-const TUSKER_REFERER_URL = "https://tusker-staging.logistimo.com/"
 
 export const ConfirmInvoiceImageModal = (props: Props) => {
     const [fetching, setFetching] = useState(true)
     const [error, setError] = useState(false)
+    const [updating, setUpdating] = useState(false)
     const [image, setImage] = useState(null)
     const [close, setClose] = useState(false)
 
     useEffect(() => {
-        props.setConfirmation(false)
-        // all illegal hacks:
-        // window.history.replaceState(null, '', TUSKER_REFERER_URL)
-
-        // delete window.document.referrer;
-        // window.document.__defineGetter__('referrer', function () {
-        //     return "yoururl.com";
-        // });
-        // Object.defineProperty(window.document, "referrer", {get : function(){ return TUSKER_REFERER_URL }});
-
-        axios.get(
-            `${TUSKER_S3_BUCKET_URL}/${props.invoiceDocId}`, 
-            {
-                headers: {Referer: TUSKER_REFERER_URL}
+        async function getImage () {
+            setFetching(true)
+            const url = `/v1/invoice/image/${props.invoice.invoiceId}`
+            console.log('fetching', url)
+            const response = await axiosInstance.get(url, {responseType: 'blob'})
+            if (response.error) {
+                setError(true)
+                setFetching(false)
+            } else {
+                const imageSrc = URL.createObjectURL(response.data)
+                setImage(imageSrc)
+                setFetching(false)
             }
-        ).then(response => {
-            setFetching(false)
-            console.log(response)
-            setImage("TODO")
-        }).catch(err => {
-            console.log(err)
-            setError(true)
-        })
-    }, [])
+        }
+        getImage()
+    }, [props.invoice])
 
-    const confirm = () => {
-        props.setConfirmation(true)
+    const updateStatus = (newStatus) => {
+        setUpdating(true)
+        updateVerificationStatus(newStatus)
+        setUpdating(false)
         setClose(true)
-        // setClose(false)
+        setClose(false)
+    }
+
+    const updateVerificationStatus = async (newStatus) => {
+        // alert(msg)
+        const update = { newStatus: newStatus }
+        try {
+            const res = await axiosInstance.post( `/v1/test/update/verification/${props.invoice.invoiceId}`, {update})
+            if (res.status === 200) {
+                alert("Updated")
+            } else {
+            alert("error")
+            }
+        } catch (err) {
+            console.log(err)
+            alert(err)
+        }
     }
 
 
     return (
       <ChakraModal
-          buttonText={"Verify uploaded invoice"}
-          heading={"Confirm invoice document for order " + props.orderRef}
+          buttonText={"change"}
+          heading={"Confirm invoice document for order " + props.invoice.orderId}
           body={
               <>
-                <Box>Please confirm that the uploaded invoice has this ID:</Box>
-                <Box> <b> {props.invoiceId} </b> </Box>
+                <Box>Please confirm that the uploaded invoice is signed and has this ID:</Box>
+                <Box> <b> {props.invoice.invoiceId} </b> </Box>
                 {error && (
                     <Text>Error</Text>
                 )}
@@ -76,18 +84,31 @@ export const ConfirmInvoiceImageModal = (props: Props) => {
                     <Spinner />
                 )}
                 {image && (
-                    <div>TODO</div> 
+                    <div>
+                        <Image 
+                            src={image}
+                            alt={'invoice for order'+ props.invoice.orderId}
+                        />
+                    </div> 
                 )}
             </>
           }
           footer={
+              <>
                <Button 
-                colorScheme="teal" mr={3} onClick={confirm}
-                // disabled={error || fetching} 
-                // disabled={error || fetching} 
+                colorScheme="orange" mr={3} onClick={() => updateStatus('INVALID')}
+                disabled={error || fetching} 
                 >
-                    Confirm Invoice!
+                    {updating ? <Spinner /> : "Flag as Invalid"  }
                 </Button>
+
+               <Button 
+                colorScheme="teal" mr={3} onClick={() => updateStatus('VALID')}
+                disabled={error || fetching} 
+                >
+                    {updating ? <Spinner /> : "Confirm Invoice!"  }
+                </Button>
+                </>
           }
           close={close} />
     )
