@@ -97,6 +97,8 @@ const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
         }
     }
 
+
+
     // const addToWhitelist = async (locationId) => {
     //     // const msg = "" + invoiceId + "->" + newValue
     //     // alert(msg)
