@@ -179,13 +179,6 @@ const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
                                 Change Value
                                 </Tooltip>
                             </Button>
-                            <Box> 
-                                <Select value={newStatus} onChange={(e)=> setNewStatus(e.target.value)} placeholder={"current status: " + invoice.status}>
-                                    {possibleStatus.map((s) => (
-                                        <option value={s}> {s} </option>
-                                        ))}
-                                </Select>
-                            </Box>
                             <Stack direction='row'>
                                 <Text> <Tooltip label="The uploaded image must match the invoice id and the invoice must be signed!">
                                         <Text fontSize="lg"> Verification Status: {invoiceToSymbol(invoice)} </Text>
@@ -193,12 +186,18 @@ const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
                                 </Text>
                                 <ConfirmInvoiceImageModal invoice={invoice} />
                             </Stack>
- 
+                            <Box> 
+                                <Select value={newStatus} onChange={(e)=> setNewStatus(e.target.value)} placeholder={"current status: " + invoice.status}>
+                                    {possibleStatus.map((s) => (
+                                        <option value={s}> {s} </option>
+                                        ))}
+                                </Select>
+                            </Box>
                             <Button 
                             width="150px" onClick={() => changeStatus(invoice.invoiceId)}
                             disabled={!newStatus || (newStatus=='FINANCED' && getVerificationStatus(invoice) !== 'valid' )}
                             >
-                                Update Invoice
+                                Update Status
                             </Button>
                         </HStack>
                     </li>

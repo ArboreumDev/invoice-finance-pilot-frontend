@@ -71,7 +71,7 @@ export const ConfirmInvoiceImageModal = (props: Props) => {
 
     return (
       <ChakraModal
-          buttonText={"change"}
+          buttonText={"verify"}
           heading={"Confirm invoice document for order " + props.invoice.orderId}
           body={
               <>
