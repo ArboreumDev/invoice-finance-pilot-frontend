@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 // Note: This code could be better, so I'd recommend you to understand how I solved and you could write yours better :)
 const AppBar = () => {
   const [userName, setUserName] = useState("")
+  const [loggedIn, setLoggedIn] = useState(false)
 
   const handleClick = () => {
     window.localStorage.removeItem("arboreum:info")
@@ -13,7 +14,12 @@ const AppBar = () => {
 
   useEffect(() => {
     setUserName(window.localStorage.getItem("arboreum:name"))
-  })
+
+    const token = window.localStorage.getItem("arboreum:info")
+    if (token && !loggedIn) {
+      setLoggedIn(true)
+    }
+  }, [])
 
     
 
@@ -41,12 +47,17 @@ const AppBar = () => {
     <Box flex="1"></Box>
     <HStack className="navButtons">
       <Text as="samp">User: {userName}</Text>
-      <Button size="lg" colorScheme="teal">
-        Log In
-      </Button>
-      <Button size="lg" colorScheme="teal" onClick={handleClick}>
-        Log Out
-      </Button>
+      { !loggedIn && (
+          <Button size="lg" colorScheme="teal">
+          Log In
+        </Button>
+      )}
+      {
+        loggedIn && (
+          <Button size="lg" colorScheme="teal" onClick={handleClick}>
+            Log Out
+          </Button>
+      )}
     </HStack>
   </Flex>
   </>
