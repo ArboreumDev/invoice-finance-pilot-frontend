@@ -12,22 +12,19 @@ import {TuskerSearch} from "../common/TuskerSearch";
 import {ChakraModal} from "../common/ChakraModal";
 import {error, success} from "../common/popups";
 
-interface Props {
-    suppliers: SupplierInfo[]
-}
 
-interface WhitelistInput extends SupplierUpdate {
+interface WhitelistInput extends SupplierUpdateInput {
     purchaser: ReceiverInfo
 }
-interface WhitelistUpdateInput extends SupplierUpdate {
+interface WhitelistUpdateInput extends SupplierUpdateInput {
     purchaserId: string
+    creditlineSize: number
 }
 
-interface SupplierUpdate {
+interface SupplierUpdateInput {
     supplierId: string
     tenorInDays: number
     apr: number
-    creditlineSize: number
 }
 
 
@@ -152,18 +149,18 @@ export const ModTermsModal = (props: {name: string, purchaserId?: string, suppli
                 update: {
                     supplierId: props.supplierId,
                     purchaserId: props.purchaserId,
-                    apr: newApr,
-                    tenorInDays: newTenor,
-                    creditlineSize: newCreditLimit
+                    apr: newApr !== null ? newApr : props.apr,
+                    tenorInDays: newTenor ? newTenor : props.tenor,
+                    creditlineSize: newCreditLimit !== null ? newCreditLimit : props.creditline
                 } as WhitelistUpdateInput
         } :
         {
                 update: {
                     supplierId: props.supplierId,
-                    apr: newApr,
-                    tenorInDays: newTenor,
-                    creditlineSize: newCreditLimit
-                    } as SupplierUpdate
+                    apr: newApr !== null ? newApr : props.apr,
+                    tenorInDays: newTenor ? newTenor : props.tenor,
+                    creditlineSize: newCreditLimit !== null ? newCreditLimit : props.creditline
+                    } as SupplierUpdateInput
         }
         setLoading(true)
         axiosInstance.post(endpoint, input)
