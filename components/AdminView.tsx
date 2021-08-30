@@ -139,7 +139,7 @@ const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
                     <Select onChange={(e)=> setSupplier(suppliers.filter(s => s.id == e.target.value)[0])} placeholder="Select Supplier">
                     { suppliers.map((s) => (
                         // eslint-disable-next-line react/jsx-key
-                        <option value={s.id}> {s.name} </option>
+                        <option key={s.id} value={s.id}> {s.name} </option>
                     ))}
                     </Select>
                 )}
@@ -148,7 +148,7 @@ const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
                     <Select onChange={(e)=> setNewOrderReceiver(e.target.value)} placeholder="Select Receiver">
                         {Object.values(creditInfo[supplier.id]).map((c) => (
                             // <option value={c}> {c.info.name} </option>
-                            <option key={c} value={c.info.id}> {c.info.name} ({c.info.city}, {c.info.phone}) </option>
+                            <option key={c.info.id} value={c.info.id}> {c.info.name} ({c.info.city}, {c.info.phone}) </option>
                             ))}
                     </Select>
                     </Box>

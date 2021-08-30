@@ -11,11 +11,9 @@ function SelectColumnFilter({
 }) {
   // Calculate the options for filtering
   // using the preFilteredRows
-  console.log('dfddfd', filterValue, preFilteredRows)
   const options = React.useMemo(() => {
     const options = new Set()
     preFilteredRows.forEach(row => {
-      console.log('r', row)
       options.add(row.values[id])
     })
     return [...options.values()]

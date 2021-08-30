@@ -30,7 +30,6 @@ const SupplierTable = (props: { suppliers: SupplierInfo[] }) => {
       }),
     [props.suppliers]
   )
-  console.log('s', props.suppliers)
 
   const columns = React.useMemo(
     () => [
