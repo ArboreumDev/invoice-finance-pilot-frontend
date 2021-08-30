@@ -2,13 +2,16 @@
 import {
   Box, Button, Divider, Heading, HStack, Text, VStack, Select,
   Input,
-  Tooltip,
+  Tooltip, Stack
 
 } from "@chakra-ui/react"
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../utils/fetcher"
 import {Invoice, SupplierInfo} from "./Main"
 import {CreditSummary} from "./CreditlinesTable"
+import {ConfirmInvoiceImageModal} from "./ConfirmInvoiceImageModal";
+import { QuestionIcon } from "@chakra-ui/icons";
+import { sign } from "crypto";
 
 interface Props {
     invoices: Invoice[]
@@ -23,6 +26,7 @@ const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
     const [newStatus, setNewStatus] = useState("")
     const [supplier, setSupplier] = useState({id: "", name: ""})
     const [newOrderReceiver, setNewOrderReceiver] = useState("")
+    const [newSignatureConfirmationResult, setNewSignatureConfirmationResult] = useState("")
     const [filterId, setFilterId] = useState("")
 
     const updateDB = async () => {
@@ -97,31 +101,23 @@ const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
         }
     }
 
-    // const addToWhitelist = async (locationId) => {
-    //     // const msg = "" + invoiceId + "->" + newValue
-    //     // alert(msg)
-    //     try {
-    //         const res = await axiosInstance.post("/v1/whitelist/new", {
-    //             supplierId: 
-    //         })
-    //         console.log(res.status)
-    //         if (res.status === 200) {
-    //             setNewStatus("")
-    //             alert("Updated")
-    //         } else {
-    //         alert("error")
-    //         }
-    //     } catch (err) {
-    //         console.log(err)
-    //         alert(err)
-    //     }
-    // }
-
-
 
     const filteredInvoices = () => {
         if (filterId) return invoices.filter(i => i.orderId === filterId)
         else return invoices
+    }
+
+    const getVerificationStatus = (invoice: Invoice) => {
+        if (invoice.paymentDetails.verificationResult.includes("INVALID")) return 'invalid'
+        if (invoice.paymentDetails.verificationResult.includes("VALID")) return 'valid'
+        return "unverified"
+    }
+
+    const invoiceToSymbol = (invoice: Invoice) => {
+        const status = getVerificationStatus(invoice)
+        if (status === 'unverified') return <Tooltip label={'unverified'}>❔❔❔</Tooltip>
+        if (status === 'valid') return <Tooltip label={'verified'}> ✅ </Tooltip>
+        else return <Tooltip label={'verified'}> ❌ </Tooltip>
     }
 
     const possibleStatus = ["FINANCED", "DISBURSAL_REQUESTED", "REPAID", "INITIAL"]
@@ -183,6 +179,13 @@ const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
                                 Change Value
                                 </Tooltip>
                             </Button>
+                            <Stack direction='row'>
+                                <Text> <Tooltip label="The uploaded image must match the invoice id and the invoice must be signed!">
+                                        <Text fontSize="lg"> Verification Status: {invoiceToSymbol(invoice)} </Text>
+                                    </Tooltip>
+                                </Text>
+                                <ConfirmInvoiceImageModal invoice={invoice} />
+                            </Stack>
                             <Box> 
                                 <Select value={newStatus} onChange={(e)=> setNewStatus(e.target.value)} placeholder={"current status: " + invoice.status}>
                                     {possibleStatus.map((s) => (
@@ -190,7 +193,12 @@ const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
                                         ))}
                                 </Select>
                             </Box>
-                            <Button width="150px" onClick={() => changeStatus(invoice.invoiceId)}>Change Status</Button>
+                            <Button 
+                            width="150px" onClick={() => changeStatus(invoice.invoiceId)}
+                            disabled={!newStatus || (newStatus=='FINANCED' && getVerificationStatus(invoice) !== 'valid' )}
+                            >
+                                Update Status
+                            </Button>
                         </HStack>
                     </li>
                     ))

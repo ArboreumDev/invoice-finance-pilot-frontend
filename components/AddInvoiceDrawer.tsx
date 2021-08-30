@@ -19,7 +19,8 @@ import {
     DrawerCloseButton,
     Stack, Button, useDisclosure, Input,
     VStack,
-    Heading
+    Heading,
+    OrderedList
   } from "@chakra-ui/react"
 import React, { useEffect, useState,  } from "react";
 import { principalToInterest } from "../lib/invoice";
@@ -32,7 +33,7 @@ const dummyOrder = {
     status: "",
     shippingStatus: "",
     invoiceId: "",
-    receiverInfo: {}
+    receiverInfo: {},
 }
 
 interface Props {
@@ -42,12 +43,13 @@ interface Props {
 function AddInvoiceDrawer() {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const btnRef = React.useRef()
-  const [isUploaded, setUploaded] = useState(false)
+  const [confirmed, setConfirmed] = useState(false)
   const [order, setOrder] = useState(dummyOrder)
 
   const getOrder = async (orderRef) => {
     await axiosInstance.get("/v1/order/" + orderRef)
       .then((result)=>{
+        console.log(result)
         success("Proceed to upload invoice.")
         setOrder({
             orderRef: result.data.orderId,
@@ -55,7 +57,7 @@ function AddInvoiceDrawer() {
             invoiceId: result.data.invoiceId,
             status: result.data.status,
             shippingStatus: result.data.shipping_status,
-            receiverInfo: result.data.receiverInfo
+            receiverInfo: result.data.receiverInfo,
         })
         // alert("Tusker has been notified.")
       })
@@ -64,7 +66,7 @@ function AddInvoiceDrawer() {
         if (err.message.includes("404")) {msg = "invoice not found"}
         if (err.message.includes("400")) {msg = "receveiver not whitelisted"}
         setOrder(dummyOrder)
-        setUploaded(false)
+        setConfirmed(false)
         error(msg) // TODO display different things by error status
       })
 }
@@ -77,7 +79,7 @@ function AddInvoiceDrawer() {
           success("Your request is being processed")
           onClose()
           setOrder(dummyOrder)
-          setUploaded(false)
+          setConfirmed(false)
 
       })
       .catch((err) => {
@@ -98,7 +100,7 @@ function AddInvoiceDrawer() {
         isOpen={isOpen}
         placement="right"
         lockFocusAcrossFrames={true}
-        onClose={() => { setOrder(dummyOrder); setUploaded(false); onClose }}
+        onClose={() => { setOrder(dummyOrder); setConfirmed(false); onClose }}
         finalFocusRef={btnRef}
         isCentered={true}
         size="sm"
@@ -148,12 +150,11 @@ function AddInvoiceDrawer() {
                         </Text>
                         <Divider />
 
-                        {/* <p>receiver: {JSON.stringify(order.receiverInfo)}</p> */}
-                        <p> I have uploaded a readable photo of the invoice with the ID
-                          <b> {order.invoiceId} </b>
-                          onto the tusker-backend
-                        </p>
-                        <Switch onChange={() => setUploaded(!isUploaded)}/>
+                        {/* <p> I have uploaded a readable photo of the invoice with the ID */}
+                          {/* <b> {order.invoiceId} </b> */}
+                          {/* onto the tusker-backend */}
+                        {/* </p> */}
+                        <Switch isChecked={confirmed} onChange={() => setConfirmed(!confirmed)}/>
                         <Divider />
 
                     </VStack>
@@ -166,7 +167,10 @@ function AddInvoiceDrawer() {
               <Button variant="outline" mr={3} onClick={onClose}>
                 Cancel
               </Button>
-              <Button disabled={!isUploaded} colorScheme="teal" onClick={handleFinance}>Finance</Button>
+              <Button 
+              // disabled={!confirmed} 
+              colorScheme="teal" 
+              onClick={handleFinance}>Finance</Button>
             </DrawerFooter>
           </DrawerContent>
         </DrawerOverlay>
