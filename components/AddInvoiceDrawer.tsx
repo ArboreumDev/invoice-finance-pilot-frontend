@@ -26,7 +26,6 @@ import React, { useEffect, useState,  } from "react";
 import { principalToInterest } from "../lib/invoice";
 import axiosInstance from "../utils/fetcher"
 import {error, success} from "./common/popups";
-import {ConfirmInvoiceImageModal} from "./ConfirmInvoiceImageModal";
 
 const dummyOrder = {
     orderRef: "",
@@ -35,7 +34,6 @@ const dummyOrder = {
     shippingStatus: "",
     invoiceId: "",
     receiverInfo: {},
-    invoiceDocId: ""
 }
 
 interface Props {
@@ -60,7 +58,6 @@ function AddInvoiceDrawer() {
             status: result.data.status,
             shippingStatus: result.data.shipping_status,
             receiverInfo: result.data.receiverInfo,
-            invoiceDocId: result.data.invoiceDocId
         })
         // alert("Tusker has been notified.")
       })
