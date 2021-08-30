@@ -83,7 +83,7 @@ const UpdateInvoiceRow = ({invoice, changeStatus, changeValue}: Props) => {
             <Box> 
                 <Stack direction='row'>
                     <Text> <Tooltip label="The uploaded image must match the invoice id and the invoice must be signed!">
-                            <Text fontSize="lg"> Verification Status: {invoiceToSymbol(invoice)} </Text>
+                            <Text fontSize="lg"> Invoice signed: {invoiceToSymbol(invoice)} </Text>
                         </Tooltip>
                     </Text>
                     <ConfirmInvoiceImageModal invoice={invoice} />
