@@ -9,25 +9,12 @@ import SupplierTable from "./supplier/SupplierTable";
 
 interface Props {
   invoices: Invoice[],
-  isLoading: boolean,
-  isError: Object
   creditInfo: any
   suppliers: SupplierInfo[]
 
 }
 
-const LenderDashboard = ({invoices, isLoading, isError, creditInfo, suppliers}: Props) => {
-  if (isLoading) {
-    return <Heading as="h2" size="lg" fontWeight="400" color="gray.500">
-        Loading
-      </Heading>
-  }
-  if (isError) {
-    console.log(isError)
-    return <Heading as="h2" size="lg" fontWeight="400" color="gray.500">
-        There was an error
-      </Heading>
-  }
+const LenderDashboard = ({invoices, creditInfo, suppliers}: Props) => {
 
   const [receiverId, setReceiver] = useState("")
   const [supplierId, setSupplier] = useState("")

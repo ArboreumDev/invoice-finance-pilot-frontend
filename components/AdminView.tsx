@@ -2,7 +2,7 @@
 import {
   Box, Button, Divider, Heading, HStack, Text, VStack, Select,
   Input,
-  Tooltip,
+  Tooltip, Stack
 
 } from "@chakra-ui/react"
 import React, { useEffect, useState } from "react";
@@ -10,6 +10,7 @@ import axiosInstance from "../utils/fetcher"
 import {Invoice, SupplierInfo} from "./Main"
 import {CreditSummary} from "./CreditlinesTable"
 import UpdateInvoiceRow from "./UpdateInvoiceRow"
+import { sign } from "crypto";
 
 interface Props {
     invoices: Invoice[]
@@ -24,6 +25,7 @@ const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
     const [newOrderReceiver, setNewOrderReceiver] = useState("")
     const [orderRefFilter, setOrderRefFilter] = useState("")
     const [loanIdFilter, setLoanIdFilter] = useState("")
+    const [filterId, setFilterId] = useState("")
 
     const updateDB = async () => {
       const res = await axiosInstance.post("/v1/invoice/update")
@@ -92,27 +94,6 @@ const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
             alert(err)
         }
     }
-
-    // const addToWhitelist = async (locationId) => {
-    //     // const msg = "" + invoiceId + "->" + newValue
-    //     // alert(msg)
-    //     try {
-    //         const res = await axiosInstance.post("/v1/whitelist/new", {
-    //             supplierId: 
-    //         })
-    //         console.log(res.status)
-    //         if (res.status === 200) {
-    //             setNewStatus("")
-    //             alert("Updated")
-    //         } else {
-    //         alert("error")
-    //         }
-    //     } catch (err) {
-    //         console.log(err)
-    //         alert(err)
-    //     }
-    // }
-
 
 
     const filteredInvoices = () => {

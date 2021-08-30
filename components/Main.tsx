@@ -1,4 +1,4 @@
-import { Heading, Center, Spinner, VStack, Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/react"
+import { Text, Heading, Center, Spinner, VStack, Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/react"
 import useSWR from "swr";
 import LenderDashboard from "./LenderDashboard";
 import WhitelistDashboard from "./whitelist/WhitelistDashboard";
@@ -9,6 +9,8 @@ import React, { useEffect, useState } from "react";
 import {fetcher} from "../utils/fetcher"
 import {CreditLineInfo, CreditSummary} from "./CreditlinesTable";
 import SupplierDashboard from "./supplier/SupplierDashboard";
+import axiosInstance from "../utils/fetcher"
+import { error } from "./common/popups";
 
 export enum ShipmentStatus {
   DEFAULTED = "DEFAULTED",
@@ -68,46 +70,72 @@ export interface Invoice {
   status: FinanceStatus;
   receiverInfo: ReceiverInfo
   paymentDetails: any
+
   // endDate: Date
 }
 
 const getInvoices = () => {
   const router = useRouter();
-  useEffect(function mount() {
+  useEffect(() => {
     const r = JSON.parse(window.localStorage.getItem("arboreum:info"))
     if (!r) {
       console.log("couldnt find user info!")
       router.push("/login");
+    } else {
+      // verify token by making a simple request
+      axiosInstance.get("/v1/credit")
+      .then(() => {
+        router.push("/")
+      })
+      .catch((error) => {
+        if (error.response?.status === 401) {
+          window.localStorage.removeItem("arboreum:info")
+          console.log("invalid token -> login again")
+          router.push("/login");
+        }
+      })
     }
-  })
-    const { data, error } = useSWR<Invoice[]>("/v1/invoice", fetcher, {
+  },[])
+
+  const { data, error } = useSWR<Invoice[]>("/v1/invoice", fetcher, {
       refreshInterval: 10000,
     });
-    const creditResult = useSWR<CreditSummary>("/v1/credit", fetcher, {
-      refreshInterval: 10000,
-    });
-    const supplierResult = useSWR<SupplierInfo[]>("/v1/supplier", fetcher, {
-      refreshInterval: 10000,
-    });
-    
-    const isError = error || creditResult.error || supplierResult.error
-    const isLoading = !isError && (!data || !creditResult.data || !supplierResult.data)
+  const creditResult = useSWR<CreditSummary>("/v1/credit", fetcher, {
+    refreshInterval: 10000,
+  });
+  const supplierResult = useSWR<SupplierInfo[]>("/v1/supplier", fetcher, {
+    refreshInterval: 10000,
+  });
+
+  const isError = error || creditResult.error || supplierResult.error
+  const isLoading = !isError && (!data || !creditResult.data || !supplierResult.data)
+  const errorData = error?.response || creditResult.error?.response || supplierResult.error?.response
+
 
   return {
     suppliers: supplierResult.data,
     invoices: data,
     creditInfo: creditResult.data,
     isError,
+    error: isError ? errorData : {},
     isLoading
   }
 };
 
 const Main = () => {
-  const { invoices, creditInfo, isLoading, isError, suppliers} = getInvoices();
+  const { invoices, creditInfo, suppliers, isLoading, isError, error } = getInvoices();
+  if (isError) console.log('err2', error)
   if (isLoading) {
     return <Heading as="h2" size="lg" fontWeight="400" color="gray.500">
         <Center>
           <Spinner />
+        </Center>
+      </Heading>
+  }
+  if (isError) {
+    return <Heading as="h2" size="lg" fontWeight="400" color="gray.500">
+        <Center>
+          <Text> Error: {error ? error.statusText : "Unknown"} </Text> 
         </Center>
       </Heading>
   }
@@ -130,8 +158,6 @@ const Main = () => {
         suppliers={suppliers}
         invoices={invoices}
         creditInfo={creditInfo}
-        isLoading={isLoading}
-        isError={isError}
       />
     </TabPanel>
 
@@ -139,8 +165,6 @@ const Main = () => {
       <LenderDashboard
         creditInfo={creditInfo}
         invoices={invoices}
-        isLoading={isLoading}
-        isError={isError}
         suppliers={suppliers}
       />
     </TabPanel>
@@ -148,8 +172,6 @@ const Main = () => {
     <TabPanel>
        <SupplierDashboard
         suppliers={suppliers}
-        isLoading={isLoading}
-        isError={isError}
       />
     </TabPanel>
 
@@ -157,8 +179,6 @@ const Main = () => {
        <WhitelistDashboard 
         creditInfo={creditInfo}
         suppliers={suppliers}
-        isLoading={isLoading}
-        isError={isError}
       /> 
     </TabPanel>
 

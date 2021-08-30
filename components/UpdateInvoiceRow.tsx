@@ -1,11 +1,13 @@
 import {
-  Box, Button, Divider, Heading, HStack, Text, VStack, Select,
+  Box, Button, Divider, Heading, HStack, Text, VStack, Select, Stack,
   Input,
   Tooltip,
 
 } from "@chakra-ui/react"
 import React, { useEffect, useState } from "react";
 import {Invoice} from "./Main"
+import {ConfirmInvoiceImageModal} from "./ConfirmInvoiceImageModal";
+import { QuestionIcon } from "@chakra-ui/icons";
 
 
 interface Props {
@@ -22,12 +24,27 @@ const UpdateInvoiceRow = ({invoice, changeStatus, changeValue}: Props) => {
     const [txId, setTxId] = useState("")
     const [newValue, setNewValue] = useState("")
     const [newStatus, setNewStatus] = useState("")
+    const [newSignatureConfirmationResult, setNewSignatureConfirmationResult] = useState("")
+
+    const getVerificationStatus = (invoice: Invoice) => {
+        if (invoice.paymentDetails.verificationResult.includes("INVALID")) return 'invalid'
+        if (invoice.paymentDetails.verificationResult.includes("VALID")) return 'valid'
+        return "unverified"
+    }
+
+    const invoiceToSymbol = (invoice: Invoice) => {
+        const status = getVerificationStatus(invoice)
+        if (status === 'unverified') return <Tooltip label={'unverified'}>❔❔❔</Tooltip>
+        if (status === 'valid') return <Tooltip label={'verified'}> ✅ </Tooltip>
+        else return <Tooltip label={'verified'}> ❌ </Tooltip>
+    }
     
     const resetState = () => {
         setLoanId("")
         setTxId("")
         setNewValue("")
         setNewStatus("")
+        setNewSignatureConfirmationResult("")
     }
 
     /**
@@ -36,7 +53,7 @@ const UpdateInvoiceRow = ({invoice, changeStatus, changeValue}: Props) => {
     const allowStatusUpdate = () => {
         console.log('nn', !newStatus)
         if (!newStatus) return false
-        if (newStatus == 'FINANCED' && loanId && txId) return true
+        if (newStatus == 'FINANCED' && loanId && txId && getVerificationStatus(invoice)) return true
         if (newStatus == 'REPAID' && txId) return true
         if (newStatus == "INITIAL") return true
         return false
@@ -64,28 +81,34 @@ const UpdateInvoiceRow = ({invoice, changeStatus, changeValue}: Props) => {
                 </Button>
             )}
             <Box> 
+                <Stack direction='row'>
+                    <Text> <Tooltip label="The uploaded image must match the invoice id and the invoice must be signed!">
+                            <Text fontSize="lg"> Verification Status: {invoiceToSymbol(invoice)} </Text>
+                        </Tooltip>
+                    </Text>
+                    <ConfirmInvoiceImageModal invoice={invoice} />
                 <VStack>
-
-                <Select 
-                value={newStatus} 
-                onChange={(e)=> {setNewStatus(e.target.value)}}
-                placeholder={"current status: " + invoice.status}>
-                    {possibleStatus.map((s) => (
-                        <option key={s} value={s}> {s} </option>
-                        ))}
-                </Select>
-                    { newStatus == "FINANCED" && (
-                        <>
-                            <Input width="300px" value={loanId} placeholder={"enter liquiloans loan ID "} size="sm" onChange={(e) => setLoanId(e.target.value)}/>
-                        </>
-                    )}
-                    { moneyStates.includes(newStatus) && (
-                        <>
-                            <Input width="300px" value={txId} placeholder={"enter transaction ID "} size="sm" onChange={(e) => setTxId(e.target.value)}/>
-                        </>
-                    )}
- 
+                    <Select 
+                    value={newStatus} 
+                    onChange={(e)=> {setNewStatus(e.target.value)}}
+                    placeholder={"current status: " + invoice.status}>
+                        {possibleStatus.map((s) => (
+                            <option key={s} value={s}> {s} </option>
+                            ))}
+                    </Select>
+                        { newStatus == "FINANCED" && (
+                            <>
+                                <Input width="300px" value={loanId} placeholder={"enter liquiloans loan ID "} size="sm" onChange={(e) => setLoanId(e.target.value)}/>
+                            </>
+                        )}
+                        { moneyStates.includes(newStatus) && (
+                            <>
+                                <Input width="300px" value={txId} placeholder={"enter transaction ID "} size="sm" onChange={(e) => setTxId(e.target.value)}/>
+                            </>
+                        )}
+    
                 </VStack>
+                </Stack>
             </Box>
             { newStatus && (
                 <Button 
