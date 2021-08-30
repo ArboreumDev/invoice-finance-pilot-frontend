@@ -2,13 +2,15 @@
 import {
   Box, Button, Divider, Heading, HStack, Text, VStack, Select,
   Input,
-  Tooltip,
+  Tooltip, Stack
 
 } from "@chakra-ui/react"
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../utils/fetcher"
 import {Invoice, SupplierInfo} from "./Main"
 import {CreditSummary} from "./CreditlinesTable"
+import UpdateInvoiceRow from "./UpdateInvoiceRow"
+import { sign } from "crypto";
 
 interface Props {
     invoices: Invoice[]
@@ -19,10 +21,10 @@ interface Props {
 
 const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
     const [newOrderValue, setNewOrderValue] = useState(2000)
-    const [newValue, setNewValue] = useState("0")
-    const [newStatus, setNewStatus] = useState("")
     const [supplier, setSupplier] = useState({id: "", name: ""})
     const [newOrderReceiver, setNewOrderReceiver] = useState("")
+    const [orderRefFilter, setOrderRefFilter] = useState("")
+    const [loanIdFilter, setLoanIdFilter] = useState("")
     const [filterId, setFilterId] = useState("")
 
     const updateDB = async () => {
@@ -63,30 +65,12 @@ const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
         // }
     }
 
-    const changeValue = async (invoiceId) => {
-        const msg = "" + invoiceId + "->" + newValue
+    const changeValue = async (invoiceId, newValue) => {
+        // const msg = "" + invoiceId + "->" + newValue
         // alert(msg)
         try {
-            const res = await axiosInstance.post("/v1/test/update/value/"+invoiceId+"/"+newValue)
+            const res = await axiosInstance.post("/v1/admin/update", {update: {invoiceId, newValue}})
             if (res.status === 200) {
-                alert("Updated")
-                setNewValue("")
-            } else {
-            alert("error")
-            }
-        } catch (err) {
-            console.log(err)
-            alert(err)
-        }
-    }
-
-    const changeStatus = async (invoiceId) => {
-        const msg = "" + invoiceId + "->" + newValue
-        // alert(msg)
-        try {
-            const res = await axiosInstance.post("/v1/test/update/status/"+invoiceId+"/"+newStatus)
-            if (res.status === 200) {
-                setNewStatus("")
                 alert("Updated")
             } else {
             alert("error")
@@ -97,36 +81,29 @@ const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
         }
     }
 
-
-
-    // const addToWhitelist = async (locationId) => {
-    //     // const msg = "" + invoiceId + "->" + newValue
-    //     // alert(msg)
-    //     try {
-    //         const res = await axiosInstance.post("/v1/whitelist/new", {
-    //             supplierId: 
-    //         })
-    //         console.log(res.status)
-    //         if (res.status === 200) {
-    //             setNewStatus("")
-    //             alert("Updated")
-    //         } else {
-    //         alert("error")
-    //         }
-    //     } catch (err) {
-    //         console.log(err)
-    //         alert(err)
-    //     }
-    // }
-
+    const changeStatus = async (invoiceId, newStatus, loanId = "", txId = "") => {
+        try {
+            const res = await axiosInstance.post("/v1/admin/update", {update: { invoiceId, txId, loanId, newStatus }})
+            if (res.status === 200) {
+                alert("Updated")
+            } else {
+            alert("error")
+            }
+        } catch (err) {
+            console.log(err)
+            alert(err)
+        }
+    }
 
 
     const filteredInvoices = () => {
-        if (filterId) return invoices.filter(i => i.orderId === filterId)
+        if (loanIdFilter || orderRefFilter) {
+            return invoices.filter(
+                i => orderRefFilter ? i.orderId === orderRefFilter : true).filter(
+                    i => loanIdFilter ? i.paymentDetails.loanId === loanIdFilter : true)
+        }
         else return invoices
     }
-
-    const possibleStatus = ["FINANCED", "DISBURSAL_REQUESTED", "REPAID", "INITIAL"]
 
     return (
         <>
@@ -143,7 +120,7 @@ const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
                     <Select onChange={(e)=> setSupplier(suppliers.filter(s => s.id == e.target.value)[0])} placeholder="Select Supplier">
                     { suppliers.map((s) => (
                         // eslint-disable-next-line react/jsx-key
-                        <option value={s.id}> {s.name} </option>
+                        <option key={s.id} value={s.id}> {s.name} </option>
                     ))}
                     </Select>
                 )}
@@ -152,7 +129,7 @@ const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
                     <Select onChange={(e)=> setNewOrderReceiver(e.target.value)} placeholder="Select Receiver">
                         {Object.values(creditInfo[supplier.id]).map((c) => (
                             // <option value={c}> {c.info.name} </option>
-                            <option value={c.info.id}> {c.info.name} ({c.info.city}, {c.info.phone}) </option>
+                            <option key={c.info.id} value={c.info.id}> {c.info.name} ({c.info.city}, {c.info.phone}) </option>
                             ))}
                     </Select>
                     </Box>
@@ -168,31 +145,20 @@ const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
                 <Heading size="sm" alignContent="left">Change existing Invoices:</Heading>
             <HStack>
                 <Input 
-                width="300px" placeholder="search for order ID" onChange={(e)=>setFilterId(e.target.value)} 
-                value={filterId}
+                    width="300px" placeholder="search for a specific order ref no" onChange={(e)=>setOrderRefFilter(e.target.value)} 
+                    value={orderRefFilter}
                 />
-                <Button width="150px" onClick={()=>setFilterId("")}>Clear</Button>
+                <Input 
+                    width="300px" placeholder="filter by loanID" onChange={(e)=>setLoanIdFilter(e.target.value)} 
+                    value={loanIdFilter}
+                />
+                <Button width="150px" onClick={()=>{setOrderRefFilter(""), setLoanIdFilter("")}}>Clear</Button>
             </HStack>
                 <ul>
                 {invoices && filteredInvoices().map((invoice: Invoice) => (
                     <li key={"inv" + invoice.invoiceId}>
                         <HStack padding="1" width="100%">
-                            <Text >{invoice.orderId}     </Text>
-                            {/* <Button width="290px" disabled onClick={() => markDelivered(invoice.invoiceId)}>deliver</Button> */}
-                            <Input width="300px" value={newValue} placeholder={"current value: " +invoice.value} size="sm" onChange={(e) => setNewValue(e.target.value)}/>
-                            <Button width="150px" onClick={() => changeValue(invoice.invoiceId)}>
-                                <Tooltip label="Note that this only changes the value in the arboreum DB and not in the Tusker data">
-                                Change Value
-                                </Tooltip>
-                            </Button>
-                            <Box> 
-                                <Select value={newStatus} onChange={(e)=> setNewStatus(e.target.value)} placeholder={"current status: " + invoice.status}>
-                                    {possibleStatus.map((s) => (
-                                        <option value={s}> {s} </option>
-                                        ))}
-                                </Select>
-                            </Box>
-                            <Button width="150px" onClick={() => changeStatus(invoice.invoiceId)}>Change Status</Button>
+                            <UpdateInvoiceRow changeStatus={changeStatus} changeValue={changeValue} invoice={invoice} />
                         </HStack>
                     </li>
                     ))

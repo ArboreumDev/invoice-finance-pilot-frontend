@@ -7,24 +7,11 @@ import {AddWhitelistModal} from "./AddWhitelistModal"
 
 
 interface Props {
-  isLoading: boolean,
-  isError: any
   creditInfo: CreditSummary
   suppliers: SupplierInfo[]
 }
 
-const WhitelistDashboard = ({isLoading, isError, creditInfo, suppliers}: Props) => {
-  if (isLoading) {
-    return <Heading as="h2" size="lg" fontWeight="400" color="gray.500">
-        Loading
-      </Heading>
-  }
-  if (isError) {
-    console.log(isError)
-    return <Heading as="h2" size="lg" fontWeight="400" color="gray.500">
-        There was an error
-      </Heading>
-  }
+const WhitelistDashboard = ({creditInfo, suppliers}: Props) => {
   return (
       <>
       <div>

@@ -2,8 +2,8 @@ import {Terms} from "../Main";
 import {Box, Input} from "@chakra-ui/react";
 import React, {useState} from "react";
 
-const TermsBox = (props: {defaultApr, setNewApr, defaultTenor, setNewTenor, defaultCreditLimit,
-    setNewCreditLimit}) => {
+const TermsBox = (
+    props: {defaultApr, setNewApr, defaultTenor, setNewTenor, defaultCreditLimit, setNewCreditLimit}) => {
     return (
         <>
             <Box>
