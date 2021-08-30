@@ -22,6 +22,7 @@ interface Props {
 export const ConfirmInvoiceImageModal = (props: Props) => {
     const [fetching, setFetching] = useState(true)
     const [error, setError] = useState(false)
+    const [msg, setMsg] = useState("")
     const [updating, setUpdating] = useState(false)
     const [image, setImage] = useState(null)
     const [close, setClose] = useState(false)
@@ -31,14 +32,24 @@ export const ConfirmInvoiceImageModal = (props: Props) => {
             setFetching(true)
             const url = `/v1/invoice/image/${props.invoice.invoiceId}`
             console.log('fetching', url)
-            const response = await axiosInstance.get(url, {responseType: 'blob'})
-            if (response.error) {
+            try {
+
+                const response = await axiosInstance.get(url, {responseType: 'blob'})
+                if (response.status === 200) {
+                    const imageSrc = URL.createObjectURL(response.data)
+                    setImage(imageSrc)
+                    setFetching(false)
+                    setMsg('')
+                } 
+            } catch (err) {
+                setFetching(false)
+                if (err.response.status === 412) {
+                    setMsg('No image uploaded')
+                }
+                if (err.response.status === 401) {
+                    setMsg('Unauthorized')
+                }
                 setError(true)
-                setFetching(false)
-            } else {
-                const imageSrc = URL.createObjectURL(response.data)
-                setImage(imageSrc)
-                setFetching(false)
             }
         }
         getImage()
@@ -78,7 +89,7 @@ export const ConfirmInvoiceImageModal = (props: Props) => {
                 <Box>Please confirm that the uploaded invoice is signed and has this ID:</Box>
                 <Box> <b> {props.invoice.invoiceId} </b> </Box>
                 {error && (
-                    <Text>Error</Text>
+                    <Text>Error: {msg || "Unknown"}</Text>
                 )}
                 {fetching && !error && (
                     <Spinner />
