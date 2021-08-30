@@ -46,7 +46,6 @@ interface Props {
 function AddInvoiceDrawer() {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const btnRef = React.useRef()
-  const [isUploaded, setUploaded] = useState(false)
   const [order, setOrder] = useState(dummyOrder)
 
   const getOrder = async (orderRef) => {
@@ -59,7 +58,7 @@ function AddInvoiceDrawer() {
             invoiceId: result.data.invoiceId,
             status: result.data.status,
             shippingStatus: result.data.shipping_status,
-            receiverInfo: result.data.receiverInfo
+            receiverInfo: result.data.receiverInfo,
         })
         // alert("Tusker has been notified.")
       })
@@ -68,7 +67,6 @@ function AddInvoiceDrawer() {
         if (err.message.includes("404")) {msg = "invoice not found"}
         if (err.message.includes("400")) {msg = "receveiver not whitelisted"}
         setOrder(dummyOrder)
-        setUploaded(false)
         error(msg) // TODO display different things by error status
       })
 }
@@ -81,7 +79,6 @@ function AddInvoiceDrawer() {
           success("Your request is being processed")
           onClose()
           setOrder(dummyOrder)
-          setUploaded(false)
 
       })
       .catch((err) => {
@@ -102,7 +99,7 @@ function AddInvoiceDrawer() {
         isOpen={isOpen}
         placement="right"
         lockFocusAcrossFrames={true}
-        onClose={() => { setOrder(dummyOrder); setUploaded(false); onClose }}
+        onClose={() => { setOrder(dummyOrder); onClose }}
         finalFocusRef={btnRef}
         isCentered={true}
         size="sm"
@@ -151,15 +148,6 @@ function AddInvoiceDrawer() {
                           </p>
                         </Text>
                         <Divider />
-
-                        {/* <p>receiver: {JSON.stringify(order.receiverInfo)}</p> */}
-                        <p> I have uploaded a readable photo of the invoice with the ID
-                          <b> {order.invoiceId} </b>
-                          onto the tusker-backend
-                        </p>
-                        <Switch onChange={() => setUploaded(!isUploaded)}/>
-                        <Divider />
-
                     </VStack>
                     </Box>
                       )}
@@ -170,7 +158,7 @@ function AddInvoiceDrawer() {
               <Button variant="outline" mr={3} onClick={onClose}>
                 Cancel
               </Button>
-              <Button disabled={!isUploaded} colorScheme="teal" onClick={handleFinance}>Finance</Button>
+              <Button  colorScheme="teal" onClick={handleFinance}>Finance</Button>
             </DrawerFooter>
           </DrawerContent>
         </DrawerOverlay>
