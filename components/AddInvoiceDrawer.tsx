@@ -43,7 +43,6 @@ interface Props {
 function AddInvoiceDrawer() {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const btnRef = React.useRef()
-  const [confirmed, setConfirmed] = useState(false)
   const [order, setOrder] = useState(dummyOrder)
 
   const getOrder = async (orderRef) => {
@@ -66,7 +65,6 @@ function AddInvoiceDrawer() {
         if (err.message.includes("404")) {msg = "invoice not found"}
         if (err.message.includes("400")) {msg = "receveiver not whitelisted"}
         setOrder(dummyOrder)
-        setConfirmed(false)
         error(msg) // TODO display different things by error status
       })
 }
@@ -79,7 +77,6 @@ function AddInvoiceDrawer() {
           success("Your request is being processed")
           onClose()
           setOrder(dummyOrder)
-          setConfirmed(false)
 
       })
       .catch((err) => {
@@ -100,7 +97,7 @@ function AddInvoiceDrawer() {
         isOpen={isOpen}
         placement="right"
         lockFocusAcrossFrames={true}
-        onClose={() => { setOrder(dummyOrder); setConfirmed(false); onClose }}
+        onClose={() => { setOrder(dummyOrder); onClose }}
         finalFocusRef={btnRef}
         isCentered={true}
         size="sm"
@@ -149,14 +146,6 @@ function AddInvoiceDrawer() {
                           </p>
                         </Text>
                         <Divider />
-
-                        {/* <p> I have uploaded a readable photo of the invoice with the ID */}
-                          {/* <b> {order.invoiceId} </b> */}
-                          {/* onto the tusker-backend */}
-                        {/* </p> */}
-                        <Switch isChecked={confirmed} onChange={() => setConfirmed(!confirmed)}/>
-                        <Divider />
-
                     </VStack>
                     </Box>
                       )}
@@ -167,10 +156,7 @@ function AddInvoiceDrawer() {
               <Button variant="outline" mr={3} onClick={onClose}>
                 Cancel
               </Button>
-              <Button 
-              // disabled={!confirmed} 
-              colorScheme="teal" 
-              onClick={handleFinance}>Finance</Button>
+              <Button  colorScheme="teal" onClick={handleFinance}>Finance</Button>
             </DrawerFooter>
           </DrawerContent>
         </DrawerOverlay>

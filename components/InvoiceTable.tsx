@@ -1,9 +1,10 @@
-import { Select, Stack, Box, Heading, Center, Table, Thead, Tbody, Tr, Th, Td, chakra } from "@chakra-ui/react"
+import { Select, Stack, Button, Box, Heading, Center, Table, Thead, Tbody, Tr, Th, Td, chakra, HStack, Checkbox } from "@chakra-ui/react"
 import { TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons"
 import { useTable, useSortBy, useFilters} from "react-table"
 import {Invoice} from "./Main"
 import React, { useMemo, useEffect, useState } from "react";
 import {InvoiceDetails} from "./InvoiceDetails"
+import axiosInstance from "../utils/fetcher"
 
 
 function SelectColumnFilter({
@@ -49,6 +50,22 @@ interface Props {
 
 const InvoiceTable = (props: Props) => {
 
+  const verify = async (invoiceId, verified) => {
+      try {
+          const res = await axiosInstance.post(`/v1/invoice/verification/${invoiceId}/${verified}`)
+          if (res.status === 200) {
+              alert("Updated.\n (It may take a few seconds until the change becomes visible.)")
+          } else {
+          alert("error")
+          }
+      } catch (err) {
+          console.log(err)
+          alert(err)
+      }
+  }
+
+
+
   const currencyToString = (amount) => {
     return amount.toLocaleString("en-IN", { 
         style: "currency",
@@ -57,12 +74,20 @@ const InvoiceTable = (props: Props) => {
         maximumFractionDigits: 2,
       })
     }
+
+  const isVerified = (invoice) => {
+    return invoice.status !== "INITIAL"
+  }
  
 
   const data = React.useMemo(
     () => props.invoices.map((i: Invoice) => {
         return {
             ...i,
+          verified: <Checkbox
+                isChecked={i.verified}
+                onChange={() => verify(i.invoiceId, !i.verified)}
+              >verified</Checkbox>,
           amount: currencyToString(i.value),
           supplierName: props.supplierMap[i.supplierId],
           details: <InvoiceDetails invoice={i}/>,
@@ -104,6 +129,11 @@ const InvoiceTable = (props: Props) => {
       {
         Header: " Status",
         accessor: "status",
+        disableFilters: true
+      },
+      {
+        Header: " Verified by Tusker",
+        accessor: "verified",
         disableFilters: true
       },
       {

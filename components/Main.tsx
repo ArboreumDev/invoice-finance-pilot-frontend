@@ -66,6 +66,7 @@ export interface Invoice {
   supplierId: string;
   orderId: string;
   value: number;
+  verified: boolean;
   shippingStatus: ShipmentStatus;
   status: FinanceStatus;
   receiverInfo: ReceiverInfo
