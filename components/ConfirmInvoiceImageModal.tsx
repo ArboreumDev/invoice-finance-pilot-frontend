@@ -65,9 +65,12 @@ export const ConfirmInvoiceImageModal = (props: Props) => {
 
     const updateVerificationStatus = async (newStatus) => {
         // alert(msg)
-        const update = { newStatus: newStatus }
+        const update = { 
+            invoiceId: props.invoice.invoiceId,
+            signatureVerificationResult: newStatus 
+        }
         try {
-            const res = await axiosInstance.post( `/v1/test/update/verification/${props.invoice.invoiceId}`, {update})
+            const res = await axiosInstance.post( '/v1/admin/update/', {update})
             if (res.status === 200) {
                 alert("Updated")
             } else {

@@ -2,6 +2,7 @@ import {Box, Button, Input, Radio, RadioGroup, Spinner, Stack} from "@chakra-ui/
 import React, {useState} from "react";
 import axiosInstance from "../../utils/fetcher";
 import TermsBox from "./TermsBox";
+import CreditlineIdBox from "../supplier/CreditlineIdBox";
 import {error} from "./popups";
 
 interface Props {
@@ -20,6 +21,8 @@ interface Props {
   defaultTenor: number,
   newTenor: number,
   setNewTenor: React.Dispatch<React.SetStateAction<any>>
+  creditlineId: number,
+  setCreditlineId: React.Dispatch<React.SetStateAction<any>>
 }
 
 export const TuskerSearch = (props: Props) => {

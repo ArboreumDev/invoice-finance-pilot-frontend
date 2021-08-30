@@ -14,6 +14,7 @@ export interface SupplierInput {
   creditlineSize: number
   defaultApr: number
   defaultTenorInDays: number
+  data: string
 }
 
 export const AddSupplierModal = () => {
@@ -36,7 +37,8 @@ export const AddSupplierModal = () => {
                     name: receiverInfo.name,
                     creditlineSize: newCreditLimit,
                     defaultApr: newApr,
-                    defaultTenorInDays: newTenor
+                    defaultTenorInDays: newTenor,
+                    data: receiverInfo.toString()
                 } as SupplierInput
             })
 

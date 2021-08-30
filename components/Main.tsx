@@ -42,11 +42,13 @@ export interface ReceiverInfo {
   phone: string
   city: string
   terms: Terms
+  locationId: string
 }
 
 export interface SupplierInfo {
   id: string
   name: string
+  creditlineId: string
   creditlineSize: number
   defaultTerms: Terms
 }
