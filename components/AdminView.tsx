@@ -11,6 +11,7 @@ import {Invoice, SupplierInfo} from "./Main"
 import {CreditSummary} from "./CreditlinesTable"
 import UpdateInvoiceRow from "./UpdateInvoiceRow"
 import { sign } from "crypto";
+import { notEqual } from "assert";
 
 interface Props {
     invoices: Invoice[]
@@ -25,14 +26,27 @@ const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
     const [newOrderReceiver, setNewOrderReceiver] = useState("")
     const [orderRefFilter, setOrderRefFilter] = useState("")
     const [loanIdFilter, setLoanIdFilter] = useState("")
+    const [lastUpdate, setLastUpdate] = useState("")
     const [filterId, setFilterId] = useState("")
+
+  useEffect(() => {
+    const r = window.localStorage.getItem("arboreum:last_update")
+    if (!r) {
+        setLastUpdate(r)
+    }
+    }, [lastUpdate])
+ 
 
     const updateDB = async () => {
       const res = await axiosInstance.post("/v1/invoice/update")
       if (res.status === 200) {
-          alert("Updated")
+        alert("Updated.\n (It may take a few seconds until the change becomes visible.)")
+        const now = new Date(Date.now())
+        const nowString = now.toLocaleDateString('en-US') + " " + now.toLocaleTimeString('en-US')
+        setLastUpdate(nowString)
+        window.localStorage.setItem("arboreum:last_update", nowString)
       } else {
-          alert("error")
+        alert("error")
       }
     }
 
@@ -110,9 +124,10 @@ const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
         <Box>
             <VStack>
             <Heading float='left' size="sm" alignContent="left">SYNC DB</Heading>
-            <Button disabled onClick={updateDB}>
-                    <Tooltip label="in order to trigger status changes that happen upon delivery"> UpdateDb</Tooltip>
+            <Button onClick={updateDB}>
+                    <Tooltip label="update delivery status by syncing DB with latest Tusker data"> UpdateDb</Tooltip>
             </Button>
+            <Text> (last update: {lastUpdate}) </Text>
             <Divider />
             <Heading size="sm" alignContent="left">Create a New Order</Heading>
             <HStack>
@@ -158,7 +173,9 @@ const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
                 {invoices && filteredInvoices().map((invoice: Invoice) => (
                     <li key={"inv" + invoice.invoiceId}>
                         <HStack padding="1" width="100%">
-                            <UpdateInvoiceRow changeStatus={changeStatus} changeValue={changeValue} invoice={invoice} />
+                            <UpdateInvoiceRow 
+                            changeStatus={changeStatus} changeValue={changeValue} invoice={invoice} markDelivered={markDelivered}
+                            />
                         </HStack>
                     </li>
                     ))

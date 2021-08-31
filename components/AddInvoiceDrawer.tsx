@@ -138,13 +138,13 @@ function AddInvoiceDrawer() {
                         <Text>
                           If financed this invoice will accrue the following interest:
                           <p>
-                            after one month: {principalToInterest(order.value, 1)}
+                            after one month: {principalToInterest(order.value, 30)}
                           </p>
                           <p>
-                            after two months: {principalToInterest(order.value, 2)}
+                            after two months: {principalToInterest(order.value, 60)}
                           </p>
                           <p>
-                            after three months: {principalToInterest(order.value, 3)}
+                            after three months (90 days): {principalToInterest(order.value, 90)}
                           </p>
                         </Text>
                         <Divider />

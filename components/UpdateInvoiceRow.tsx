@@ -14,12 +14,13 @@ interface Props {
     invoice: Invoice
     changeValue: any
     changeStatus: any
+    markDelivered: any
 }
 
 const possibleStatus = ["FINANCED", "DISBURSAL_REQUESTED", "REPAID", "INITIAL"]
 const moneyStates = ["FINANCED", "REPAID"]
 
-const UpdateInvoiceRow = ({invoice, changeStatus, changeValue}: Props) => {
+const UpdateInvoiceRow = ({invoice, changeStatus, changeValue, markDelivered}: Props) => {
     const [loanId, setLoanId] = useState("")
     const [txId, setTxId] = useState("")
     const [newValue, setNewValue] = useState("")
@@ -80,6 +81,15 @@ const UpdateInvoiceRow = ({invoice, changeStatus, changeValue}: Props) => {
                     </Tooltip>
                 </Button>
             )}
+            <Button 
+                width="150px"
+                onClick={() => {markDelivered(invoice.invoiceId)}}
+            >
+                <Tooltip label="For testing purposes, this will trigger the same changes as DELIVERED came by the regular update-route">
+                Mark Delivered
+                </Tooltip>
+            </Button>
+
             <Box> 
                 <Stack direction='row'>
                     <Text> <Tooltip label="The uploaded image must match the invoice id and the invoice must be signed!">
