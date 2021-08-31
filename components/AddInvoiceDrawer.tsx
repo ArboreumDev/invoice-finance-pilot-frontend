@@ -135,7 +135,7 @@ function AddInvoiceDrawer() {
                         </Tbody>
                         </Table>
                         <Divider />
-                        <Text>
+                        {/* <Text>
                           If financed this invoice will accrue the following interest:
                           <p>
                             after one month: {principalToInterest(order.value, 30)}
@@ -147,7 +147,7 @@ function AddInvoiceDrawer() {
                             after three months (90 days): {principalToInterest(order.value, 90)}
                           </p>
                         </Text>
-                        <Divider />
+                        <Divider /> */}
                     </VStack>
                     </Box>
                       )}

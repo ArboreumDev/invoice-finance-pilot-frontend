@@ -1,8 +1,8 @@
 
 import {
   Box, Button, Divider, Heading, HStack, Text, VStack, Select,
-  Input,
-  Tooltip, Stack
+  Input, useClipboard,
+  Tooltip, Stack, Spinner
 
 } from "@chakra-ui/react"
 import React, { useEffect, useState } from "react";
@@ -12,6 +12,11 @@ import {CreditSummary} from "./CreditlinesTable"
 import UpdateInvoiceRow from "./UpdateInvoiceRow"
 import { sign } from "crypto";
 import { notEqual } from "assert";
+import CsvDownloader from "react-csv-downloader";
+import { time } from "console";
+
+
+const possibleStatus = ["DELIVERED", "DISBURSAL_REQUESTED", "PLACED_AND_VALID", "REPAID", "INITIAL"]
 
 interface Props {
     invoices: Invoice[]
@@ -26,15 +31,16 @@ const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
     const [newOrderReceiver, setNewOrderReceiver] = useState("")
     const [orderRefFilter, setOrderRefFilter] = useState("")
     const [loanIdFilter, setLoanIdFilter] = useState("")
+    const [statusFilter, setStatusFilter] = useState("")
     const [lastUpdate, setLastUpdate] = useState("")
     const [filterId, setFilterId] = useState("")
+    const [csvExport, setCsvExport] = useState("")
+    const { hasCopied, onCopy } = useClipboard(csvExport)
 
   useEffect(() => {
     const r = window.localStorage.getItem("arboreum:last_update")
-    if (!r) {
-        setLastUpdate(r)
-    }
-    }, [lastUpdate])
+    if (r) setLastUpdate(r)
+    }, [])
  
 
     const updateDB = async () => {
@@ -111,23 +117,80 @@ const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
 
 
     const filteredInvoices = () => {
-        if (loanIdFilter || orderRefFilter) {
+        if (loanIdFilter || orderRefFilter || statusFilter) {
             return invoices.filter(
                 i => orderRefFilter ? i.orderId === orderRefFilter : true).filter(
-                    i => loanIdFilter ? i.paymentDetails.loanId === loanIdFilter : true)
+                    i => statusFilter ? i.shippingStatus === statusFilter || i.status === statusFilter : true).filter(
+                        i => loanIdFilter ? i.paymentDetails.loanId === loanIdFilter : true)
         }
         else return invoices
     }
+
+    const invoicesToBeFinanced = () => {
+        return invoices.filter((i: Invoice) => {
+            return  i.verified && i.shippingStatus === "DELIVERED" && i.paymentDetails.verificationResult.includes("VALID") && i.status == "INITIAL"
+            // return i.verified && i.shippingStatus === "DELIVERED"
+        })
+    }
+
+    const clipboardExport = () => {
+        let csv = "orderID, invoice value, principal\n"
+        let totalValue = 0
+        let totalPrincipal = 0
+        for (let invoice of invoicesToBeFinanced()) {
+            csv += `${invoice.orderId}, ${invoice.value}, ${invoice.paymentDetails.principal}\n`
+            totalValue += invoice.value
+            totalPrincipal += invoice.paymentDetails.principal
+            // totalInterest += invoice.paymentDetails.interest
+        }
+        csv += `\nTotal,${totalValue},${totalPrincipal}\n`
+        setCsvExport(csv)
+        onCopy()
+    }
+
+    const prepareCsvExport = () => {
+        const rows = []
+        let totalValue = 0
+        let totalPrincipal = 0
+        for (let invoice of invoicesToBeFinanced()) {
+            rows.push({
+                orderId: invoice.orderId,
+                invoiceValue: invoice.value,
+                principal: invoice.paymentDetails.principal
+            })
+            totalValue += invoice.value
+            totalPrincipal += invoice.paymentDetails.principal
+        }
+        rows.push({
+            orderId: "Total",
+            invoiceValue: totalValue,
+            principal: totalPrincipal,
+        })
+        return Promise.resolve(rows);
+    }; 
 
     return (
         <>
         <Box>
             <VStack>
-            <Heading float='left' size="sm" alignContent="left">SYNC DB</Heading>
             <Button onClick={updateDB}>
                     <Tooltip label="update delivery status by syncing DB with latest Tusker data"> UpdateDb</Tooltip>
             </Button>
             <Text> (last update: {lastUpdate}) </Text>
+            <HStack>
+                <Text>Get latest financable invoices:</Text>
+                <Button onClick={clipboardExport} ml={2}>
+                    {hasCopied ? <Spinner /> : "Copy to Clipboard"}
+                </Button>
+                <Text>OR</Text>
+                <Box>
+                    <CsvDownloader filename={`exportAfterUpdate${lastUpdate}.csv`} datas={prepareCsvExport}>
+                        <Button>Download .csv</Button>
+
+                    </CsvDownloader>
+                </Box>
+            </HStack>
+
             <Divider />
             <Heading size="sm" alignContent="left">Create a New Order</Heading>
             <HStack>
@@ -158,6 +221,7 @@ const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
             </HStack>
             <Divider />
                 <Heading size="sm" alignContent="left">Change existing Invoices:</Heading>
+
             <HStack>
                 <Input 
                     width="300px" placeholder="search for a specific order ref no" onChange={(e)=>setOrderRefFilter(e.target.value)} 
@@ -167,7 +231,16 @@ const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
                     width="300px" placeholder="filter by loanID" onChange={(e)=>setLoanIdFilter(e.target.value)} 
                     value={loanIdFilter}
                 />
-                <Button width="150px" onClick={()=>{setOrderRefFilter(""), setLoanIdFilter("")}}>Clear</Button>
+                <Select 
+                width="300px"
+                value={statusFilter} 
+                onChange={(e)=> {setStatusFilter(e.target.value)}}
+                placeholder={"filter by shipping/finance status"}>
+                    {possibleStatus.map((s) => (
+                        <option key={s} value={s}> {s} </option>
+                        ))}
+                </Select>
+                <Button width="150px" onClick={()=>{setOrderRefFilter(""), setLoanIdFilter(""), setStatusFilter("")}}>Clear</Button>
             </HStack>
                 <ul>
                 {invoices && filteredInvoices().map((invoice: Invoice) => (

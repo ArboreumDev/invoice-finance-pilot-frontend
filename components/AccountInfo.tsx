@@ -125,12 +125,6 @@ const _MS_PER_DAY = 1000 * 60 * 60 * 24;
 
 // a and b are javascript Date objects
 function dateDiffInDays(a, b) {
-  console.log('a', a)
-  console.log('b', b)
-  // Discard the time and time-zone information.
-  // const utc1 = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate());
-  // const utc2 = Date.UTC(b.getFullYear(), b.getMonth(), b.getDate());
-
   return Math.floor((a - b) / _MS_PER_DAY);
 }
 
@@ -138,7 +132,6 @@ function dateDiffInDays(a, b) {
 const invoiceToDebt = (i: Invoice, endOfTerm = true) => {
   if (endOfTerm) {
     let t=i.paymentDetails.principal + i.paymentDetails.interest
-    console.log('int end ', t, i.paymentDetails.principal, i.paymentDetails.interest)
     return t 
   } else {
     let t=( i.paymentDetails.principal + principalToInterest(
