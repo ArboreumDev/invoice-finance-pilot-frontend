@@ -36,6 +36,12 @@ const dummyOrder = {
       name: null,
       city: null,
       phone: null
+    },
+    paymentDetails: {
+      principal: 0,
+      interest: 0,
+      apr: 0,
+      tenorInDays: 0
     }
 }
 
@@ -59,6 +65,7 @@ function AddInvoiceDrawer() {
             status: result.data.status,
             shippingStatus: result.data.shipping_status,
             receiverInfo: result.data.receiverInfo,
+            paymentDetails: result.data.paymentDetails
         })
         // alert("Tusker has been notified.")
       })
@@ -88,7 +95,7 @@ function AddInvoiceDrawer() {
 }
 
 
-
+  console.log('or', order)
 
   return (
     <>
@@ -135,20 +142,13 @@ function AddInvoiceDrawer() {
                         </Tbody>
                         </Table>
                         <Divider />
-                        {/* <Text>
-                          If financed this invoice will accrue the following interest:
-                          <p>
-                            after one month: {principalToInterest(order.value, 30)}
-                          </p>
-                          <p>
-                            after two months: {principalToInterest(order.value, 60)}
-                          </p>
-                          <p>
-                            after three months (90 days): {principalToInterest(order.value, 90)}
-                          </p>
-                        </Text>
-                        <Divider /> */}
-                    </VStack>
+                        <text>
+                          <p> principal: {order.paymentDetails.principal} </p>
+                          <p> apr: {order.paymentDetails.apr} </p>
+                          <p> interest after {order.paymentDetails.tenorInDays} days: {parseFloat(order.paymentDetails.interest, 2).toFixed(2)} </p>
+                        </text>
+                        <Divider /> 
+                    </VStack> 
                     </Box>
                       )}
               </Box>
