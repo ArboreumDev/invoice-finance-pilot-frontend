@@ -68,12 +68,14 @@ const UpdateInvoiceRow = ({invoice, changeStatus, changeValue, markDelivered}: P
                 width="300px" 
                 value={newValue}
                 placeholder={"current value: " +invoice.value}
+                disabled /*comment out for testing or development*/ 
                 size="sm"
                 onChange={(e) => setNewValue(e.target.value)}
             />
             {newValue && (
                 <Button 
                     width="150px"
+                    // disabled /*comment out for testing or development*/ 
                     onClick={() => {changeValue(invoice.invoiceId, newValue); resetState()}}
                 >
                     <Tooltip label="Note that this only changes the value in the arboreum DB and not in the Tusker data">
@@ -84,7 +86,8 @@ const UpdateInvoiceRow = ({invoice, changeStatus, changeValue, markDelivered}: P
             <Button 
                 width="150px"
                 onClick={() => {markDelivered(invoice.invoiceId)}}
-            >
+                disabled /*comment out for testing or development*/ 
+                >
                 <Tooltip label="For testing purposes, this will trigger the same changes as DELIVERED came by the regular update-route">
                 Mark Delivered
                 </Tooltip>

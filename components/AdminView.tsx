@@ -126,46 +126,39 @@ const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
         else return invoices
     }
 
-    const invoicesToBeFinanced = () => {
-        return invoices.filter((i: Invoice) => {
-            return  i.verified && i.shippingStatus === "DELIVERED" && i.paymentDetails.verificationResult.includes("VALID") && i.status == "INITIAL"
-            // return i.verified && i.shippingStatus === "DELIVERED"
+    const invoicesToBeFinanced = (supplierId: string) => {
+        return invoices.filter( i => i.supplierId === supplierId).filter((i: Invoice) => {
+            return  (
+                i.verified  // by tusker
+                && i.shippingStatus === "DELIVERED" 
+                && i.paymentDetails.verificationResult.includes("VALID")  // signature on invoice image
+                && i.status == "INITIAL"
+            )
         })
-    }
-
-    const clipboardExport = () => {
-        let csv = "orderID, invoice value, principal\n"
-        let totalValue = 0
-        let totalPrincipal = 0
-        for (let invoice of invoicesToBeFinanced()) {
-            csv += `${invoice.orderId}, ${invoice.value}, ${invoice.paymentDetails.principal}\n`
-            totalValue += invoice.value
-            totalPrincipal += invoice.paymentDetails.principal
-            // totalInterest += invoice.paymentDetails.interest
-        }
-        csv += `\nTotal,${totalValue},${totalPrincipal}\n`
-        setCsvExport(csv)
-        onCopy()
     }
 
     const prepareCsvExport = () => {
         const rows = []
         let totalValue = 0
         let totalPrincipal = 0
-        for (let invoice of invoicesToBeFinanced()) {
+        for (let supplier of suppliers) {
+            for (let invoice of invoicesToBeFinanced(supplier.id)) {
+                rows.push({
+                    supplier: supplier.name,
+                    orderId: invoice.orderId,
+                    invoiceValue: invoice.value,
+                    principal: invoice.paymentDetails.principal
+                })
+                totalValue += invoice.value
+                totalPrincipal += invoice.paymentDetails.principal
+            }
             rows.push({
-                orderId: invoice.orderId,
-                invoiceValue: invoice.value,
-                principal: invoice.paymentDetails.principal
+                supplier: supplier.name,
+                orderId: "Total",
+                invoiceValue: totalValue,
+                principal: totalPrincipal,
             })
-            totalValue += invoice.value
-            totalPrincipal += invoice.paymentDetails.principal
         }
-        rows.push({
-            orderId: "Total",
-            invoiceValue: totalValue,
-            principal: totalPrincipal,
-        })
         return Promise.resolve(rows);
     }; 
 
@@ -179,14 +172,9 @@ const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
             <Text> (last update: {lastUpdate}) </Text>
             <HStack>
                 <Text>Get latest financable invoices:</Text>
-                <Button onClick={clipboardExport} ml={2}>
-                    {hasCopied ? <Spinner /> : "Copy to Clipboard"}
-                </Button>
-                <Text>OR</Text>
                 <Box>
                     <CsvDownloader filename={`exportAfterUpdate${lastUpdate}.csv`} datas={prepareCsvExport}>
                         <Button>Download .csv</Button>
-
                     </CsvDownloader>
                 </Box>
             </HStack>
