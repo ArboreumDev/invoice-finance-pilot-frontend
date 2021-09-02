@@ -129,7 +129,8 @@ export const AddWhitelistModal = (props: {suppliers: SupplierInfo[]} ) => {
                                     setNewCreditLimit={setNewCreditLimit}
                                     defaultTenor={defaultTerms ? defaultTerms.tenorInDays : null}
                                     newTenor={newTenor}
-                                    setNewTenor={setNewTenor} />  : null }
+                                    setNewTenor={setNewTenor} 
+                                    editableTerms={["CREDITLIMIT"]} />  : null }
                             </Box>
                          }
                          footer={""}

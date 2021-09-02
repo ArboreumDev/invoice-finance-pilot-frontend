@@ -80,6 +80,7 @@ export const AddSupplierModal = () => {
                                     setNewCreditLimit={setNewCreditLimit}
                                     defaultTenor={defaultTuskerTenor}
                                     newTenor={newTenor}
+                                    editableTerms={["APR", "TENOR", "CREDITLIMIT"]}
                                     setNewTenor={setNewTenor} />
                             </Box>
                          }
