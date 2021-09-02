@@ -94,9 +94,6 @@ function AddInvoiceDrawer() {
       })
 }
 
-
-  console.log('or', order)
-
   return (
     <>
       <Button ref={btnRef} colorScheme="teal" onClick={onOpen}>
