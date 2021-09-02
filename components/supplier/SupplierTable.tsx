@@ -44,7 +44,7 @@ const SupplierTable = (props: { suppliers: SupplierInfo[] }) => {
         disableFilters: true
       },
       {
-        Header: "Credit Limit",
+        Header: "Max Total Credit Limit",
         accessor: "creditlineSize",
         sortDescFirst: true,
         disableFilters: true

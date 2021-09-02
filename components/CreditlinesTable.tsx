@@ -79,7 +79,7 @@ const CreditlinesTable = (props: { creditLines: CreditLineInfo[] }) => {
         sortDescFirst: true
       },
       {
-        Header: "Total Credit Line Size",
+        Header: "Total Extended Credit Line Size",
         accessor: "total",
         sortDescFirst: true
       },
