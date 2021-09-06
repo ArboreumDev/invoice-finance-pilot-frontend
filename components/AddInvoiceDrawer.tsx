@@ -19,8 +19,7 @@ import {
     DrawerCloseButton,
     Stack, Button, useDisclosure, Input,
     VStack,
-    Heading,
-    OrderedList
+    Heading
   } from "@chakra-ui/react"
 import React, { useEffect, useState,  } from "react";
 import { principalToInterest } from "../lib/invoice";
@@ -33,7 +32,11 @@ const dummyOrder = {
     status: "",
     shippingStatus: "",
     invoiceId: "",
-    receiverInfo: {},
+    receiverInfo: {
+      name: null,
+      city: null,
+      phone: null
+    }
 }
 
 interface Props {
@@ -48,7 +51,6 @@ function AddInvoiceDrawer() {
   const getOrder = async (orderRef) => {
     await axiosInstance.get("/v1/order/" + orderRef)
       .then((result)=>{
-        console.log(result)
         success("Proceed to upload invoice.")
         setOrder({
             orderRef: result.data.orderId,
