@@ -202,6 +202,7 @@ export const ModTermsModal = (props: {
                         defaultCreditLimit={props.creditline}
                         setNewCreditLimit={setNewCreditLimit} defaultTenor={props.tenor}
                         setNewTenor={setNewTenor} 
+                        editableTerms={['CREDITLIMIT']}
                     />
                     {/* if this is for the supplier, also allow updating the supplierCreditlineID */}
                     {!props.purchaserId && (
