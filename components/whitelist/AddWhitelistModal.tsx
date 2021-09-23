@@ -115,22 +115,26 @@ export const AddWhitelistModal = (props: {suppliers: SupplierInfo[]} ) => {
                                 </Select>
                                  {supplierId ?
                                 <TuskerSearch
-                                    submit={submit}
-                                    loading={loading}
-                                    receiver={receiver}
-                                    setReceiver={setReceiver}
-                                    searchResults={searchResults}
-                                    setSearchResults={setSearchResults}
-                                    defaultApr={defaultTerms ? defaultTerms.apr : null}
-                                    newApr={newApr}
-                                    setNewApr={setNewApr}
-                                    defaultCreditLimit={0}
-                                    newCreditLimit={newCreditLimit}
-                                    setNewCreditLimit={setNewCreditLimit}
-                                    defaultTenor={defaultTerms ? defaultTerms.tenorInDays : null}
-                                    newTenor={newTenor}
-                                    setNewTenor={setNewTenor} 
-                                    editableTerms={["CREDITLIMIT"]} />  : null }
+                                         submit={submit}
+                                         loading={loading}
+                                         receiver={receiver}
+                                         setReceiver={setReceiver}
+                                         searchResults={searchResults}
+                                         setSearchResults={setSearchResults}
+                                         defaultApr={defaultTerms ? defaultTerms.apr : null}
+                                         newApr={newApr}
+                                         setNewApr={setNewApr}
+                                         defaultCreditLimit={0}
+                                         newCreditLimit={newCreditLimit}
+                                         setNewCreditLimit={setNewCreditLimit}
+                                         defaultTenor={defaultTerms ? defaultTerms.tenorInDays : null}
+                                         newTenor={newTenor}
+                                         setNewTenor={setNewTenor}
+                                         editableTerms={["CREDITLIMIT"]} 
+                                         creditlineId={0} 
+                                         setCreditlineId={function (): void {
+                                             throw new Error("Function not implemented.");
+                                         } } />  : null }
                             </Box>
                          }
                          footer={""}

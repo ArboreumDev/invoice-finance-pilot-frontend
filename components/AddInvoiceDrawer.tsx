@@ -142,7 +142,7 @@ function AddInvoiceDrawer() {
                         <text>
                           <p> principal: {order.paymentDetails.principal} </p>
                           <p> apr: {order.paymentDetails.apr} </p>
-                          <p> interest after {order.paymentDetails.tenorInDays} days: {parseFloat(order.paymentDetails.interest, 2).toFixed(2)} </p>
+                          <p> interest after {order.paymentDetails.tenorInDays} days: {order.paymentDetails.interest.toFixed(2)} </p>
                         </text>
                         <Divider /> 
                     </VStack> 

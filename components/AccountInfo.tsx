@@ -181,13 +181,13 @@ const AccountInfo = ({invoices, creditInfo, suppliers}: VendorAccountInfoProps) 
   let names = _names.concat(_names)
   names.push("available")
 
-  const CustomTag = React.forwardRef(({ children, ...rest }, ref) => (
-    <Box p="1">
-      <Tag ref={ref} {...rest}>
-        {children}
-      </Tag>
-    </Box>
-  ))
+  // const CustomTag = React.forwardRef(({ children, ...rest }, ref) => (
+  //   <Box p="1">
+  //     <Tag ref={ref} {...rest}>
+  //       {children}
+  //     </Tag>
+  //   </Box>
+  // ))
   
 
 
