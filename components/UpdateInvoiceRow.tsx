@@ -22,14 +22,15 @@ const moneyStates = ["FINANCED", "REPAID"]
 
 const UpdateInvoiceRow = ({invoice, changeStatus, changeValue, markDelivered}: Props) => {
     const [loanId, setLoanId] = useState("")
+    const [disbursalDate, setDisbursalDate] = useState("")
     const [txId, setTxId] = useState("")
     const [newValue, setNewValue] = useState("")
     const [newStatus, setNewStatus] = useState("")
     const [newSignatureConfirmationResult, setNewSignatureConfirmationResult] = useState("")
 
     const getVerificationStatus = (invoice: Invoice) => {
-        if (invoice.paymentDetails.verificationResult.includes("INVALID")) return 'invalid'
-        if (invoice.paymentDetails.verificationResult.includes("VALID")) return 'valid'
+        if (invoice.paymentDetails.signatureVerificationResult.includes("INVALID")) return 'invalid'
+        if (invoice.paymentDetails.signatureVerificationResult.includes("VALID")) return 'valid'
         return "unverified"
     }
 
@@ -45,6 +46,7 @@ const UpdateInvoiceRow = ({invoice, changeStatus, changeValue, markDelivered}: P
         setTxId("")
         setNewValue("")
         setNewStatus("")
+        setDisbursalDate("")
         setNewSignatureConfirmationResult("")
     }
 
@@ -54,7 +56,7 @@ const UpdateInvoiceRow = ({invoice, changeStatus, changeValue, markDelivered}: P
     const allowStatusUpdate = () => {
         console.log('nn', !newStatus)
         if (!newStatus) return false
-        if (newStatus == 'FINANCED' && loanId && txId && getVerificationStatus(invoice)) return true
+        if (newStatus == 'FINANCED' && loanId && txId && getVerificationStatus(invoice) && disbursalDate) return true
         if (newStatus == 'REPAID' && txId) return true
         if (newStatus == "INITIAL") return true
         return false
@@ -86,7 +88,7 @@ const UpdateInvoiceRow = ({invoice, changeStatus, changeValue, markDelivered}: P
             <Button 
                 width="150px"
                 onClick={() => {markDelivered(invoice.invoiceId)}}
-                disabled /*comment out for testing or development*/ 
+                // disabled /*comment out for testing or development*/ 
                 >
                 <Tooltip label="For testing purposes, this will trigger the same changes as DELIVERED came by the regular update-route">
                 Mark Delivered
@@ -112,6 +114,7 @@ const UpdateInvoiceRow = ({invoice, changeStatus, changeValue, markDelivered}: P
                         { newStatus == "FINANCED" && (
                             <>
                                 <Input width="300px" value={loanId} placeholder={"enter liquiloans loan ID "} size="sm" onChange={(e) => setLoanId(e.target.value)}/>
+                                <Input width="300px" value={disbursalDate} placeholder={"disbursal date: e.g. '2021-09-24T16:03:13.588402+02:00'"} size="sm" onChange={(e) => setDisbursalDate(e.target.value)}/>
                             </>
                         )}
                         { moneyStates.includes(newStatus) && (
@@ -127,7 +130,7 @@ const UpdateInvoiceRow = ({invoice, changeStatus, changeValue, markDelivered}: P
                 <Button 
                     disabled={!allowStatusUpdate()}
                     width="150px" 
-                    onClick={() => {changeStatus(invoice.invoiceId, newStatus, loanId, txId) ; resetState()}}
+                    onClick={() => {changeStatus(invoice.invoiceId, newStatus, loanId, txId, disbursalDate) ; resetState()}}
                 >Change Status
                 </Button>
             )}

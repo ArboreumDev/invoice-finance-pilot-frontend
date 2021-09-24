@@ -101,9 +101,9 @@ const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
         }
     }
 
-    const changeStatus = async (invoiceId, newStatus, loanId = "", txId = "") => {
+    const changeStatus = async (invoiceId, newStatus, loanId = "", txId = "", disbursalDate = "") => {
         try {
-            const res = await axiosInstance.post("/v1/admin/update", {update: { invoiceId, txId, loanId, newStatus }})
+            const res = await axiosInstance.post("/v1/admin/update", {update: { invoiceId, txId, loanId, newStatus, disbursalDate }})
             if (res.status === 200) {
                 alert("Updated")
             } else {
