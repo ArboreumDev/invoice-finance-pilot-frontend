@@ -101,16 +101,16 @@ const WhitelistTable = (props: { creditInfo: CreditSummary, suppliers: SupplierI
         sortDescFirst: true,
         disableFilters: true
       },
-      {
-        Header: "APR",
-        accessor: "info.terms.apr",
-        disableFilters: true
-      },
-      {
-        Header: "tenor (days)",
-        accessor: "info.terms.tenorInDays",
-        disableFilters: true
-      },
+      // {
+      //   Header: "APR",
+      //   accessor: "info.terms.apr",
+      //   disableFilters: true
+      // },
+      // {
+      //   Header: "tenor (days)",
+      //   accessor: "info.terms.tenorInDays",
+      //   disableFilters: true
+      // },
       {
         Header: "Phone",
         accessor: "info.phone",
