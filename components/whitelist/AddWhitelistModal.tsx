@@ -144,7 +144,7 @@ export const AddWhitelistModal = (props: {suppliers: SupplierInfo[]} ) => {
 
 export const ModTermsModal = (props: {
     name: string, purchaserId?: string, supplierId: string, apr: number, tenor: number,
-    creditline: number, creditlineId?: string 
+    creditline: number, creditlineId?: string, editableTerms: string[]
 }) => {
     const [newApr, setNewApr] = useState(null)
     const [newCreditLimit, setNewCreditLimit] = useState(null)
@@ -206,7 +206,7 @@ export const ModTermsModal = (props: {
                         defaultCreditLimit={props.creditline}
                         setNewCreditLimit={setNewCreditLimit} defaultTenor={props.tenor}
                         setNewTenor={setNewTenor} 
-                        editableTerms={['CREDITLIMIT']}
+                        editableTerms={props.editableTerms}
                     />
                     {/* if this is for the supplier, also allow updating the supplierCreditlineID */}
                     {!props.purchaserId && (

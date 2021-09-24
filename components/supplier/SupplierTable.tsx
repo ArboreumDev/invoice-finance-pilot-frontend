@@ -24,7 +24,7 @@ const SupplierTable = (props: { suppliers: SupplierInfo[] }) => {
           edit: <ModTermsModal 
             supplierId={s.id} name={s.name} apr={s.defaultTerms.apr}
             tenor={s.defaultTerms.tenorInDays} creditline={s.creditlineSize}
-            creditlineId={s.creditlineId}
+            creditlineId={s.creditlineId} editableTerms={['CREDITLIMIT', 'APR', 'TENOR']}
           />,
           }
       }),
