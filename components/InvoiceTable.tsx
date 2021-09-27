@@ -139,8 +139,9 @@ const InvoiceTable = (props: Props) => {
       {
         Header: " Loan Id",
         accessor: "paymentDetails.loanId",
-        Filter: SelectColumnFilter,
-        filter: "includes",
+        disableFilters: true
+        // Filter: SelectColumnFilter,
+        // filter: "includes",
       },
       {
         Header: "Due Date",

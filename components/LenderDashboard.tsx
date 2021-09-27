@@ -21,6 +21,7 @@ const LenderDashboard = ({invoices, creditInfo, suppliers}: Props) => {
 
   const [receiverId, setReceiver] = useState("")
   const [supplierId, setSupplier] = useState("")
+  const [loanId, setLoanId] = useState("")
   const [invoiceStatus, setInvoiceStatus] = useState("")
   // const [invoicesToShow, setInvoicesToShow] = useState(invoices)
 
@@ -28,7 +29,8 @@ const LenderDashboard = ({invoices, creditInfo, suppliers}: Props) => {
       return invoices 
       .filter( i => supplierId ? i.supplierId === supplierId : true)
       .filter( i => receiverId ? i.receiverInfo.id === receiverId : true)
-        .filter(i => invoiceStatus ? i.status === invoiceStatus : true)
+      .filter(i => invoiceStatus ? i.status === invoiceStatus : true)
+      .filter(i => loanId ? i.paymentDetails.loanId === loanId : true)
 
     } 
 
@@ -71,6 +73,8 @@ const LenderDashboard = ({invoices, creditInfo, suppliers}: Props) => {
     }
   }
 
+  const allLoanIds = Array.from(new Set(invoices.map(i => i.paymentDetails.loanId)))
+
   const prepareCsvExport = () => {
       const rows = []
       filteredInvoices().forEach(invoice => {
@@ -95,16 +99,21 @@ const LenderDashboard = ({invoices, creditInfo, suppliers}: Props) => {
             <option key={s.id} value={s.id}> {s.name} </option>
             ))}
         </Select>
-        )}
-
+      )}
       {creditInfo && (
         <Select onChange={(e)=> setReceiver(e.target.value)} placeholder="All Receivers">
-          { 
-          filteredReceiversCreditInfo().map((c: ReceiverInfo) => (
+          { filteredReceiversCreditInfo().map((c: ReceiverInfo) => (
             <option key={c.id} value={c.id}> {c.name} ({c.city}) </option>
-            ))}
+          ))}
         </Select>
-        )}
+      )}
+      {allLoanIds && (
+      <Select onChange={(e)=> setLoanId(e.target.value)} placeholder="All Loan Ids">
+        {allLoanIds.map((l) => (
+          <option key={l} value={l}> {l} </option>
+        ))}
+      </Select>
+      )}
         <Box minW="170px" width="10%">
           <AddInvoiceDrawer />
         </Box>
