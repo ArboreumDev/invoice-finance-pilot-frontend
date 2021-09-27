@@ -1,4 +1,4 @@
-import {Select,Spacer, Flex, Box, Button, Center, Divider, Grid, Heading, HStack, Text, VStack} from "@chakra-ui/react"
+import {Input, Select,Spacer, Flex, Box, Button, Center, Divider, Grid, Heading, HStack, Text, VStack} from "@chakra-ui/react"
 import AddInvoiceDrawer from "./AddInvoiceDrawer"
 import {Invoice, ReceiverInfo} from "./Main"
 import React, { useEffect, useState } from "react";
@@ -21,12 +21,14 @@ const LenderDashboard = ({invoices, creditInfo, suppliers}: Props) => {
 
   const [receiverId, setReceiver] = useState("")
   const [supplierId, setSupplier] = useState("")
+  const [orderIdSearchString, setOrderIdSearchString] = useState("")
   const [loanId, setLoanId] = useState("")
   const [invoiceStatus, setInvoiceStatus] = useState("")
   // const [invoicesToShow, setInvoicesToShow] = useState(invoices)
 
   const filteredInvoices = () => {
       return invoices 
+      .filter( i => orderIdSearchString ? i.orderId.toString().includes(orderIdSearchString) : true)
       .filter( i => supplierId ? i.supplierId === supplierId : true)
       .filter( i => receiverId ? i.receiverInfo.id === receiverId : true)
       .filter(i => invoiceStatus ? i.status === invoiceStatus : true)
@@ -88,6 +90,7 @@ const LenderDashboard = ({invoices, creditInfo, suppliers}: Props) => {
     <VStack>
     <HStack >
       <Text minW="110px" width="27%">Show Invoices:</Text>
+      <Input width="400px" onChange={(e) => setOrderIdSearchString(parseInt(e.target.value))} placeholder={"order ID"}/>
       <Select onChange={(e)=> setInvoiceStatus(e.target.value)} placeholder="All Status">
         <option value={FinanceStatus.INITIAL}>requested & awaiting delivery (INITIAL)</option>
         <option value={FinanceStatus.DISBURSAL_REQUESTED}>delivered & awaiting disbursal (DISBURSAL_REQUESTED)</option>
