@@ -28,7 +28,9 @@ const LenderDashboard = ({invoices, creditInfo, suppliers}: Props) => {
 
   const filteredInvoices = () => {
       return invoices 
-      .filter( i => orderIdSearchString ? i.orderId.toString().includes(orderIdSearchString) : true)
+      .filter( i => orderIdSearchString ? (
+        i.orderId.toString().includes(orderIdSearchString) || i.invoiceId.toString().includes(orderIdSearchString) 
+      ) : true)
       .filter( i => supplierId ? i.supplierId === supplierId : true)
       .filter( i => receiverId ? i.receiverInfo.id === receiverId : true)
       .filter(i => invoiceStatus ? i.status === invoiceStatus : true)
@@ -90,7 +92,7 @@ const LenderDashboard = ({invoices, creditInfo, suppliers}: Props) => {
     <VStack>
     <HStack >
       <Text minW="110px" width="27%">Show Invoices:</Text>
-      <Input width="400px" onChange={(e) => setOrderIdSearchString(parseInt(e.target.value))} placeholder={"order ID"}/>
+      <Input width="400px" onChange={(e) => setOrderIdSearchString(parseInt(e.target.value))} placeholder={"order/invoice ID"}/>
       <Select onChange={(e)=> setInvoiceStatus(e.target.value)} placeholder="All Status">
         <option value={FinanceStatus.INITIAL}>requested & awaiting delivery (INITIAL)</option>
         <option value={FinanceStatus.DISBURSAL_REQUESTED}>delivered & awaiting disbursal (DISBURSAL_REQUESTED)</option>
