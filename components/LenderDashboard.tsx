@@ -92,6 +92,7 @@ const LenderDashboard = ({invoices, creditInfo, suppliers}: Props) => {
         <option value={FinanceStatus.INITIAL}>requested & awaiting delivery (INITIAL)</option>
         <option value={FinanceStatus.DISBURSAL_REQUESTED}>delivered & awaiting disbursal (DISBURSAL_REQUESTED)</option>
         <option value={FinanceStatus.FINANCED}>disbursed & to be paid back (FINANCED)</option>
+        <option value={FinanceStatus.REPAID}> fully paid back (REPAID)</option>
       </Select>
       {suppliers && (
         <Select onChange={(e)=> setSupplier(e.target.value)} placeholder="All Suppliers">
