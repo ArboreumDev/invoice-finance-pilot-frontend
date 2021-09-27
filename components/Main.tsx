@@ -72,6 +72,7 @@ export interface Invoice {
   receiverInfo: ReceiverInfo
   paymentDetails: any
   financedOn: any;
+  deliveredOn: string;
 
   // endDate: Date
 }
