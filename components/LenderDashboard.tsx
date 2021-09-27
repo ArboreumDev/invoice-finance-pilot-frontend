@@ -6,6 +6,8 @@ import {FinanceStatus, SupplierInfo} from "./Main"
 import InvoiceTable from "./InvoiceTable"
 import SupplierTable from "./supplier/SupplierTable";
 import {CreditLineInfo} from "./CreditlinesTable";
+import {flattenObject} from "../utils/utils"
+import CsvDownloader from "react-csv-downloader";
 
 
 interface Props {
@@ -69,6 +71,14 @@ const LenderDashboard = ({invoices, creditInfo, suppliers}: Props) => {
     }
   }
 
+  const prepareCsvExport = () => {
+      const rows = []
+      filteredInvoices().forEach(invoice => {
+        rows.push(flattenObject(invoice))
+      });
+      return Promise.resolve(rows);
+  }; 
+
   return (
     <>
     <VStack>
@@ -98,6 +108,9 @@ const LenderDashboard = ({invoices, creditInfo, suppliers}: Props) => {
         <Box minW="170px" width="10%">
           <AddInvoiceDrawer />
         </Box>
+          <CsvDownloader filename={`filteredInvoices${Date.now()}.csv`} datas={prepareCsvExport}>
+              <Button title="Download a .csv file of all currently showed invoices">Export</Button>
+          </CsvDownloader>
       </HStack>
       <Divider />
       <HStack width="100%">
