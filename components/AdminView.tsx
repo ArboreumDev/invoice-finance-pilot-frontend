@@ -139,10 +139,10 @@ const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
 
     const prepareCsvExport = () => {
         const rows = []
-        for (let supplier of suppliers) {
+        for (const supplier of suppliers) {
             let totalValue = 0
             let totalPrincipal = 0
-            for (let invoice of invoicesToBeFinanced(supplier.id)) {
+            for (const invoice of invoicesToBeFinanced(supplier.id)) {
                 rows.push({
                     supplier: supplier.name,
                     orderId: invoice.orderId,
