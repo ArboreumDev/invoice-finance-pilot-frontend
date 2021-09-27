@@ -89,10 +89,10 @@ export const InvoiceDetails = ({invoice}: Props) => {
                                 <Td isNumeric>{invoice.status}</Td>
                             </Tr>
 
-                            {/* <Tr>
-                                <Td>request reference number</Td>
-                                <Td isNumeric>{invoice.paymentDetails.requestId}</Td>
-                            </Tr> */}
+                             <Tr>
+                                <Td>disbursal time by loan admin (UTC+0)</Td>
+                                <Td isNumeric>{invoice.financedOn}</Td>
+                            </Tr> 
 
                             <Tr>
                                 <Td>disbursal transaction ID </Td>
