@@ -19,3 +19,10 @@ export function flattenObject(ob) {
     }
     return toReturn;
 }
+
+export const UTCStringToLocaleTime = (s) => {
+    if (s && s !== "None") {
+        const d = new Date(Date.parse(s))
+        return d.toLocaleDateString() +" "+ d.toLocaleTimeString()
+    } else return ""
+}

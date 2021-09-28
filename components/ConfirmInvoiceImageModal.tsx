@@ -44,10 +44,10 @@ export const ConfirmInvoiceImageModal = (props: Props) => {
             } catch (err) {
                 setFetching(false)
                 console.log('err', err)
-                if (err.response.status === 412) {
+                if (err?.response?.status === 412) {
                     setMsg('No image uploaded')
                 }
-                if (err.response.status === 401) {
+                if (err?.response?.status === 401) {
                     setMsg('Unauthorized')
                 }
                 setError(true)

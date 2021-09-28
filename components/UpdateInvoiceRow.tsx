@@ -114,7 +114,7 @@ const UpdateInvoiceRow = ({invoice, changeStatus, changeValue, markDelivered}: P
                         { newStatus == "FINANCED" && (
                             <>
                                 <Input width="300px" value={loanId} placeholder={"enter liquiloans loan ID "} size="sm" onChange={(e) => setLoanId(e.target.value)}/>
-                                <Input width="300px" value={disbursalDate} placeholder={"disbursal date: e.g. '2021-09-24T16:03:13.588402+02:00'"} size="sm" onChange={(e) => setDisbursalDate(e.target.value)}/>
+                                <Input type="datetime-local"  width="300px" value={disbursalDate} placeholder={"disbursal date: e.g. '2021-09-24T16:03:13.588402+02:00'"} size="sm" onChange={(e) => setDisbursalDate(e.target.value)}/>
                             </>
                         )}
                         { moneyStates.includes(newStatus) && (
