@@ -75,7 +75,15 @@ export const InvoiceDetails = ({invoice}: Props) => {
                                 <Td>invoice value</Td>
                                 <Td isNumeric>{invoice.value}</Td>
                             </Tr>
+                            <Tr>
+                                <Td>principal</Td>
+                                <Td isNumeric>{invoice.paymentDetails.principal}</Td>
+                            </Tr>
 
+                            <Tr>
+                                <Td>Interest due after 90 days</Td>
+                                <Td isNumeric>{invoice.paymentDetails.interest}</Td>
+                            </Tr>
                             <Tr>
                                 <Td>status</Td>
                                 <Td isNumeric>{invoice.status}</Td>

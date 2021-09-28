@@ -29,7 +29,7 @@ function SelectColumnFilter({
       }}
     >
       <option value="">All</option>
-      {options.map((option, i) => (
+      {options.map((option: string | undefined, i) => (
         <option key={i} value={option}>
           {option}
         </option>

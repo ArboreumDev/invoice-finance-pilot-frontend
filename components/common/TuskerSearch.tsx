@@ -23,6 +23,7 @@ interface Props {
   setNewTenor: React.Dispatch<React.SetStateAction<any>>
   creditlineId: number,
   setCreditlineId: React.Dispatch<React.SetStateAction<any>>
+  editableTerms: Array<string>
 }
 
 export const TuskerSearch = (props: Props) => {
@@ -82,7 +83,8 @@ export const TuskerSearch = (props: Props) => {
               defaultCreditLimit={props.defaultCreditLimit}
               setNewCreditLimit={props.setNewCreditLimit}
               defaultTenor={props.defaultTenor}
-              setNewTenor={props.setNewTenor} />
+              setNewTenor={props.setNewTenor} 
+              editableTerms={props.editableTerms} />
           </Box>
       )}
       <Box>

@@ -24,7 +24,7 @@ const SupplierTable = (props: { suppliers: SupplierInfo[] }) => {
           edit: <ModTermsModal 
             supplierId={s.id} name={s.name} apr={s.defaultTerms.apr}
             tenor={s.defaultTerms.tenorInDays} creditline={s.creditlineSize}
-            creditlineId={s.creditlineId}
+            creditlineId={s.creditlineId} editableTerms={['CREDITLIMIT', 'APR', 'TENOR']}
           />,
           }
       }),
@@ -44,7 +44,7 @@ const SupplierTable = (props: { suppliers: SupplierInfo[] }) => {
         disableFilters: true
       },
       {
-        Header: "Credit Limit",
+        Header: "Max Total Credit Limit",
         accessor: "creditlineSize",
         sortDescFirst: true,
         disableFilters: true

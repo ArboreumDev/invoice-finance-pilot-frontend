@@ -66,21 +66,26 @@ export const AddSupplierModal = () => {
                          body={
                              <Box>
                                 <TuskerSearch
-                                    submit={submit}
-                                    loading={loading}
-                                    receiver={receiver}
-                                    setReceiver={setReceiver}
-                                    searchResults={searchResults}
-                                    setSearchResults={setSearchResults}
-                                    defaultApr={defaultTuskerApr}
-                                    newApr={newApr}
-                                    setNewApr={setNewApr}
-                                    defaultCreditLimit={defaultTuskerCreditLineSize}
-                                    newCreditLimit={newCreditLimit}
-                                    setNewCreditLimit={setNewCreditLimit}
-                                    defaultTenor={defaultTuskerTenor}
-                                    newTenor={newTenor}
-                                    setNewTenor={setNewTenor} />
+                                     submit={submit}
+                                     loading={loading}
+                                     receiver={receiver}
+                                     setReceiver={setReceiver}
+                                     searchResults={searchResults}
+                                     setSearchResults={setSearchResults}
+                                     defaultApr={defaultTuskerApr}
+                                     newApr={newApr}
+                                     setNewApr={setNewApr}
+                                     defaultCreditLimit={defaultTuskerCreditLineSize}
+                                     newCreditLimit={newCreditLimit}
+                                     setNewCreditLimit={setNewCreditLimit}
+                                     defaultTenor={defaultTuskerTenor}
+                                     newTenor={newTenor}
+                                     editableTerms={["APR", "TENOR", "CREDITLIMIT"]}
+                                     setNewTenor={setNewTenor} 
+                                     creditlineId={0} 
+                                     setCreditlineId={function (): void {
+                                         throw new Error("Function not implemented.");
+                                     } } />
                             </Box>
                          }
                          footer={""}

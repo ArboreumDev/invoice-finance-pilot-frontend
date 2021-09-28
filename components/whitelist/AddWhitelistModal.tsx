@@ -115,21 +115,26 @@ export const AddWhitelistModal = (props: {suppliers: SupplierInfo[]} ) => {
                                 </Select>
                                  {supplierId ?
                                 <TuskerSearch
-                                    submit={submit}
-                                    loading={loading}
-                                    receiver={receiver}
-                                    setReceiver={setReceiver}
-                                    searchResults={searchResults}
-                                    setSearchResults={setSearchResults}
-                                    defaultApr={defaultTerms ? defaultTerms.apr : null}
-                                    newApr={newApr}
-                                    setNewApr={setNewApr}
-                                    defaultCreditLimit={0}
-                                    newCreditLimit={newCreditLimit}
-                                    setNewCreditLimit={setNewCreditLimit}
-                                    defaultTenor={defaultTerms ? defaultTerms.tenorInDays : null}
-                                    newTenor={newTenor}
-                                    setNewTenor={setNewTenor} />  : null }
+                                         submit={submit}
+                                         loading={loading}
+                                         receiver={receiver}
+                                         setReceiver={setReceiver}
+                                         searchResults={searchResults}
+                                         setSearchResults={setSearchResults}
+                                         defaultApr={defaultTerms ? defaultTerms.apr : null}
+                                         newApr={newApr}
+                                         setNewApr={setNewApr}
+                                         defaultCreditLimit={0}
+                                         newCreditLimit={newCreditLimit}
+                                         setNewCreditLimit={setNewCreditLimit}
+                                         defaultTenor={defaultTerms ? defaultTerms.tenorInDays : null}
+                                         newTenor={newTenor}
+                                         setNewTenor={setNewTenor}
+                                         editableTerms={["CREDITLIMIT"]} 
+                                         creditlineId={0} 
+                                         setCreditlineId={function (): void {
+                                             throw new Error("Function not implemented.");
+                                         } } />  : null }
                             </Box>
                          }
                          footer={""}
@@ -139,7 +144,7 @@ export const AddWhitelistModal = (props: {suppliers: SupplierInfo[]} ) => {
 
 export const ModTermsModal = (props: {
     name: string, purchaserId?: string, supplierId: string, apr: number, tenor: number,
-    creditline: number, creditlineId?: string 
+    creditline: number, creditlineId?: string, editableTerms: string[]
 }) => {
     const [newApr, setNewApr] = useState(null)
     const [newCreditLimit, setNewCreditLimit] = useState(null)
@@ -201,6 +206,7 @@ export const ModTermsModal = (props: {
                         defaultCreditLimit={props.creditline}
                         setNewCreditLimit={setNewCreditLimit} defaultTenor={props.tenor}
                         setNewTenor={setNewTenor} 
+                        editableTerms={props.editableTerms}
                     />
                     {/* if this is for the supplier, also allow updating the supplierCreditlineID */}
                     {!props.purchaserId && (

@@ -73,7 +73,8 @@ const WhitelistTable = (props: { creditInfo: CreditSummary, suppliers: SupplierI
           creditlineSize: currencyToString(w.info.terms.creditlineSize),
           edit: <ModTermsModal supplierId={w.supplierId} name={w.info.name} apr={w.info.terms.apr}
                                tenor={w.info.terms.tenorInDays} creditline={w.info.terms.creditlineSize}
-                               purchaserId={w.info.id} />,
+                               purchaserId={w.info.id} editableTerms={['CREDITLIMIT']}
+                               />,
           supplier: {...props.suppliers.filter((s) => s.id === w.supplierId)[0]}
         }
       }),
@@ -100,16 +101,16 @@ const WhitelistTable = (props: { creditInfo: CreditSummary, suppliers: SupplierI
         sortDescFirst: true,
         disableFilters: true
       },
-      {
-        Header: "APR",
-        accessor: "info.terms.apr",
-        disableFilters: true
-      },
-      {
-        Header: "tenor (days)",
-        accessor: "info.terms.tenorInDays",
-        disableFilters: true
-      },
+      // {
+      //   Header: "APR",
+      //   accessor: "info.terms.apr",
+      //   disableFilters: true
+      // },
+      // {
+      //   Header: "tenor (days)",
+      //   accessor: "info.terms.tenorInDays",
+      //   disableFilters: true
+      // },
       {
         Header: "Phone",
         accessor: "info.phone",

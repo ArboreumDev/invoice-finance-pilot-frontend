@@ -71,6 +71,7 @@ export interface Invoice {
   status: FinanceStatus;
   receiverInfo: ReceiverInfo
   paymentDetails: any
+  financedOn: any;
 
   // endDate: Date
 }

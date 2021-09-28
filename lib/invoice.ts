@@ -1,5 +1,5 @@
 export const principalToInterest = (
-    principal: number, afterXCompoundPeriods=3, apr=0.01666667
+    principal: number, afterXCompoundPeriods=3, apr=0.1666667
     ) => {
-    return Math.round(apr * afterXCompoundPeriods * principal)
+    return Math.round((principal * (1 + apr / 360) ** afterXCompoundPeriods) - principal)
 }

@@ -1,8 +1,8 @@
 
 import {
   Box, Button, Divider, Heading, HStack, Text, VStack, Select,
-  Input,
-  Tooltip, Stack
+  Input, useClipboard,
+  Tooltip, Stack, Spinner
 
 } from "@chakra-ui/react"
 import React, { useEffect, useState } from "react";
@@ -11,6 +11,12 @@ import {Invoice, SupplierInfo} from "./Main"
 import {CreditSummary} from "./CreditlinesTable"
 import UpdateInvoiceRow from "./UpdateInvoiceRow"
 import { sign } from "crypto";
+import { notEqual } from "assert";
+import CsvDownloader from "react-csv-downloader";
+import { time } from "console";
+
+
+const possibleStatus = ["DELIVERED", "DISBURSAL_REQUESTED", "PLACED_AND_VALID", "REPAID", "INITIAL"]
 
 interface Props {
     invoices: Invoice[]
@@ -25,14 +31,28 @@ const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
     const [newOrderReceiver, setNewOrderReceiver] = useState("")
     const [orderRefFilter, setOrderRefFilter] = useState("")
     const [loanIdFilter, setLoanIdFilter] = useState("")
+    const [statusFilter, setStatusFilter] = useState("")
+    const [lastUpdate, setLastUpdate] = useState("")
     const [filterId, setFilterId] = useState("")
+    const [csvExport, setCsvExport] = useState("")
+    const { hasCopied, onCopy } = useClipboard(csvExport)
+
+  useEffect(() => {
+    const r = window.localStorage.getItem("arboreum:last_update")
+    if (r) setLastUpdate(r)
+    }, [])
+ 
 
     const updateDB = async () => {
       const res = await axiosInstance.post("/v1/invoice/update")
       if (res.status === 200) {
-          alert("Updated")
+        alert("Updated.\n (It may take a few seconds until the change becomes visible.)")
+        const now = new Date(Date.now())
+        const nowString = now.toLocaleDateString('en-US') + " " + now.toLocaleTimeString('en-US')
+        setLastUpdate(nowString)
+        window.localStorage.setItem("arboreum:last_update", nowString)
       } else {
-          alert("error")
+        alert("error")
       }
     }
 
@@ -97,22 +117,68 @@ const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
 
 
     const filteredInvoices = () => {
-        if (loanIdFilter || orderRefFilter) {
+        if (loanIdFilter || orderRefFilter || statusFilter) {
             return invoices.filter(
                 i => orderRefFilter ? i.orderId === orderRefFilter : true).filter(
-                    i => loanIdFilter ? i.paymentDetails.loanId === loanIdFilter : true)
+                    i => statusFilter ? i.shippingStatus === statusFilter || i.status === statusFilter : true).filter(
+                        i => loanIdFilter ? i.paymentDetails.loanId === loanIdFilter : true)
         }
         else return invoices
     }
+
+    const invoicesToBeFinanced = (supplierId: string) => {
+        return invoices.filter( i => i.supplierId === supplierId).filter((i: Invoice) => {
+            return  (
+                i.verified  // by tusker
+                && i.shippingStatus === "DELIVERED" 
+                && i.paymentDetails.verificationResult.includes("VALID")  // signature on invoice image
+                && i.status == "INITIAL"
+            )
+        })
+    }
+
+    const prepareCsvExport = () => {
+        const rows = []
+        for (let supplier of suppliers) {
+            let totalValue = 0
+            let totalPrincipal = 0
+            for (let invoice of invoicesToBeFinanced(supplier.id)) {
+                rows.push({
+                    supplier: supplier.name,
+                    orderId: invoice.orderId,
+                    invoiceValue: invoice.value,
+                    principal: invoice.paymentDetails.principal
+                })
+                totalValue += invoice.value
+                totalPrincipal += invoice.paymentDetails.principal
+            }
+            rows.push({
+                supplier: supplier.name,
+                orderId: "Total",
+                invoiceValue: totalValue,
+                principal: totalPrincipal,
+            })
+        }
+        return Promise.resolve(rows);
+    }; 
 
     return (
         <>
         <Box>
             <VStack>
-            <Heading float='left' size="sm" alignContent="left">SYNC DB</Heading>
-            <Button disabled onClick={updateDB}>
-                    <Tooltip label="in order to trigger status changes that happen upon delivery"> UpdateDb</Tooltip>
+            <Button onClick={updateDB}>
+                    <Tooltip label="update delivery status by syncing DB with latest Tusker data"> UpdateDb</Tooltip>
             </Button>
+            <Text> (last update: {lastUpdate}) </Text>
+            <HStack>
+                <Text>Get latest financable invoices:</Text>
+                <Box>
+                    <CsvDownloader filename={`exportAfterUpdate${lastUpdate}.csv`} datas={prepareCsvExport}>
+                        <Button>Download .csv</Button>
+                    </CsvDownloader>
+                </Box>
+            </HStack>
+
             <Divider />
             <Heading size="sm" alignContent="left">Create a New Order</Heading>
             <HStack>
@@ -143,6 +209,7 @@ const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
             </HStack>
             <Divider />
                 <Heading size="sm" alignContent="left">Change existing Invoices:</Heading>
+
             <HStack>
                 <Input 
                     width="300px" placeholder="search for a specific order ref no" onChange={(e)=>setOrderRefFilter(e.target.value)} 
@@ -152,13 +219,24 @@ const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
                     width="300px" placeholder="filter by loanID" onChange={(e)=>setLoanIdFilter(e.target.value)} 
                     value={loanIdFilter}
                 />
-                <Button width="150px" onClick={()=>{setOrderRefFilter(""), setLoanIdFilter("")}}>Clear</Button>
+                <Select 
+                width="300px"
+                value={statusFilter} 
+                onChange={(e)=> {setStatusFilter(e.target.value)}}
+                placeholder={"filter by shipping/finance status"}>
+                    {possibleStatus.map((s) => (
+                        <option key={s} value={s}> {s} </option>
+                        ))}
+                </Select>
+                <Button width="150px" onClick={()=>{setOrderRefFilter(""), setLoanIdFilter(""), setStatusFilter("")}}>Clear</Button>
             </HStack>
                 <ul>
                 {invoices && filteredInvoices().map((invoice: Invoice) => (
                     <li key={"inv" + invoice.invoiceId}>
                         <HStack padding="1" width="100%">
-                            <UpdateInvoiceRow changeStatus={changeStatus} changeValue={changeValue} invoice={invoice} />
+                            <UpdateInvoiceRow 
+                            changeStatus={changeStatus} changeValue={changeValue} invoice={invoice} markDelivered={markDelivered}
+                            />
                         </HStack>
                     </li>
                     ))

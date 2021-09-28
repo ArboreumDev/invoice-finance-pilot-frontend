@@ -4,6 +4,7 @@ import {
   Box, Divider, Grid, Heading, HStack, Text, VStack, Spinner, Center,
   Select,
   Flex,
+  Tag,
   Progress,
   Stack,
   Stat,
@@ -21,6 +22,8 @@ import {FinanceStatus } from "./Main"
 import {ReceiverDetails} from "./ReceiverDetails"
 import CreditlinesTable, {CreditLineInfo, CreditSummary} from "./CreditlinesTable"
 import {principalToInterest} from "../lib/invoice"
+import { InfoIcon } from '@chakra-ui/icons'
+import { InvoiceDetails } from "./InvoiceDetails";
 
 
 const CreditLines = (props: { creditLines: CreditLineInfo[] }) => {
@@ -118,6 +121,29 @@ interface VendorAccountInfoProps {
   suppliers: SupplierInfo[]
 }
 
+const _MS_PER_DAY = 1000 * 60 * 60 * 24;
+
+// a and b are javascript Date objects
+function dateDiffInDays(a, b) {
+  return Math.floor((a - b) / _MS_PER_DAY);
+}
+
+
+const invoiceToDebt = (i: Invoice, endOfTerm = true) => {
+  if (endOfTerm) {
+    let t=i.paymentDetails.principal + i.paymentDetails.interest
+    return t 
+  } else {
+    let t=( i.paymentDetails.principal + principalToInterest(
+      i.paymentDetails.principal, // amount
+      dateDiffInDays(Date.now(), Date.parse(i.financedOn)),
+      i.paymentDetails.apr)
+    )
+      console.log('in', t)
+      return t 
+  }
+}
+
 
 const AccountInfo = ({invoices, creditInfo, suppliers}: VendorAccountInfoProps) => {
   const [view, setView] = useState("tusker")
@@ -138,8 +164,12 @@ const AccountInfo = ({invoices, creditInfo, suppliers}: VendorAccountInfoProps) 
   const percUsed = dec_to_perc(totalUsed / total, 1)
   const percAvailable = dec_to_perc(totalAvailable / total, 1)
   const percRequested = dec_to_perc(totalRequested / total, 1)
-  // const totalDebt = totalUsed * 1.05
-  const totalDebt = totalUsed + principalToInterest(totalUsed, 0.0166666, 3)
+  const totalFinanced = invoicesFunded.map(i => i.value).reduce((a,b) => a+b, 0)
+  // assuming repayment at end of latest possible date
+  const totalOutstandingAtEndOfTenor = invoicesFunded.map(i => invoiceToDebt(i)).reduce((a,b) => a+b, 0)
+  // assuming repayment before end of day
+  const totalLiveDebt = invoicesFunded.map(i => invoiceToDebt(i, false)).reduce((a,b) => a+b, 0)
+  // console.log('sffsd', invoicesFunded[0].paymentDetails.interest , invoicesFunded[0].paymentDetails)
 
 
   let usedAmounts = creditLines.map(c => c.used)
@@ -150,6 +180,15 @@ const AccountInfo = ({invoices, creditInfo, suppliers}: VendorAccountInfoProps) 
   let _names = creditLines.map(c => c.info.name)
   let names = _names.concat(_names)
   names.push("available")
+
+  // const CustomTag = React.forwardRef(({ children, ...rest }, ref) => (
+  //   <Box p="1">
+  //     <Tag ref={ref} {...rest}>
+  //       {children}
+  //     </Tag>
+  //   </Box>
+  // ))
+  
 
 
   return (
@@ -171,14 +210,44 @@ const AccountInfo = ({invoices, creditInfo, suppliers}: VendorAccountInfoProps) 
           <HStack spacing={20} marginTop={1}>
             <Stat>
               <StatLabel fontSize="lg">
-                  <Tooltip label="assuming payback after 90 days">
-                    Total Current Debt
+                <Stack direction="row">
+                  <Text> Financed Invoice Value </Text>
+                  <Tooltip label="Total amount of invoices currently financed or requested">
+                  <InfoIcon />
                   </Tooltip>
+                </Stack>
                 </StatLabel>
               <StatNumber fontSize="3xl">
-                <Currency amount={totalDebt} />
+                <Currency amount={totalFinanced} />
               </StatNumber>
             </Stat>
+            <Stat>
+              <StatLabel fontSize="lg">
+                <Stack direction="row">
+                  <Text> Total Debt </Text>
+                  <Tooltip label="total amount due if invoices are being repaid according to terms (at the last possible date) ">
+                  <InfoIcon />
+                  </Tooltip>
+                </Stack>
+                </StatLabel>
+              <StatNumber fontSize="3xl">
+                <Currency amount={totalOutstandingAtEndOfTenor} />
+              </StatNumber>
+            </Stat>
+             <Stat>
+              <StatLabel fontSize="lg">
+                <Stack direction="row">
+                  <Text> Total Live Debt </Text>
+                  <Tooltip label="total amount due if all invoices were repaid by the end of this day ">
+                  <InfoIcon />
+                  </Tooltip>
+                </Stack>
+                </StatLabel>
+              <StatNumber fontSize="3xl">
+                <Currency amount={totalLiveDebt} />
+              </StatNumber>
+            </Stat>
+ 
             </HStack>
 
           <Heading size="md">Account Overview</Heading>

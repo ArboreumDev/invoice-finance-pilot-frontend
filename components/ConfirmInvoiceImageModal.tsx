@@ -43,6 +43,7 @@ export const ConfirmInvoiceImageModal = (props: Props) => {
                 } 
             } catch (err) {
                 setFetching(false)
+                console.log('err', err)
                 if (err.response.status === 412) {
                     setMsg('No image uploaded')
                 }
