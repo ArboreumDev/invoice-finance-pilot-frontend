@@ -92,7 +92,7 @@ const LenderDashboard = ({invoices, creditInfo, suppliers}: Props) => {
     <VStack>
     <HStack >
       <Text minW="110px" width="27%">Show Invoices:</Text>
-      <Input width="400px" onChange={(e) => setOrderIdSearchString(parseInt(e.target.value))} placeholder={"order/invoice ID"}/>
+      <Input width="400px" onChange={(e) => setOrderIdSearchString(e.target.value)} placeholder={"order/invoice ID"}/>
       <Select onChange={(e)=> setInvoiceStatus(e.target.value)} placeholder="All Status">
         <option value={FinanceStatus.INITIAL}>requested & awaiting delivery (INITIAL)</option>
         <option value={FinanceStatus.DISBURSAL_REQUESTED}>delivered & awaiting disbursal (DISBURSAL_REQUESTED)</option>

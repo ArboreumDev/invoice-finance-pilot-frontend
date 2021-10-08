@@ -16,10 +16,11 @@ interface Props {
   body: React.ReactNode
   footer: React.ReactNode
   close: boolean
+  size?: string
 }
 
 
-export const ChakraModal = ({buttonText, heading, body, footer, close}: Props) => {
+export const ChakraModal = ({buttonText, heading, body, footer, close, size}: Props) => {
   const { isOpen, onOpen, onClose } = useDisclosure()
   useEffect(() => {
     if(close) {
@@ -29,7 +30,7 @@ export const ChakraModal = ({buttonText, heading, body, footer, close}: Props) =
       return (
         <>
         <Button onClick={onOpen} colorScheme="teal" >{buttonText}</Button>
-        <Modal isOpen={isOpen} onClose={onClose}>
+        <Modal isOpen={isOpen} onClose={onClose} size={size}>
             <ModalOverlay />
             <ModalContent>
             <ModalHeader>{heading}</ModalHeader>

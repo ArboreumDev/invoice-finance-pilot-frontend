@@ -58,8 +58,8 @@ const UpdateInvoiceRow = ({invoice, changeStatus, changeValue, markDelivered}: P
         if (!newStatus) return false
         if (newStatus == 'FINANCED' && loanId && txId && getVerificationStatus(invoice) && disbursalDate) return true
         if (newStatus == 'REPAID' && txId) return true
-        if (newStatus == "INITIAL") return true
-        return false
+        return newStatus == "INITIAL";
+
     }
 
     return (
@@ -97,10 +97,9 @@ const UpdateInvoiceRow = ({invoice, changeStatus, changeValue, markDelivered}: P
 
             <Box> 
                 <Stack direction='row'>
-                    <Text> <Tooltip label="The uploaded image must match the invoice id and the invoice must be signed!">
-                            <Text fontSize="lg"> Invoice signed: {invoiceToSymbol(invoice)} </Text>
-                        </Tooltip>
-                    </Text>
+                    <Tooltip label="The uploaded image must match the invoice id and the invoice must be signed!">
+                        <Text fontSize="lg"> Invoice signed: {invoiceToSymbol(invoice)} </Text>
+                    </Tooltip>
                     <ConfirmInvoiceImageModal invoice={invoice} />
                 <VStack>
                     <Select 

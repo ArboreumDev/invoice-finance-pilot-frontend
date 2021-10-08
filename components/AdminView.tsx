@@ -2,7 +2,7 @@
 import {
   Box, Button, Divider, Heading, HStack, Text, VStack, Select,
   Input, useClipboard,
-  Tooltip, Stack, Spinner
+  Tooltip,
 
 } from "@chakra-ui/react"
 import React, { useEffect, useState } from "react";
@@ -10,11 +10,7 @@ import axiosInstance from "../utils/fetcher"
 import {Invoice, SupplierInfo} from "./Main"
 import {CreditSummary} from "./CreditlinesTable"
 import UpdateInvoiceRow from "./UpdateInvoiceRow"
-import { sign } from "crypto";
-import { notEqual } from "assert";
 import CsvDownloader from "react-csv-downloader";
-import { time } from "console";
-
 
 const possibleStatus = ["DELIVERED", "DISBURSAL_REQUESTED", "PLACED_AND_VALID", "REPAID", "INITIAL"]
 
@@ -79,15 +75,9 @@ const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
             console.log(err)
             alert('error')
         }
-        // } catch (err) {
-        //     console.log(err)
-        //     alert(err)
-        // }
     }
 
     const changeValue = async (invoiceId, newValue) => {
-        // const msg = "" + invoiceId + "->" + newValue
-        // alert(msg)
         try {
             const res = await axiosInstance.post("/v1/admin/update", {update: {invoiceId, newValue}})
             if (res.status === 200) {
@@ -185,7 +175,6 @@ const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
                 {suppliers && (
                     <Select onChange={(e)=> setSupplier(suppliers.filter(s => s.id == e.target.value)[0])} placeholder="Select Supplier">
                     { suppliers.map((s) => (
-                        // eslint-disable-next-line react/jsx-key
                         <option key={s.id} value={s.id}> {s.name} </option>
                     ))}
                     </Select>
@@ -194,7 +183,6 @@ const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
                     <Box>
                     <Select onChange={(e)=> setNewOrderReceiver(e.target.value)} placeholder="Select Receiver">
                         {Object.values(creditInfo[supplier.id]).map((c) => (
-                            // <option value={c}> {c.info.name} </option>
                             <option key={c.info.id} value={c.info.id}> {c.info.name} ({c.info.city}, {c.info.phone}) </option>
                             ))}
                     </Select>
