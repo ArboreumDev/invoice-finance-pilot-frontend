@@ -33,6 +33,7 @@ import {
   } from "@chakra-ui/react"
 import {Invoice} from "./Main"
 import { Currency } from "../components/common/Currency"
+import {UTCStringToLocaleTime} from "../utils/utils"
 
 interface Props {
     invoice: Invoice
@@ -88,11 +89,15 @@ export const InvoiceDetails = ({invoice}: Props) => {
                                 <Td>status</Td>
                                 <Td isNumeric>{invoice.status}</Td>
                             </Tr>
+                            <Tr>
+                                <Td>delivered on</Td>
+                                <Td isNumeric>{UTCStringToLocaleTime(invoice.deliveredOn)}</Td>
+                            </Tr>
 
-                            {/* <Tr>
-                                <Td>request reference number</Td>
-                                <Td isNumeric>{invoice.paymentDetails.requestId}</Td>
-                            </Tr> */}
+                             <Tr>
+                                <Td>disbursal time by loan admin</Td>
+                                <Td isNumeric>{UTCStringToLocaleTime(invoice.financedOn)}</Td>
+                            </Tr> 
 
                             <Tr>
                                 <Td>disbursal transaction ID </Td>

@@ -7,40 +7,6 @@ import {InvoiceDetails} from "./InvoiceDetails"
 import axiosInstance from "../utils/fetcher"
 
 
-function SelectColumnFilter({
-  column: { filterValue, setFilter, preFilteredRows, id },
-}) {
-  // Calculate the options for filtering
-  // using the preFilteredRows
-  const options = React.useMemo(() => {
-    const options = new Set()
-    preFilteredRows.forEach(row => {
-      options.add(row.values[id])
-    })
-    return [...options.values()]
-  }, [id, preFilteredRows])
-
-   // Render a multi-select box
-  return (
-    <Select
-      value={filterValue}
-      onChange={e => {
-        setFilter(e.target.value || undefined)
-      }}
-    >
-      <option value="">All</option>
-      {options.map((option: string | undefined, i) => (
-        <option key={i} value={option}>
-          {option}
-        </option>
-      ))}
-    </Select>
-    // <div>TODO</div>
-  )
-}
-
-
-
 export interface SupplierMap { [key: string]: string; }
 interface Props {
   invoices: Invoice[]
@@ -64,8 +30,6 @@ const InvoiceTable = (props: Props) => {
       }
   }
 
-
-
   const currencyToString = (amount) => {
     return amount.toLocaleString("en-IN", { 
         style: "currency",
@@ -74,11 +38,6 @@ const InvoiceTable = (props: Props) => {
         maximumFractionDigits: 2,
       })
     }
-
-  const isVerified = (invoice) => {
-    return invoice.status !== "INITIAL"
-  }
- 
 
   const data = React.useMemo(
     () => props.invoices.map((i: Invoice) => {
@@ -117,7 +76,6 @@ const InvoiceTable = (props: Props) => {
       {
         Header: "Invoice Amount",
         accessor: "amount",
-        // isNumeric: true
         sortDescFirst: true,
         disableFilters: true
       },
@@ -139,8 +97,7 @@ const InvoiceTable = (props: Props) => {
       {
         Header: " Loan Id",
         accessor: "paymentDetails.loanId",
-        Filter: SelectColumnFilter,
-        filter: "includes",
+        disableFilters: true
       },
       {
         Header: "Due Date",

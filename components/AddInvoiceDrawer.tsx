@@ -1,13 +1,8 @@
 import {
     Drawer,
     Table,
-    Switch,
-    Thead,
-    Text,
     Tbody,
-    Tfoot,
     Tr,
-    Th,
     Td,
     Divider,
     Box,
@@ -17,12 +12,11 @@ import {
     DrawerOverlay,
     DrawerContent,
     DrawerCloseButton,
-    Stack, Button, useDisclosure, Input,
+    Button, useDisclosure, Input,
     VStack,
     Heading
   } from "@chakra-ui/react"
-import React, { useEffect, useState,  } from "react";
-import { principalToInterest } from "../lib/invoice";
+import React, { useState,  } from "react";
 import axiosInstance from "../utils/fetcher"
 import {error, success} from "./common/popups";
 
@@ -67,7 +61,6 @@ function AddInvoiceDrawer() {
             receiverInfo: result.data.receiverInfo,
             paymentDetails: result.data.paymentDetails
         })
-        // alert("Tusker has been notified.")
       })
       .catch((err) => {
         let msg = "unknown error"
@@ -81,8 +74,6 @@ function AddInvoiceDrawer() {
   const handleFinance = async () => {
     axiosInstance.post("/v1/invoice/" +  order.orderRef)
       .then((result)=>{
-        // setResult("success")
-        // alert
           success("Your request is being processed")
           onClose()
           setOrder(dummyOrder)

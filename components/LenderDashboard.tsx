@@ -1,4 +1,4 @@
-import {Select,Spacer, Flex, Box, Button, Center, Divider, Grid, Heading, HStack, Text, VStack} from "@chakra-ui/react"
+import {Input, Select,Spacer, Flex, Box, Button, Center, Divider, Grid, Heading, HStack, Text, VStack} from "@chakra-ui/react"
 import AddInvoiceDrawer from "./AddInvoiceDrawer"
 import {Invoice, ReceiverInfo} from "./Main"
 import React, { useEffect, useState } from "react";
@@ -6,6 +6,8 @@ import {FinanceStatus, SupplierInfo} from "./Main"
 import InvoiceTable from "./InvoiceTable"
 import SupplierTable from "./supplier/SupplierTable";
 import {CreditLineInfo} from "./CreditlinesTable";
+import {flattenObject} from "../utils/utils"
+import CsvDownloader from "react-csv-downloader";
 
 
 interface Props {
@@ -19,14 +21,20 @@ const LenderDashboard = ({invoices, creditInfo, suppliers}: Props) => {
 
   const [receiverId, setReceiver] = useState("")
   const [supplierId, setSupplier] = useState("")
+  const [orderIdSearchString, setOrderIdSearchString] = useState("")
+  const [loanId, setLoanId] = useState("")
   const [invoiceStatus, setInvoiceStatus] = useState("")
   // const [invoicesToShow, setInvoicesToShow] = useState(invoices)
 
   const filteredInvoices = () => {
       return invoices 
+      .filter( i => orderIdSearchString ? (
+        i.orderId.toString().includes(orderIdSearchString) || i.invoiceId.toString().includes(orderIdSearchString) 
+      ) : true)
       .filter( i => supplierId ? i.supplierId === supplierId : true)
       .filter( i => receiverId ? i.receiverInfo.id === receiverId : true)
-        .filter(i => invoiceStatus ? i.status === invoiceStatus : true)
+      .filter(i => invoiceStatus ? i.status === invoiceStatus : true)
+      .filter(i => loanId ? i.paymentDetails.loanId === loanId : true)
 
     } 
 
@@ -69,15 +77,27 @@ const LenderDashboard = ({invoices, creditInfo, suppliers}: Props) => {
     }
   }
 
+  const allLoanIds = Array.from(new Set(invoices.map(i => i.paymentDetails.loanId)))
+
+  const prepareCsvExport = () => {
+      const rows = []
+      filteredInvoices().forEach(invoice => {
+        rows.push(flattenObject(invoice))
+      });
+      return Promise.resolve(rows);
+  }; 
+
   return (
     <>
     <VStack>
     <HStack >
       <Text minW="110px" width="27%">Show Invoices:</Text>
+      <Input width="400px" onChange={(e) => setOrderIdSearchString(e.target.value)} placeholder={"order/invoice ID"}/>
       <Select onChange={(e)=> setInvoiceStatus(e.target.value)} placeholder="All Status">
         <option value={FinanceStatus.INITIAL}>requested & awaiting delivery (INITIAL)</option>
         <option value={FinanceStatus.DISBURSAL_REQUESTED}>delivered & awaiting disbursal (DISBURSAL_REQUESTED)</option>
         <option value={FinanceStatus.FINANCED}>disbursed & to be paid back (FINANCED)</option>
+        <option value={FinanceStatus.REPAID}> fully paid back (REPAID)</option>
       </Select>
       {suppliers && (
         <Select onChange={(e)=> setSupplier(e.target.value)} placeholder="All Suppliers">
@@ -85,19 +105,27 @@ const LenderDashboard = ({invoices, creditInfo, suppliers}: Props) => {
             <option key={s.id} value={s.id}> {s.name} </option>
             ))}
         </Select>
-        )}
-
+      )}
       {creditInfo && (
         <Select onChange={(e)=> setReceiver(e.target.value)} placeholder="All Receivers">
-          { 
-          filteredReceiversCreditInfo().map((c: ReceiverInfo) => (
+          { filteredReceiversCreditInfo().map((c: ReceiverInfo) => (
             <option key={c.id} value={c.id}> {c.name} ({c.city}) </option>
-            ))}
+          ))}
         </Select>
-        )}
+      )}
+      {allLoanIds && (
+      <Select onChange={(e)=> setLoanId(e.target.value)} placeholder="All Loan Ids">
+        {allLoanIds.map((l) => (
+          <option key={l} value={l}> {l} </option>
+        ))}
+      </Select>
+      )}
         <Box minW="170px" width="10%">
           <AddInvoiceDrawer />
         </Box>
+          <CsvDownloader filename={`filteredInvoices${Date.now()}.csv`} datas={prepareCsvExport}>
+              <Button title="Download a .csv file of all currently showed invoices">Export</Button>
+          </CsvDownloader>
       </HStack>
       <Divider />
       <HStack width="100%">
