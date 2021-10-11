@@ -87,8 +87,7 @@ export const ConfirmInvoiceImageModal = (props: Props) => {
             heading={"Confirm invoice document for order " + props.invoice.orderId}
             body={
                 <>
-                    <Box>Please confirm that the uploaded invoice is signed and has this ID:</Box>
-                    <Box> <b> {props.invoice.invoiceId} </b> </Box>
+                    <Box>Please confirm that the uploaded invoice is signed and has a stamp:</Box>
                     {error && (
                         <Text>Error: {msg || "Unknown"}</Text>
                     )}
