@@ -43,6 +43,7 @@ interface Props {
 
 export const InvoiceDetails = ({invoice}: Props) => {
     const { isOpen, onOpen, onClose } = useDisclosure()
+    console.log('tokenization', invoice.paymentDetails.tokenization)
     return (
       <>
         <Button onClick={onOpen}>...</Button>

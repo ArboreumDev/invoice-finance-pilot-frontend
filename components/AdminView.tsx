@@ -1,10 +1,10 @@
 
 import {
   Box, Button, Divider, Heading, HStack, Text, VStack, Select,
-  Input, useClipboard,
-  Tooltip,
-
+  Input, useClipboard, Link,
+  Tooltip, Spinner
 } from "@chakra-ui/react"
+import { ExternalLinkIcon } from "@chakra-ui/icons"
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../utils/fetcher"
 import {Invoice, SupplierInfo} from "./Main"
@@ -13,6 +13,7 @@ import UpdateInvoiceRow from "./UpdateInvoiceRow"
 import CsvDownloader from "react-csv-downloader";
 
 const possibleStatus = ["DELIVERED", "DISBURSAL_REQUESTED", "PLACED_AND_VALID", "REPAID", "INITIAL"]
+const algoExplorerBaseUrl = "https://testnet.algoexplorer.io/tx/"
 
 interface Props {
     invoices: Invoice[]
@@ -30,6 +31,7 @@ const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
     const [statusFilter, setStatusFilter] = useState("")
     const [lastUpdate, setLastUpdate] = useState("")
     const [filterId, setFilterId] = useState("")
+    const [ isLoading, setIsLoading ] = useState(false)
     const [csvExport, setCsvExport] = useState("")
     const { hasCopied, onCopy } = useClipboard(csvExport)
 
@@ -52,7 +54,7 @@ const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
       }
     }
 
-    const createNew = async () => {
+    const createNewOrder = async () => {
         try {
             const res = await axiosInstance.post(`/v1/test/new/order/${supplier.id}/${newOrderReceiver}/${newOrderValue}`)
             if (res.status === 200) {
@@ -63,6 +65,28 @@ const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
         } catch (err) {
             console.log(err)
                 alert("error")
+        }
+    }
+
+    const tokenizeAsset = async () => {
+        try {
+            setIsLoading(true)
+
+            const res = await axiosInstance.post(`/v1/admin/asset/new/${loanIdFilter}`)
+            if (res.status === 200) {
+                alert(`Success: created new asset with id: ${res.data.assetId}: \n
+                    view asset at: ${algoExplorerBaseUrl}${res.data.assetId} \n
+                    view tx at: ${algoExplorerBaseUrl}${res.data.txId}`
+                )
+                setIsLoading(false)
+            } else {
+                setIsLoading(false)
+                alert(`ERROR: ${res.data}`)
+            }
+        } catch (err) {
+            setIsLoading(false)
+            console.log('sdfsdfsdfsdf', err?.response)
+            alert(`ERROR: ${err?.response?.data?.detail}`)
         }
     }
 
@@ -189,7 +213,7 @@ const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
                     </Box>
                 )}
                 <Input width="300px" onChange={(e) => setNewOrderValue(parseFloat(e.target.value))} placeholder={"order value: "+newOrderValue.toString()}/>
-                <Button onClick={createNew} width="150px">
+                <Button onClick={createNewOrder} width="150px">
                     <Tooltip label="then use order ref number to search for the invoice and reuqest it to be financed">
                         Create
                     </Tooltip>
@@ -217,6 +241,14 @@ const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
                         ))}
                 </Select>
                 <Button width="150px" onClick={()=>{setOrderRefFilter(""), setLoanIdFilter(""), setStatusFilter("")}}>Clear</Button>
+                <Button onClick={tokenizeAsset} width="150px" disabled={!loanIdFilter}>
+                    {isLoading ? 
+                    <Spinner /> 
+                    : <Tooltip label="create a token with data of all loans of the same loanId as metadata">
+                        Tokenize
+                    </Tooltip>
+                    }
+                </Button>
             </HStack>
                 <ul>
                 {invoices && filteredInvoices().map((invoice: Invoice) => (
