@@ -34,6 +34,7 @@ import {
 import {Invoice} from "./Main"
 import { Currency } from "../components/common/Currency"
 import {UTCStringToLocaleTime} from "../utils/utils"
+import { InfoOutlineIcon } from "@chakra-ui/icons"
 
 interface Props {
     invoice: Invoice
@@ -117,6 +118,13 @@ export const InvoiceDetails = ({invoice}: Props) => {
                             <Tr>
                                 <Td>request date</Td>
                                 <Td isNumeric>{invoice.paymentDetails.startDate || "tbd"}</Td>
+                            </Tr>
+                            <Tr>
+                                <Td>Tokenization info </Td>
+                                <Td isNumeric> 
+                                Asset Id: {invoice.paymentDetails.tokenization?.asset_id || "none"}
+                                txs :{Object.keys(invoice.paymentDetails.tokenization?.transactions || {}).length}
+                                </Td>
                             </Tr>
                         </Tbody>
                         </Table>

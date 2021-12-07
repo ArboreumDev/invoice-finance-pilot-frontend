@@ -61,6 +61,7 @@ const UpdateInvoiceRow = ({invoice, changeStatus, changeValue, markDelivered}: P
         return newStatus == "INITIAL";
 
     }
+    // console.log('i', invoice)
 
     return (
         <>
@@ -132,6 +133,11 @@ const UpdateInvoiceRow = ({invoice, changeStatus, changeValue, markDelivered}: P
                     onClick={() => {changeStatus(invoice.invoiceId, newStatus, loanId, txId, disbursalDate) ; resetState()}}
                 >Change Status
                 </Button>
+            )}
+            {(
+                invoice.paymentDetails.tokenization?.asset_id ?
+                <Text>Tokenized</Text>
+                : <Text></Text>
             )}
 
         </>
