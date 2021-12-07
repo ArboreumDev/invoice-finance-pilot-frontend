@@ -12,7 +12,7 @@ import {CreditSummary} from "./CreditlinesTable"
 import UpdateInvoiceRow from "./UpdateInvoiceRow"
 import CsvDownloader from "react-csv-downloader";
 
-const possibleStatus = ["DELIVERED", "DISBURSAL_REQUESTED", "PLACED_AND_VALID", "REPAID", "INITIAL"]
+const possibleStatus = ["DELIVERED", "DISBURSAL_REQUESTED", "PLACED_AND_VALID", "REPAID", "INITIAL", "FINANCED"]
 const algoExplorerBaseUrl = "https://testnet.algoexplorer.io/tx/"
 
 interface Props {
@@ -145,7 +145,7 @@ const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
             return  (
                 i.verified  // by tusker
                 && i.shippingStatus === "DELIVERED" 
-                && i.paymentDetails.verificationResult.includes("VALID")  // signature on invoice image
+                && i.paymentDetails?.signatureVerificationResult?.includes("VALID")  // signature on invoice image
                 && i.status == "INITIAL"
             )
         })
@@ -244,7 +244,7 @@ const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
                 <Button onClick={tokenizeAsset} width="150px" disabled={!loanIdFilter}>
                     {isLoading ? 
                     <Spinner /> 
-                    : <Tooltip label="create a token with data of all loans of the same loanId as metadata">
+                    : <Tooltip label="create a token with data of all loans of the same loanId as metadata (Note: filter by a loan-ID to get started)">
                         Tokenize
                     </Tooltip>
                     }
