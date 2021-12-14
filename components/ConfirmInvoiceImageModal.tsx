@@ -113,7 +113,7 @@ export const ConfirmInvoiceImageModal = (props: Props) => {
                 <>
                     <Button
                         colorScheme="orange" mr={3} onClick={() => updateStatus('INVALID')}
-                        disabled={error || fetching}
+                        // disabled={error || fetching}
                     >
                         {updating ? <Spinner/> : "Flag as Invalid"}
                     </Button>
