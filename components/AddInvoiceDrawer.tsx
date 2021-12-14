@@ -131,8 +131,8 @@ function AddInvoiceDrawer() {
                         </Table>
                         <Divider />
                         <text>
-                          <p> principal: {order.paymentDetails.principal} </p>
-                          <p> apr: {order.paymentDetails.apr} </p>
+                          <p> principal: {Math.ceil(order.paymentDetails.principal)} </p>
+                          <p> apr: {order.paymentDetails.apr * 100}{'%'} </p>
                           <p> interest after {order.paymentDetails.tenorInDays} days: {order.paymentDetails.interest.toFixed(2)} </p>
                         </text>
                         <Divider /> 

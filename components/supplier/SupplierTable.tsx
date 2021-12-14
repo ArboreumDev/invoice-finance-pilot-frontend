@@ -21,6 +21,10 @@ const SupplierTable = (props: { suppliers: SupplierInfo[] }) => {
         return {
           ...s,
           creditlineSize: currencyToString(s.creditlineSize),
+          defaultTerms: {
+            ...s.defaultTerms,
+            apr: s.defaultTerms.apr * 100
+          },
           edit: <ModTermsModal 
             supplierId={s.id} name={s.name} apr={s.defaultTerms.apr}
             tenor={s.defaultTerms.tenorInDays} creditline={s.creditlineSize}
@@ -50,7 +54,7 @@ const SupplierTable = (props: { suppliers: SupplierInfo[] }) => {
         disableFilters: true
       },
       {
-        Header: "APR",
+        Header: "APR (%)",
         accessor: "defaultTerms.apr",
         disableFilters: true
       },
