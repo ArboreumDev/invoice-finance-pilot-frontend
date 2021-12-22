@@ -42,7 +42,6 @@ export const principalToAccruedInterest = (
     principal: number, afterXCompoundPeriods: number, apr: number, round=true
     ) => {
     const accrued =  Math.max(
-        // 0, 
         principalToPrepaidInterest(principal, apr, false),
         principalToInterest(principal, afterXCompoundPeriods, apr, false) - principalToPrepaidInterest(principal, apr, false)
     )

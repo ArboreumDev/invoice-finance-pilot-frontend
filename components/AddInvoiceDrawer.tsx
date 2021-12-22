@@ -142,9 +142,8 @@ function AddInvoiceDrawer() {
                         <text>
                           <p> principal: {Math.ceil(order.paymentDetails.principal)} </p>
                           <p> apr: {order.paymentDetails.apr * 100}{'%'} </p>
+                          <p> pre-paid interest (after 30 days): {prePaidInterest.toFixed(2)} </p>
                           <p> interest after {order.paymentDetails.tenorInDays} days:  {order.paymentDetails.interest.toFixed(2)}</p>
-                          <p> pre-paid interest (first 30days): {prePaidInterest.toFixed(2)} </p>
-                          <p> total interest to pay: {(order.paymentDetails.interest - prePaidInterest).toFixed(2)}</p>
                         </text>
                         <Divider /> 
                     </VStack> 
