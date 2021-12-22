@@ -16,9 +16,11 @@ import {
     VStack,
     Heading
   } from "@chakra-ui/react"
-import React, { useState,  } from "react";
+import React, { useEffect, useState,  } from "react";
 import axiosInstance from "../utils/fetcher"
 import {error, success} from "./common/popups";
+import {defaultPrepaidInterestPeriod} from "./common/constants";
+import {principalToInterest, principalToPrepaidInterest, principalToAccruedInterest} from "../lib/invoice"
 
 const dummyOrder = {
     orderRef: "",
@@ -35,7 +37,7 @@ const dummyOrder = {
       principal: 0,
       interest: 0,
       apr: 0,
-      tenorInDays: 0
+      tenorInDays: 0,
     }
 }
 
@@ -47,11 +49,16 @@ function AddInvoiceDrawer() {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const btnRef = React.useRef()
   const [order, setOrder] = useState(dummyOrder)
+  const [prePaidInterest, setPrepaidInterest] = useState(0)
+
 
   const getOrder = async (orderRef) => {
     await axiosInstance.get("/v1/order/" + orderRef)
       .then((result)=>{
         success("Proceed to upload invoice.")
+        setPrepaidInterest(
+          principalToPrepaidInterest(result.data.paymentDetails.principal, result.data.paymentDetails.apr, false)
+        )
         setOrder({
             orderRef: result.data.orderId,
             value: result.data.value,
@@ -67,6 +74,7 @@ function AddInvoiceDrawer() {
         if (err.message.includes("404")) {msg = "invoice not found"}
         if (err.message.includes("400")) {msg = "receveiver not whitelisted"}
         setOrder(dummyOrder)
+        setPrepaidInterest(0)
         error(msg) // TODO display different things by error status
       })
 }
@@ -77,13 +85,14 @@ function AddInvoiceDrawer() {
           success("Your request is being processed")
           onClose()
           setOrder(dummyOrder)
+          setPrepaidInterest(0)
 
       })
       .catch((err) => {
         const message = err.response?.data?.detail || "Unknown Error"
         error(message)
       })
-}
+  }
 
   return (
     <>
@@ -133,7 +142,9 @@ function AddInvoiceDrawer() {
                         <text>
                           <p> principal: {Math.ceil(order.paymentDetails.principal)} </p>
                           <p> apr: {order.paymentDetails.apr * 100}{'%'} </p>
-                          <p> interest after {order.paymentDetails.tenorInDays} days: {order.paymentDetails.interest.toFixed(2)} </p>
+                          <p> interest after {order.paymentDetails.tenorInDays} days:  {order.paymentDetails.interest.toFixed(2)}</p>
+                          <p> pre-paid interest (first 30days): {prePaidInterest.toFixed(2)} </p>
+                          <p> total interest to pay: {(order.paymentDetails.interest - prePaidInterest).toFixed(2)}</p>
                         </text>
                         <Divider /> 
                     </VStack> 

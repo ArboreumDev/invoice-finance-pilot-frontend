@@ -5,6 +5,7 @@ import {Invoice} from "./Main"
 import React, { useMemo, useEffect, useState } from "react";
 import {InvoiceDetails} from "./InvoiceDetails"
 import axiosInstance from "../utils/fetcher"
+import { invoiceToAccruedInterest } from "../lib/invoice";
 
 
 export interface SupplierMap { [key: string]: string; }
@@ -47,7 +48,8 @@ const InvoiceTable = (props: Props) => {
                 isChecked={i.verified}
                 onChange={() => verify(i.invoiceId, !i.verified)}
               >verified</Checkbox>,
-          amount: currencyToString(i.value),
+          amount: <p>{currencyToString(i.value)} | {currencyToString(i.paymentDetails.principal || i.value * .8)}</p>,
+          accrued: currencyToString(invoiceToAccruedInterest(i)),
           supplierName: props.supplierMap[i.supplierId],
           details: <InvoiceDetails invoice={i}/>,
           shortDate: i.paymentDetails.collectionDate ? i.paymentDetails.collectionDate.slice(0,10) : ""
@@ -74,7 +76,7 @@ const InvoiceTable = (props: Props) => {
         disableFilters: true
       },
       {
-        Header: "Invoice Amount",
+        Header: "Invoice Value (total | financed)",
         accessor: "amount",
         sortDescFirst: true,
         disableFilters: true
@@ -87,6 +89,12 @@ const InvoiceTable = (props: Props) => {
       {
         Header: " Status",
         accessor: "status",
+        disableFilters: true
+      },
+      {
+        Header: "Interest accrued",
+        accessor: "accrued",
+        sortDescFirst: true,
         disableFilters: true
       },
       {

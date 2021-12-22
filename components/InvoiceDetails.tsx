@@ -35,6 +35,7 @@ import {Invoice} from "./Main"
 import { Currency } from "../components/common/Currency"
 import {UTCStringToLocaleTime} from "../utils/utils"
 import { InfoOutlineIcon } from "@chakra-ui/icons"
+import { invoiceToAccruedInterest } from "../lib/invoice"
 
 interface Props {
     invoice: Invoice
@@ -82,11 +83,15 @@ export const InvoiceDetails = ({invoice}: Props) => {
                                 <Td>principal</Td>
                                 <Td isNumeric>{invoice.paymentDetails.principal}</Td>
                             </Tr>
-
                             <Tr>
                                 <Td>Interest due after 90 days</Td>
                                 <Td isNumeric>{invoice.paymentDetails.interest}</Td>
                             </Tr>
+                            <Tr>
+                                <Td>Interest accrued (live)</Td>
+                                <Td isNumeric>{invoiceToAccruedInterest(invoice)}</Td>
+                            </Tr>
+ 
                             <Tr>
                                 <Td>status</Td>
                                 <Td isNumeric>{invoice.status}</Td>

@@ -20,7 +20,7 @@ import {Currency} from "./common/Currency"
 import {FinanceStatus} from "./Main"
 import {ReceiverDetails} from "./ReceiverDetails"
 import CreditlinesTable, {CreditLineInfo, CreditSummary} from "./CreditlinesTable"
-import {principalToInterest} from "../lib/invoice"
+import {principalToAccruedInterest, principalToInterest} from "../lib/invoice"
 import {InfoIcon} from '@chakra-ui/icons'
 import {InvoiceDetails} from "./InvoiceDetails";
 
@@ -130,13 +130,15 @@ function dateDiffInDays(a, b) {
 
 const invoiceToDebt = (i: Invoice, endOfTerm = true) => {
     if (endOfTerm) {
-        let t = i.paymentDetails.principal + i.paymentDetails.interest
+        const t = i.paymentDetails.principal + i.paymentDetails.interest
         return t
     } else {
-        let t = (i.paymentDetails.principal + principalToInterest(
+        const t = (i.paymentDetails.principal + principalToAccruedInterest(
                 i.paymentDetails.principal, // amount
                 dateDiffInDays(Date.now(), Date.parse(i.financedOn)),
-                i.paymentDetails.apr)
+                i.paymentDetails.apr,
+                true
+                )
         )
         console.log('in', t)
         return t
@@ -155,7 +157,7 @@ const AccountInfo = ({invoices, creditInfo, suppliers}: VendorAccountInfoProps) 
     const invoicesPaidBack = filteredInvoices.filter(i => [FinanceStatus.REPAID].includes(i.status)) //.map(i => i.value).reduce((a, b) => a + b, 0)
     const invoicesRequested = filteredInvoices.filter(i => [FinanceStatus.DISBURSAL_REQUESTED, FinanceStatus.INITIAL].includes(i.status)) //.map(i => i.value).reduce((a, b) => a + b, 0)
 
-    const totalPaidBack = invoicesPaidBack.map(i => i.value).reduce((a, b) => a + b, 0)
+    const totalPaidBack = invoicesPaidBack.map(i => i.paymentDetails?.principal || 0).reduce((a, b) => a + b, 0)
     const totalAvailable = creditLines.map(c => c.available).reduce((a, b) => a + b, 0)
     const totalUsed = creditLines.map(c => c.used).reduce((a, b) => a + b, 0)
     const totalRequested = creditLines.map(c => c.requested).reduce((a, b) => a + b, 0)
@@ -264,7 +266,7 @@ const AccountInfo = ({invoices, creditInfo, suppliers}: VendorAccountInfoProps) 
                         </Stat>
                         <Stat>
                             <StatLabel fontSize="lg">
-                                Invoices Repaid ({invoicesPaidBack.length})
+                                Repaid Principal ({invoicesPaidBack.length})
                             </StatLabel>
                             <StatNumber fontSize="3xl">
                                 <Currency amount={totalPaidBack}/>
