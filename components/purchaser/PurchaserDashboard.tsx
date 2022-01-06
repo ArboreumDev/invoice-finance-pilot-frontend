@@ -1,4 +1,4 @@
-import {Heading, HStack} from "@chakra-ui/react"
+import {Heading, HStack, Button, Tooltip} from "@chakra-ui/react"
 import React from "react";
 import {PurchaserInfo} from "../Main";
 import PurchaserTable from "./PurchaserTable";
@@ -14,7 +14,11 @@ const PurchaserDashboard = ({purchasers}: Props) => {
       <div>
       <HStack >
           <Heading size="md">Purchasers </Heading>
-        {/* <AddPurchaserModal /> */}
+        <Button disabled title="">
+          <Tooltip label="Adding Purchaser without a supplier is not allowed! Go to the Whitelist-Tab and add a new purchaser-supplier pair. Then you can come back here and edit the purchaser limit.">
+          Add new
+          </Tooltip>
+          </Button>
       </HStack>
       <PurchaserTable
         purchasers={purchasers}
