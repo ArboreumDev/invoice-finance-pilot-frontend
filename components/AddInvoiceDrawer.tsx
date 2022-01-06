@@ -89,6 +89,7 @@ function AddInvoiceDrawer() {
 
       })
       .catch((err) => {
+        console.log('errsdf', err)
         const message = err.response?.data?.detail || "Unknown Error"
         error(message)
       })

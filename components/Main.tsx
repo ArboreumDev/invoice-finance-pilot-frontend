@@ -9,6 +9,7 @@ import React, { useEffect, useState } from "react";
 import {fetcher} from "../utils/fetcher"
 import {CreditLineInfo, CreditSummary} from "./CreditlinesTable";
 import SupplierDashboard from "./supplier/SupplierDashboard";
+import PurchaserDashboard from "./purchaser/PurchaserDashboard";
 import axiosInstance from "../utils/fetcher"
 import { error } from "./common/popups";
 
@@ -51,6 +52,13 @@ export interface SupplierInfo {
   creditlineId: string
   creditlineSize: number
   defaultTerms: Terms
+}
+
+export interface PurchaserInfo {
+  id: string
+  name: string
+  creditLimit: number
+  creditUsed: number
 }
 
 export interface PaymentDetails {
@@ -110,13 +118,20 @@ const getInvoices = () => {
     refreshInterval: 10000,
   });
 
-  const isError = error || creditResult.error || supplierResult.error
-  const isLoading = !isError && (!data || !creditResult.data || !supplierResult.data)
-  const errorData = error?.response || creditResult.error?.response || supplierResult.error?.response
+  const purchaserResult = useSWR<PurchaserInfo[]>("/v1/purchaser", fetcher, {
+    refreshInterval: 10000,
+  });
+
+
+
+  const isError = error || creditResult.error || supplierResult.error || purchaserResult.error
+  const isLoading = !isError && (!data || !creditResult.data || !supplierResult.data || !purchaserResult.data)
+  const errorData = error?.response || creditResult.error?.response || supplierResult.error?.response || purchaserResult.error?.response
 
 
   return {
     suppliers: supplierResult.data,
+    purchasers: purchaserResult.data,
     invoices: data,
     creditInfo: creditResult.data,
     isError,
@@ -126,7 +141,7 @@ const getInvoices = () => {
 };
 
 const Main = () => {
-  const { invoices, creditInfo, suppliers, isLoading, isError, error } = getInvoices();
+  const { invoices, creditInfo, suppliers, purchasers, isLoading, isError, error } = getInvoices();
   if (isError) console.log('err2', error)
   if (isLoading) {
     return <Heading as="h2" size="lg" fontWeight="400" color="gray.500">
@@ -152,6 +167,7 @@ const Main = () => {
     <Tab>Invoices</Tab>
     <Tab>Suppliers</Tab>
     <Tab>Whitelist</Tab>
+    <Tab>Purchasers</Tab>
     <Tab>AdminView</Tab>
   </TabList>
 
@@ -183,6 +199,12 @@ const Main = () => {
         creditInfo={creditInfo}
         suppliers={suppliers}
       /> 
+    </TabPanel>
+
+    <TabPanel>
+       <PurchaserDashboard
+        purchasers={purchasers}
+      />
     </TabPanel>
 
     <TabPanel>
