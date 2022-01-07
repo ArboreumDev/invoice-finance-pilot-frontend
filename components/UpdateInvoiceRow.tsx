@@ -5,7 +5,7 @@ import {
 
 } from "@chakra-ui/react"
 import React, { useEffect, useState } from "react";
-import {Invoice} from "./Main"
+import {Invoice, ShipmentStatus} from "./Main"
 import {ConfirmInvoiceImageModal} from "./ConfirmInvoiceImageModal";
 import { QuestionIcon } from "@chakra-ui/icons";
 
@@ -61,6 +61,7 @@ const UpdateInvoiceRow = ({invoice, changeStatus, changeValue, markDelivered}: P
         return newStatus == "INITIAL";
 
     }
+    // console.log('i', invoice)
 
     return (
         <>
@@ -85,16 +86,19 @@ const UpdateInvoiceRow = ({invoice, changeStatus, changeValue, markDelivered}: P
                     </Tooltip>
                 </Button>
             )}
-            <Button 
-                width="150px"
-                onClick={() => {markDelivered(invoice.invoiceId)}}
-                // disabled /*comment out for testing or development*/ 
-                >
-                <Tooltip label="For testing purposes, this will trigger the same changes as DELIVERED came by the regular update-route">
-                Mark Delivered
-                </Tooltip>
-            </Button>
-
+            {invoice.shippingStatus===ShipmentStatus.DELIVERED ? 
+            <Text>{invoice.shippingStatus}</Text>
+            : (
+                <Button 
+                    width="150px"
+                    onClick={() => {markDelivered(invoice.invoiceId)}}
+                    disabled={invoice.shippingStatus===ShipmentStatus.DELIVERED} /*comment out for testing or development*/ 
+                    >
+                    <Tooltip label="For testing purposes, this will trigger the same changes as DELIVERED came by the regular update-route">
+                    Mark Delivered
+                    </Tooltip>
+                </Button>
+            )}
             <Box> 
                 <Stack direction='row'>
                     <Tooltip label="The uploaded image must match the invoice id and the invoice must be signed!">
@@ -132,6 +136,11 @@ const UpdateInvoiceRow = ({invoice, changeStatus, changeValue, markDelivered}: P
                     onClick={() => {changeStatus(invoice.invoiceId, newStatus, loanId, txId, disbursalDate) ; resetState()}}
                 >Change Status
                 </Button>
+            )}
+            {(
+                invoice.paymentDetails.tokenization?.asset_id ?
+                <Text>Tokenized</Text>
+                : <Text></Text>
             )}
 
         </>

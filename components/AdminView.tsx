@@ -1,10 +1,10 @@
 
 import {
   Box, Button, Divider, Heading, HStack, Text, VStack, Select,
-  Input, useClipboard,
-  Tooltip,
-
+  Input, useClipboard, Link,
+  Tooltip, Spinner
 } from "@chakra-ui/react"
+import { ExternalLinkIcon } from "@chakra-ui/icons"
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../utils/fetcher"
 import {Invoice, SupplierInfo} from "./Main"
@@ -12,7 +12,8 @@ import {CreditSummary} from "./CreditlinesTable"
 import UpdateInvoiceRow from "./UpdateInvoiceRow"
 import CsvDownloader from "react-csv-downloader";
 
-const possibleStatus = ["DELIVERED", "DISBURSAL_REQUESTED", "PLACED_AND_VALID", "REPAID", "INITIAL"]
+const possibleStatus = ["DELIVERED", "DISBURSAL_REQUESTED", "PLACED_AND_VALID", "REPAID", "INITIAL", "FINANCED"]
+const algoExplorerBaseUrl = "https://testnet.algoexplorer.io/tx/"
 
 interface Props {
     invoices: Invoice[]
@@ -28,8 +29,10 @@ const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
     const [orderRefFilter, setOrderRefFilter] = useState("")
     const [loanIdFilter, setLoanIdFilter] = useState("")
     const [statusFilter, setStatusFilter] = useState("")
+    const [supplierFilter, setSupplierFilter] = useState("")
     const [lastUpdate, setLastUpdate] = useState("")
     const [filterId, setFilterId] = useState("")
+    const [ isLoading, setIsLoading ] = useState(false)
     const [csvExport, setCsvExport] = useState("")
     const { hasCopied, onCopy } = useClipboard(csvExport)
 
@@ -52,7 +55,7 @@ const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
       }
     }
 
-    const createNew = async () => {
+    const createNewOrder = async () => {
         try {
             const res = await axiosInstance.post(`/v1/test/new/order/${supplier.id}/${newOrderReceiver}/${newOrderValue}`)
             if (res.status === 200) {
@@ -63,6 +66,28 @@ const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
         } catch (err) {
             console.log(err)
                 alert("error")
+        }
+    }
+
+    const tokenizeAsset = async () => {
+        try {
+            setIsLoading(true)
+
+            const res = await axiosInstance.post(`/v1/admin/asset/new/${loanIdFilter}`)
+            if (res.status === 200) {
+                alert(`Success: created new asset with id: ${res.data.assetId}: \n
+                    view asset at: ${algoExplorerBaseUrl}${res.data.assetId} \n
+                    view tx at: ${algoExplorerBaseUrl}${res.data.txId}`
+                )
+                setIsLoading(false)
+            } else {
+                setIsLoading(false)
+                alert(`ERROR: ${res.data}`)
+            }
+        } catch (err) {
+            setIsLoading(false)
+            console.log('sdfsdfsdfsdf', err?.response)
+            alert(`ERROR: ${err?.response?.data?.detail}`)
         }
     }
 
@@ -107,11 +132,13 @@ const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
 
 
     const filteredInvoices = () => {
-        if (loanIdFilter || orderRefFilter || statusFilter) {
+        if (loanIdFilter || orderRefFilter || statusFilter || supplierFilter) {
             return invoices.filter(
                 i => orderRefFilter ? i.orderId === orderRefFilter : true).filter(
                     i => statusFilter ? i.shippingStatus === statusFilter || i.status === statusFilter : true).filter(
-                        i => loanIdFilter ? i.paymentDetails.loanId === loanIdFilter : true)
+                        i => loanIdFilter ? i.paymentDetails.loanId === loanIdFilter : true).filter(
+                            i => supplierFilter ? i.supplierId === supplierFilter : true
+                        )
         }
         else return invoices
     }
@@ -121,7 +148,7 @@ const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
             return  (
                 i.verified  // by tusker
                 && i.shippingStatus === "DELIVERED" 
-                && i.paymentDetails.verificationResult.includes("VALID")  // signature on invoice image
+                && i.paymentDetails?.signatureVerificationResult?.includes("VALID")  // signature on invoice image
                 && i.status == "INITIAL"
             )
         })
@@ -170,7 +197,7 @@ const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
             </HStack>
 
             <Divider />
-            <Heading size="sm" alignContent="left">Create a New Order</Heading>
+            <Heading size="md" alignContent="left">Create a New Order (Demo only)</Heading>
             <HStack>
                 {suppliers && (
                     <Select onChange={(e)=> setSupplier(suppliers.filter(s => s.id == e.target.value)[0])} placeholder="Select Supplier">
@@ -189,34 +216,58 @@ const AdminView = ({invoices, creditInfo, suppliers}: Props) => {
                     </Box>
                 )}
                 <Input width="300px" onChange={(e) => setNewOrderValue(parseFloat(e.target.value))} placeholder={"order value: "+newOrderValue.toString()}/>
-                <Button onClick={createNew} width="150px">
+                <Button onClick={createNewOrder} width="150px">
                     <Tooltip label="then use order ref number to search for the invoice and reuqest it to be financed">
                         Create
                     </Tooltip>
                 </Button>
             </HStack>
             <Divider />
-                <Heading size="sm" alignContent="left">Change existing Invoices:</Heading>
-
+            <Heading size="md" alignContent="left">Change View</Heading>
+                <HStack>
+                    <Heading size="sm" alignContent="left">Filter:</Heading>
+                    <Select 
+                    width="300px"
+                    value={supplierFilter} 
+                    onChange={(e)=> {setSupplierFilter(e.target.value)}}
+                    placeholder={"filter by supplier"}>
+                        {suppliers.map((s) => (
+                            <option key={s.id} value={s.id}> {s.name} </option>
+                            ))}
+                    </Select>
+                    <Select 
+                    width="300px"
+                    value={statusFilter} 
+                    onChange={(e)=> {setStatusFilter(e.target.value)}}
+                    placeholder={"filter by shipping/finance status"}>
+                        {possibleStatus.map((s) => (
+                            <option key={s} value={s}> {s} </option>
+                            ))}
+                    </Select>
+                </HStack>
             <HStack>
+                <Heading size="sm" alignContent="left">Search for:</Heading>
                 <Input 
-                    width="300px" placeholder="search for a specific order ref no" onChange={(e)=>setOrderRefFilter(e.target.value)} 
+                    width="300px" placeholder="a specific order ref no: <100454>" onChange={(e)=>setOrderRefFilter(e.target.value)} 
                     value={orderRefFilter}
                 />
                 <Input 
-                    width="300px" placeholder="filter by loanID" onChange={(e)=>setLoanIdFilter(e.target.value)} 
+                    width="300px" placeholder="all loans with a specific loanID: <l1> " onChange={(e)=>setLoanIdFilter(e.target.value)} 
                     value={loanIdFilter}
                 />
-                <Select 
-                width="300px"
-                value={statusFilter} 
-                onChange={(e)=> {setStatusFilter(e.target.value)}}
-                placeholder={"filter by shipping/finance status"}>
-                    {possibleStatus.map((s) => (
-                        <option key={s} value={s}> {s} </option>
-                        ))}
-                </Select>
-                <Button width="150px" onClick={()=>{setOrderRefFilter(""), setLoanIdFilter(""), setStatusFilter("")}}>Clear</Button>
+           </HStack>
+            <HStack>
+                <Heading size="sm" alignContent="left">Actions:</Heading>
+               <Button width="150px" onClick={()=>{setOrderRefFilter(""), setLoanIdFilter(""), setStatusFilter(""), setSupplierFilter("")}}>Clear search/filter</Button>
+                <Button onClick={tokenizeAsset} width="150px" disabled={!loanIdFilter}>
+                    {isLoading ? 
+                    <Spinner /> 
+                    : <Tooltip label="create a token with data of all loans of the same loanId as metadata (Note: enter a loan-ID in search field to get started)">
+                        Tokenize
+                    </Tooltip>
+                    }
+                </Button>
+ 
             </HStack>
                 <ul>
                 {invoices && filteredInvoices().map((invoice: Invoice) => (

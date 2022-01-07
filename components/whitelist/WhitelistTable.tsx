@@ -95,8 +95,8 @@ const WhitelistTable = (props: { creditInfo: CreditSummary, suppliers: SupplierI
         disableFilters: true
       },
       {
-        Header: "Credit Limit",
-        accessor: "info.terms.creditlineSize",
+        Header: "Relationship Credit Limit",
+        accessor: "creditlineSize",
         // isNumeric: true
         sortDescFirst: true,
         disableFilters: true

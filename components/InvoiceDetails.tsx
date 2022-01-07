@@ -34,6 +34,8 @@ import {
 import {Invoice} from "./Main"
 import { Currency } from "../components/common/Currency"
 import {UTCStringToLocaleTime} from "../utils/utils"
+import { InfoOutlineIcon } from "@chakra-ui/icons"
+import { invoiceToAccruedInterest } from "../lib/invoice"
 
 interface Props {
     invoice: Invoice
@@ -43,6 +45,7 @@ interface Props {
 
 export const InvoiceDetails = ({invoice}: Props) => {
     const { isOpen, onOpen, onClose } = useDisclosure()
+    console.log('tokenization', invoice.paymentDetails.tokenization)
     return (
       <>
         <Button onClick={onOpen}>...</Button>
@@ -80,11 +83,15 @@ export const InvoiceDetails = ({invoice}: Props) => {
                                 <Td>principal</Td>
                                 <Td isNumeric>{invoice.paymentDetails.principal}</Td>
                             </Tr>
-
                             <Tr>
                                 <Td>Interest due after 90 days</Td>
                                 <Td isNumeric>{invoice.paymentDetails.interest}</Td>
                             </Tr>
+                            <Tr>
+                                <Td>Interest accrued (live)</Td>
+                                <Td isNumeric>{invoiceToAccruedInterest(invoice)}</Td>
+                            </Tr>
+ 
                             <Tr>
                                 <Td>status</Td>
                                 <Td isNumeric>{invoice.status}</Td>
@@ -116,6 +123,13 @@ export const InvoiceDetails = ({invoice}: Props) => {
                             <Tr>
                                 <Td>request date</Td>
                                 <Td isNumeric>{invoice.paymentDetails.startDate || "tbd"}</Td>
+                            </Tr>
+                            <Tr>
+                                <Td>Tokenization info </Td>
+                                <Td isNumeric> 
+                                Asset Id: {invoice.paymentDetails.tokenization?.asset_id || "none"}
+                                txs :{Object.keys(invoice.paymentDetails.tokenization?.transactions || {}).length}
+                                </Td>
                             </Tr>
                         </Tbody>
                         </Table>

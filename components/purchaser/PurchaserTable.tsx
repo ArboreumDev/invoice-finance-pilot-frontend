@@ -1,12 +1,14 @@
-import {Stack, Box, Table, Thead, Tbody, Tr, Th, Td, chakra, Select} from "@chakra-ui/react"
+import {Stack, Box, Table, Thead, Tbody, Tr, Th, Td, chakra} from "@chakra-ui/react"
 import { TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons"
 import { useTable, useSortBy, useFilters } from "react-table"
 import React from "react";
-import {SupplierInfo} from "../Main"
-import {ModTermsModal} from "../whitelist/AddWhitelistModal";
+import {PurchaserInfo} from "../Main"
+import {ModCreditLimitModal} from "./ModCreditLimitModal"
 
 
-const SupplierTable = (props: { suppliers: SupplierInfo[] }) => {
+
+const PurchaserTable = (props: { purchasers: PurchaserInfo[] }) => {
+  console.log('p', props.purchasers)
   const currencyToString = (amount) => {
     return amount.toLocaleString("en-IN", { 
         style: "currency",
@@ -16,51 +18,49 @@ const SupplierTable = (props: { suppliers: SupplierInfo[] }) => {
       })
     }
 
+  const purchaserToCreditUsed = (p: PurchaserInfo) => {
+    const percentage =  (100 * (p.creditUsed/p.creditLimit)).toFixed(0)
+    console.log(';', percentage)
+    return percentage
+  }
+
   const data = React.useMemo(
-    () => props.suppliers.map((s: SupplierInfo) => {
+    () => props.purchasers.map((p: PurchaserInfo) => {
         return {
-          ...s,
-          creditlineSize: currencyToString(s.creditlineSize),
-          defaultTerms: {
-            ...s.defaultTerms,
-            apr: s.defaultTerms.apr * 100
-          },
-          edit: <ModTermsModal 
-            supplierId={s.id} name={s.name} apr={s.defaultTerms.apr}
-            tenor={s.defaultTerms.tenorInDays} creditline={s.creditlineSize}
-            creditlineId={s.creditlineId} editableTerms={['CREDITLIMIT', 'APR', 'TENOR']}
-          />,
+          ...p,
+          creditLimit: currencyToString(p.creditLimit),
+          used: <> 
+            <p>
+              { currencyToString(p.creditUsed)} | {purchaserToCreditUsed(p)}%
+            </p> 
+          </>,
+          edit: <ModCreditLimitModal 
+            purchaserId={p.id}
+            name={p.name}
+            creditLimit={p.creditLimit}
+           />
           }
       }),
-    [props.suppliers]
+    [props.purchasers]
   )
 
   const columns = React.useMemo(
     () => [
       {
-        Header: "Supplier Name",
+        Header: "Purchaser Name",
         accessor: "name",
+        sortDescFirst: false,
         disableFilters: true
       },
       {
-        Header: "Creditline ID",
-        accessor: "creditlineId",
+        Header: "Purchaser Credit Limit",
+        accessor: "creditLimit",
+        // sortDescFirst: true,
         disableFilters: true
       },
       {
-        Header: "Total Supplier Credit Limit",
-        accessor: "creditlineSize",
-        sortDescFirst: true,
-        disableFilters: true
-      },
-      {
-        Header: "APR (%)",
-        accessor: "defaultTerms.apr",
-        disableFilters: true
-      },
-      {
-        Header: "tenor (days)",
-        accessor: "defaultTerms.tenorInDays",
+        Header: "Used (₹ | %)",
+        accessor: "used",
         disableFilters: true
       },
       {
@@ -80,7 +80,10 @@ const SupplierTable = (props: { suppliers: SupplierInfo[] }) => {
     prepareRow,
   } = useTable(
     { columns, 
-      data
+      data,
+      initalState: {
+        sortBy: [{id: 'name',desc: false}] // TODO: this is not working!
+      }
     }, useFilters, useSortBy)
 
   return (
@@ -131,4 +134,4 @@ const SupplierTable = (props: { suppliers: SupplierInfo[] }) => {
   )
 }
  
-export default SupplierTable
+export default PurchaserTable
