@@ -17,9 +17,12 @@ const SupplierTable = (props: { suppliers: SupplierInfo[] }) => {
     }
 
     const supplierDataObject = (s: SupplierInfo) => {
-      console.log('sdata', typeof(JSON.parse(s.data)))
-      // return {}
-      return JSON.parse(s.data)
+      try {
+        return JSON.parse(s.data)
+      } catch(err) {
+        console.log('could not parse supplier data', err)
+        return {}
+      }
     }
 
   const data = React.useMemo(

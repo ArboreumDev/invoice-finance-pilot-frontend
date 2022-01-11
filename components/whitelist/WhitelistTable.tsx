@@ -71,11 +71,14 @@ const WhitelistTable = (props: { creditInfo: CreditSummary, suppliers: SupplierI
   }
 
   const getSupplierDescriptor = (w: CreditLineInfo) => {
-    const s = getSupplierFromCreditlineInfo(w)
-    const data = JSON.parse(s.data)
-    return <>
-      <Text>{data.phone}, {data.city}</Text>
-    </>
+    try {
+      const s = getSupplierFromCreditlineInfo(w)
+      const data = JSON.parse(s.data)
+      return <> <Text>{data.phone}, {data.city}</Text> </>
+    } catch (err) {
+      console.log("could not parse supplier data")
+      return <Text>???</Text>
+    }
   }
 
   const data = React.useMemo(
