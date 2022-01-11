@@ -72,7 +72,10 @@ function AddInvoiceDrawer() {
       .catch((err) => {
         let msg = "unknown error"
         if (err.message.includes("404")) {msg = "invoice not found"}
-        if (err.message.includes("400")) {msg = "receveiver not whitelisted"}
+        if (err.message.includes("400")) {
+          console.log('error is', err.response?.data?.detail)
+          msg = `receveiver not whitelisted: ${err.response?.data?.detail}`
+        }
         setOrder(dummyOrder)
         setPrepaidInterest(0)
         error(msg) // TODO display different things by error status

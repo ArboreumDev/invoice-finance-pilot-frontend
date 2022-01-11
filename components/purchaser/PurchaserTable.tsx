@@ -1,4 +1,4 @@
-import {Stack, Box, Table, Thead, Tbody, Tr, Th, Td, chakra} from "@chakra-ui/react"
+import {Text, Stack, Box, Table, Thead, Tbody, Tr, Th, Td, chakra} from "@chakra-ui/react"
 import { TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons"
 import { useTable, useSortBy, useFilters } from "react-table"
 import React from "react";
@@ -8,7 +8,6 @@ import {ModCreditLimitModal} from "./ModCreditLimitModal"
 
 
 const PurchaserTable = (props: { purchasers: PurchaserInfo[] }) => {
-  console.log('p', props.purchasers)
   const currencyToString = (amount) => {
     return amount.toLocaleString("en-IN", { 
         style: "currency",
@@ -20,7 +19,6 @@ const PurchaserTable = (props: { purchasers: PurchaserInfo[] }) => {
 
   const purchaserToCreditUsed = (p: PurchaserInfo) => {
     const percentage =  (100 * (p.creditUsed/p.creditLimit)).toFixed(0)
-    console.log(';', percentage)
     return percentage
   }
 
@@ -28,12 +26,11 @@ const PurchaserTable = (props: { purchasers: PurchaserInfo[] }) => {
     () => props.purchasers.map((p: PurchaserInfo) => {
         return {
           ...p,
+          pDescriptor: <Text>{p.name} ({p.phone}, {p.city})</Text>,
           creditLimit: currencyToString(p.creditLimit),
-          used: <> 
-            <p>
+          used:  <p>
               { currencyToString(p.creditUsed)} | {purchaserToCreditUsed(p)}%
-            </p> 
-          </>,
+            </p> ,
           edit: <ModCreditLimitModal 
             purchaserId={p.id}
             name={p.name}
@@ -48,7 +45,7 @@ const PurchaserTable = (props: { purchasers: PurchaserInfo[] }) => {
     () => [
       {
         Header: "Purchaser Name",
-        accessor: "name",
+        accessor: "pDescriptor",
         sortDescFirst: false,
         disableFilters: true
       },

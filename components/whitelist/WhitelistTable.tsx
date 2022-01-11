@@ -1,4 +1,4 @@
-import {Stack, Button, Box, Input, Table, Thead, Tbody, Tr, Th, Td, chakra, Select} from "@chakra-ui/react"
+import {Text, Stack, Button, Box, Input, Table, Thead, Tbody, Tr, Th, Td, chakra, Select} from "@chakra-ui/react"
 import { TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons"
 import { useTable, useSortBy, useFilters } from "react-table"
 import React, {useMemo, useState} from "react";
@@ -66,16 +66,30 @@ const WhitelistTable = (props: { creditInfo: CreditSummary, suppliers: SupplierI
       })
     }
 
+  const getSupplierFromCreditlineInfo = (w: CreditLineInfo) => {
+    return props.suppliers.filter((s) => s.id === w.supplierId)[0]
+  }
+
+  const getSupplierDescriptor = (w: CreditLineInfo) => {
+    const s = getSupplierFromCreditlineInfo(w)
+    const data = JSON.parse(s.data)
+    return <>
+      <Text>{data.phone}, {data.city}</Text>
+    </>
+  }
+
   const data = React.useMemo(
     () => whitelist.map((w: CreditLineInfo) => {
         return {
           ...w,
+          supplierDescriptor: getSupplierDescriptor(w),
           creditlineSize: currencyToString(w.info.terms.creditlineSize),
           edit: <ModTermsModal supplierId={w.supplierId} name={w.info.name} apr={w.info.terms.apr}
                                tenor={w.info.terms.tenorInDays} creditline={w.info.terms.creditlineSize}
                                purchaserId={w.info.id} editableTerms={['CREDITLIMIT']}
                                />,
           supplier: {...props.suppliers.filter((s) => s.id === w.supplierId)[0]}
+
         }
       }),
     [props.creditInfo]
@@ -90,6 +104,11 @@ const WhitelistTable = (props: { creditInfo: CreditSummary, suppliers: SupplierI
         filter: 'includes',
       },
       {
+        Header: "Supplier Details",
+        accessor: "supplierDescriptor",
+        disableFilters: true
+      },
+      {
         Header: "Receiver Name",
         accessor: "info.name",
         disableFilters: true
@@ -102,7 +121,7 @@ const WhitelistTable = (props: { creditInfo: CreditSummary, suppliers: SupplierI
         disableFilters: true
       },
       {
-        Header: "Phone",
+        Header: "Purchaser Phone",
         accessor: "info.phone",
         disableSortBy: true,
         disableFilters: true

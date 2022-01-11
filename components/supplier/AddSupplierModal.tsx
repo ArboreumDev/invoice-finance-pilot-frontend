@@ -38,7 +38,7 @@ export const AddSupplierModal = () => {
                     creditlineSize: newCreditLimit,
                     defaultApr: newApr,
                     defaultTenorInDays: newTenor,
-                    data: receiverInfo.toString()
+                    data: JSON.stringify(receiverInfo)
                 } as SupplierInput
             })
 

@@ -1,8 +1,8 @@
-import {Box, Button, Input, Radio, RadioGroup, Spinner, Stack} from "@chakra-ui/react";
+import {Text, Box, Button, Input, Radio, RadioGroup, Spinner, Stack} from "@chakra-ui/react";
 import React, {useState} from "react";
 import axiosInstance from "../../utils/fetcher";
 import TermsBox from "./TermsBox";
-import CreditlineIdBox from "../supplier/CreditlineIdBox";
+import SearchResultDetails from "./SearchResultDetails"
 import {error} from "./popups";
 
 interface Props {
@@ -47,6 +47,7 @@ export const TuskerSearch = (props: Props) => {
   return (
     <Box mt={5}>
       <Box mb={3}>
+        <Text as='i'>We recommend searching by phone number, as each supplier might have different locations</Text>
         <Input
             width="300px"
             onChange={(e) => setSearchString(e.target.value)}
@@ -68,6 +69,7 @@ export const TuskerSearch = (props: Props) => {
                   <Box key={"option-" + s.id}>
                       <Stack direction="row">
                           <Radio value={s.id} > {s.name}({s.city}) {s.phone} </Radio>
+                          <SearchResultDetails data={s}/>
                       </Stack>
                   </Box>
                   )

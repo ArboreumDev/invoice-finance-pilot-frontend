@@ -46,12 +46,14 @@ export interface ReceiverInfo {
   locationId: string
 }
 
+
 export interface SupplierInfo {
   id: string
   name: string
   creditlineId: string
   creditlineSize: number
   defaultTerms: Terms
+  data: string
 }
 
 export interface PurchaserInfo {
@@ -59,6 +61,9 @@ export interface PurchaserInfo {
   name: string
   creditLimit: number
   creditUsed: number
+  phone: string
+  city: string
+  locationId: string
 }
 
 export interface PaymentDetails {

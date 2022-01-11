@@ -1,4 +1,4 @@
-import {Stack, Box, Table, Thead, Tbody, Tr, Th, Td, chakra, Select} from "@chakra-ui/react"
+import {Text, Stack, Box, Table, Thead, Tbody, Tr, Th, Td, chakra, Select} from "@chakra-ui/react"
 import { TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons"
 import { useTable, useSortBy, useFilters } from "react-table"
 import React from "react";
@@ -16,11 +16,20 @@ const SupplierTable = (props: { suppliers: SupplierInfo[] }) => {
       })
     }
 
+    const supplierDataObject = (s: SupplierInfo) => {
+      console.log('sdata', typeof(JSON.parse(s.data)))
+      // return {}
+      return JSON.parse(s.data)
+    }
+
   const data = React.useMemo(
     () => props.suppliers.map((s: SupplierInfo) => {
         return {
           ...s,
           creditlineSize: currencyToString(s.creditlineSize),
+          name: <>
+              <Text>{s.name} ({supplierDataObject(s).phone}, {supplierDataObject(s).city})</Text>
+            </>,
           defaultTerms: {
             ...s.defaultTerms,
             apr: s.defaultTerms.apr * 100

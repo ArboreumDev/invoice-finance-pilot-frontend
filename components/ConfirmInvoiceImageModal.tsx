@@ -14,6 +14,8 @@ interface Props {
     invoice: Invoice,
 }
 
+// const IMAGE = "https://fleet-non-prod.s3.amazonaws.com/consgt/doc_c7d555a8-77f8-4c1f-a096-52497345cdc1.jpeg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20220110T152011Z&X-Amz-SignedHeaders=host&X-Amz-Expires=259200&X-Amz-Credential=AKIAIHZGPUAKSBOYBLUQ%2F20220110%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Signature=e4880c4b47d216ea7d3f24d9d3f7b155b40a9eebce23393daa778ba7f9bf8bf4"
+
 
 export const ConfirmInvoiceImageModal = (props: Props) => {
     const [fetching, setFetching] = useState(true)
@@ -29,6 +31,7 @@ export const ConfirmInvoiceImageModal = (props: Props) => {
             const url = `/v1/invoice/image/${props.invoice.invoiceId}`
             console.log('fetching', url)
             try {
+                setError(false)
                 const response = await axiosInstance.get(url)
                 if (response.status === 200) {
                     const images = response.data["images"]
@@ -36,6 +39,7 @@ export const ConfirmInvoiceImageModal = (props: Props) => {
                     setFetching(false)
                     setMsg('')
                 }
+                setError(false)
             } catch (err) {
                 setFetching(false)
                 console.log('err', err)
@@ -88,25 +92,26 @@ export const ConfirmInvoiceImageModal = (props: Props) => {
             body={
                 <>
                     <Box>Please confirm that the uploaded invoice is signed and has a stamp:</Box>
-                    {error && (
-                        <Text>Error: {msg || "Unknown"}</Text>
+                    {!fetching && (error || msg)  && (
+                        <Text>Error: {msg || "Unknown Error"}</Text>
                     )}
                     {fetching && !error && (
                         <Spinner/>
                     )}
-                    <Box>
+                    {!fetching && !error && (
+                        <Box>
                         <Wrap>
                             {images && images.map((image: string) => (
-                                <WrapItem>
+                                <WrapItem key={image} >
                                     <Image
-                                        key={image}
                                         src={image}
                                         alt={'invoice for order' + props.invoice.orderId}
-                                    />
+                                        />
                                 </WrapItem>
                             ))}
                         </Wrap>
-                    </Box>
+                        </Box>
+                    )}
                 </>
             }
             footer={

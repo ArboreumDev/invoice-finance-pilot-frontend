@@ -92,7 +92,8 @@ const UpdateInvoiceRow = ({invoice, changeStatus, changeValue, markDelivered}: P
                 <Button 
                     width="150px"
                     onClick={() => {markDelivered(invoice.invoiceId)}}
-                    disabled={invoice.shippingStatus===ShipmentStatus.DELIVERED} /*comment out for testing or development*/ 
+                    disabled
+                    // disabled={invoice.shippingStatus===ShipmentStatus.DELIVERED} /*comment out for testing or development*/ 
                     >
                     <Tooltip label="For testing purposes, this will trigger the same changes as DELIVERED came by the regular update-route">
                     Mark Delivered
